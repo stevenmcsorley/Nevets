@@ -1,0 +1,19 @@
+{
+  "ckpt": "checkpoints/general/general-v1.pt",
+  "iters": 4,
+  "isolated_options": true,
+  "bidirectional_state": true,
+  "requests": 176,
+  "fp32_bytes": 129396115,
+  "int8_bytes": 80408059,
+  "fp32": {
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 1.7583370208740234e-06,
+    "mean_abs_prob_diff": 1.3758959786287614e-07
+  },
+  "int8": {
+    "argmax_agree": 0.9488636363636364,
+    "max_abs_prob_diff": 0.16001833975315094,
+    "mean_abs_prob_diff": 0.009001769868319798
+  }
+}

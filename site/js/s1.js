@@ -51,8 +51,10 @@ export class Tokenizer {
       const mapped = Array.from(this.enc.encode(chunk), b => this.byteMap[b]).join("");
       let b = 0;
       for (const piece of this.bpe(mapped)) {
-        const nbytes = Array.from(piece).length, id = this.vocab[piece];
-        if (id === undefined) throw new Error(`piece not in vocab: ${piece}`);
+        const nbytes = Array.from(piece).length;
+        // Like the Python BPE (unk_token set, fuse_unk false): a symbol outside the vocabulary
+        // (e.g. "{", absent from the tokenizer's training alphabet) becomes <unk>.
+        const id = this.vocab[piece] ?? this.special["<unk>"];
         const lo = start + charOfByte[b], last = b + nbytes - 1;
         const hi = start + charOfByte[last] + (chunk.codePointAt(charOfByte[last]) > 0xffff ? 2 : 1);
         ids.push(id); offsets.push([lo, hi]); b += nbytes;
@@ -88,10 +90,15 @@ export function pack(tok, state, questions, isolate = false) {
     let entities = q.query_entities;
     if (!entities) { const m = q.instructions.match(/^What is the spatial relation of (.+) to (.+)\?$/); if (m) entities = [m[1], m[2]]; }
     const statePositions = entities ? entities.map(n => entityStatePositions(state, st.offsets, n, 2)) : null;
-    const keys = Object.keys(q.criteria), optionEnds = [];
+    // noul (yes/no) questions use fixed options, exactly as formatting.pack_request does.
+    const qtype = q.type.toLowerCase();
+    if (qtype === "noul" && q.criteria) throw new Error("noul criteria text is not supported in the browser port");
+    if (qtype !== "noul" && qtype !== "choice") throw new Error(`unsupported question type ${q.type}`);
+    const keys = qtype === "noul" ? ["false", "true"] : Object.keys(q.criteria), optionEnds = [];
+    const optionText = k => qtype === "noul" ? (k === "true" ? "Yes" : "No") : String(q.criteria[k]);
     const head = local.length, lopt = new Array(head).fill(0), lpos = [...Array(head).keys()];
     keys.forEach((k, ki) => {
-      const toks = [tok.id("<opt>"), ...tok.encode(String(q.criteria[k])).ids, tok.id("</opt>")];
+      const toks = [tok.id("<opt>"), ...tok.encode(optionText(k)).ids, tok.id("</opt>")];
       const start = isolate ? head : local.length;
       toks.forEach((t, i) => { local.push(t); lopt.push(ki + 1); lpos.push(start + i); });
       optionEnds.push(ids.length + local.length - 1);

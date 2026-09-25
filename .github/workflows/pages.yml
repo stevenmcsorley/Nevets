@@ -28,7 +28,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download demo-models-v2 --repo "$GITHUB_REPOSITORY" --pattern "*.onnx" --dir site/model
+          gh release download demo-models-v3 --repo "$GITHUB_REPOSITORY" --pattern "*.onnx" --dir site/model
           (cd site/model && sha256sum -c SHA256SUMS)  # checksums are committed in git
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

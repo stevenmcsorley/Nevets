@@ -12,7 +12,7 @@ from systemone_lab.formatting import branch_attention_mask, pack_request
 from systemone_lab.tokenizer import LabTokenizer
 
 pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
-TEXTS = ["A is left of B. C is below B.", "obj_12 sits north of obj_3.", "café naïve — “quoted” 😀 x",
+TEXTS = ['{"facts":[{"subject":"a"}]} | x (y, z)', "A is left of B. C is below B.", "obj_12 sits north of obj_3.", "café naïve — “quoted” 😀 x",
          "  leading and   multiple   spaces ", "Pe7-e8=Q Ke1-g1 castles", "don't we'll it's", "tab\there\nnewline", ""]
 
 
@@ -21,6 +21,12 @@ def cases():
     for path, step in (("reports/chain/eval_hops.jsonl", 40), ("reports/binding_stress/stress.jsonl", 40)):
         for line in itertools.islice(open(path, encoding="utf-8"), 0, 4000, step):
             r = json.loads(line); out.append({"state": r["state"], "questions": r["questions"], "bidirectional": True})
+            out.append({"state": r["state"], "questions": r["questions"], "bidirectional": True, "isolate": True})
+    from systemone_lab.worlds import DOMAINS, FORMATS
+    wrng = __import__("random").Random(5)
+    for dom in DOMAINS:  # every data-factory domain in every rendering (JSON, tables, kv, prose)
+        for fmt in FORMATS:
+            r, _ = DOMAINS[dom](wrng, fmt, "p")
             out.append({"state": r["state"], "questions": r["questions"], "bidirectional": True, "isolate": True})
     board = chess.Board()
     for mv in ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6", "O-O", "Be7", "Re1", "b5", "Bb3", "d6", "c3", "O-O", "h3"]:

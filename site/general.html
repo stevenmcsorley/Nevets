@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nevets General Playground</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--accent:#2f6fdb;--good:#1f8a4c;--bad:#c2412d;--warn:#b86e00;--bar:#e6e5e0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--accent:#6ea0ff;--good:#4fc27f;--bad:#f07a63;--warn:#e0a440;--bar:#2c2b29}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:22px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}.sub{margin:0 0 16px;color:var(--muted)}a{color:var(--accent)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+select,button{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:5px 10px}
+button{cursor:pointer}button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 5px}
+textarea,input[type=text]{width:100%;font:13.5px/1.5 ui-monospace,Consolas,monospace;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px}
+textarea{min-height:170px;resize:vertical}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.opts span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.answer{font-size:21px;font-weight:650;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:2px 0 10px}
+.pill{font-size:12px;font-weight:600;border:1px solid currentColor;border-radius:999px;padding:1px 9px}
+.ok{color:var(--good)}.no{color:var(--bad)}.unsure{color:var(--warn)}
+.bars div{display:grid;grid-template-columns:minmax(90px,170px) 1fr 54px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.track{background:var(--bar);border-radius:4px;height:11px;position:relative;overflow:hidden}.fill{background:var(--muted);height:100%}
+.top .fill{background:var(--accent)}.exact{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.8}
+.num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}.meta{font-size:13px;color:var(--muted)}
+table{border-collapse:collapse;font-size:13px;width:100%}td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}th{color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<h1>Nevets General playground</h1>
+<p class="sub"><a href="./">← Nevets demos</a> · One 32M model, trained from random weights, answers questions from eight domains in your browser. It returns a probability for every option in one forward pass, with no generated text. Pick a domain and format, load a fresh example (never seen in training), or edit the state and question yourself.</p>
+<div class="panel controls">
+  <label style="margin:0">Domain <select id="domain"></select></label>
+  <label style="margin:0">Format <select id="format">
+    <option value="prose">prose</option><option value="json">JSON</option><option value="kv">key-value</option>
+    <option value="table">table (never seen in training)</option></select></label>
+  <button class="primary" id="next">New example</button>
+  <button id="shuffle" title="Isolated options: the answer cannot depend on the order">Shuffle options</button>
+  <span class="meta" id="status">Loading the model (≈40 MB, runs in your browser)…</span>
+</div>
+<div class="layout">
+  <div class="panel">
+    <label for="state">State</label><textarea id="state" spellcheck="false"></textarea>
+    <label for="question" style="margin-top:10px">Question</label><input type="text" id="question" spellcheck="false">
+    <div class="opts" id="opts"></div>
+    <p class="meta" id="edited" style="margin:8px 0 0"></p>
+  </div>
+  <div class="panel">
+    <div class="answer" id="answer">…</div>
+    <div class="bars" id="bars"></div>
+    <p class="meta" id="note" style="margin:8px 0 0"></p>
+  </div>
+</div>
+<div class="panel">
+  <strong>How good is it? (development evaluation, <code>reports/general/v1/</code>)</strong>
+  <table style="margin-top:8px"><tr><th>Domain</th><th>Seen formats</th><th>Table (held out)</th><th>What it tests</th></tr>
+  <tr><td>Spatial chains</td><td colspan="2">1 / 2 / 3 / 4 hops: 100 / 95.0 / 78.5 / 59.6%</td><td>composing relative positions</td></tr>
+  <tr><td>Rules</td><td>88.5%</td><td>64.0%</td><td>policy with an exception; counterfactual both-correct 73.7%</td></tr>
+  <tr><td>Probability</td><td>71.8%</td><td>44.0%</td><td>exact Bayesian posterior (target distributions)</td></tr>
+  <tr><td>Info gathering</td><td>70.0%</td><td>49.2%</td><td>repair now or pay for a diagnostic (expected utility)</td></tr>
+  <tr><td>Temporal</td><td>61.5%</td><td>49.7%</td><td>before / after / cannot be determined</td></tr>
+  <tr><td>Dependency</td><td>60.8%</td><td>77.7%</td><td>does a failure propagate?</td></tr>
+  <tr><td>Kinship</td><td>56.5%</td><td>41.0%</td><td>composed family relations</td></tr>
+  <tr><td>Causal</td><td>55.2%</td><td>53.2%</td><td>P(Y | do(X)) vs P(Y | X); see-vs-do both-correct only 8.7% (not solved)</td></tr></table>
+  <p class="meta" style="margin:8px 0 0">Honest summary: strong on spatial reasoning and rules, partial elsewhere, weak on the held-out table format and on telling intervention from observation. Calibration on seen formats: ECE 0.047.</p>
+</div>
+</main>
+<script type="module">
+import { loadModel } from "./js/loader.js";
+import { pack, score } from "./js/s1.js";
+const $=id=>document.getElementById(id);
+const NAMES={spatial:"Spatial chains",rules:"Rules",probability:"Probability",infogather:"Info gathering",temporal:"Temporal",dependency:"Dependency",kinship:"Kinship",causal:"Causal"};
+let M=null,EX={},cur=null,seq=0,timer;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const optLabel=(q,k)=>q.type==="noul"?(k==="true"?"Yes":"No"):q.criteria[k];
+function show(ex){
+  cur=JSON.parse(JSON.stringify(ex)); cur.original={state:ex.state,question:ex.questions[Object.keys(ex.questions)[0]].instructions};
+  const q=cur.questions[Object.keys(cur.questions)[0]];
+  $("state").value=cur.state; $("question").value=q.instructions; drawOpts(); run();
+}
+function drawOpts(){const q=cur.questions[Object.keys(cur.questions)[0]];
+  $("opts").innerHTML=(q.type==="noul"?["false","true"]:Object.keys(q.criteria)).map(k=>`<span>${optLabel(q,k)}</span>`).join("")}
+function next(){
+  const d=$("domain").value; let f=$("format").value; if(d==="spatial") f="prose";
+  const pool=EX[`${d}|${f}`]||EX[`${d}|prose`]; show(pick(pool));
+}
+async function run(){
+  if(!M||!cur)return; const my=++seq;
+  const key=Object.keys(cur.questions)[0], q={...cur.questions[key],instructions:$("question").value};
+  const state=$("state").value, edited=state!==cur.original.state||q.instructions!==cur.original.question;
+  $("edited").textContent=edited?"Edited: ground truth hidden (it was computed for the original world).":"";
+  const t0=performance.now(); let p;
+  try{p=(await score(M.ort,M.session,pack(M.tok,state,{[key]:q},true),true,true))[key]}
+  catch(e){$("answer").textContent="Error: "+e.message;return}
+  if(my!==seq)return; const ms=performance.now()-t0;
+  const ranked=Object.entries(p).sort((a,b)=>b[1]-a[1]),[top,conf]=ranked[0];
+  const truth=String(cur.labels[key]).toLowerCase()==="true"&&q.type==="noul"?"true":String(cur.labels[key]).toLowerCase()==="false"&&q.type==="noul"?"false":cur.labels[key];
+  const exact=cur.distributions?.[key];
+  $("answer").innerHTML=`${optLabel(q,top)} <span class="pill ${conf>=.9?"ok":"unsure"}">${(conf*100).toFixed(0)}% ${conf>=.9?"confident":"uncertain"}</span>`+
+    (edited?"":`<span class="pill ${top===truth?"ok":"no"}">${top===truth?"correct":"wrong, truth: "+optLabel(q,truth)}</span>`);
+  $("bars").innerHTML=ranked.map(([k,v],i)=>`<div class="${i?"":"top"}"><span>${optLabel(q,k)}</span><span class="track"><span class="fill" style="display:block;width:${(v*100).toFixed(1)}%"></span>${!edited&&exact&&exact[k]!==undefined?`<span class="exact" style="left:${(exact[k]*100).toFixed(1)}%" title="exact probability"></span>`:""}</span><span class="num">${(v*100).toFixed(1)}%</span></div>`).join("");
+  $("note").textContent=`${ms.toFixed(0)} ms in your browser · ${cur.meta?.format?("format: "+cur.meta.format):""}${!edited&&exact?" · the dark tick marks the exact probability the model was trained to match":""}`;
+}
+$("domain").innerHTML=Object.entries(NAMES).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+$("next").onclick=next; $("domain").onchange=next; $("format").onchange=next;
+$("shuffle").onclick=()=>{if(!cur)return;const key=Object.keys(cur.questions)[0],q=cur.questions[key];if(q.type!=="choice")return;
+  const items=Object.entries(q.criteria);for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]]}
+  q.criteria=Object.fromEntries(items);drawOpts();run()};
+$("state").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(run,250)});
+$("question").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(run,250)});
+Promise.all([fetch("examples/general_examples.json").then(r=>r.json()),
+  loadModel("model/general.onnx",f=>{$("status").textContent=`Loading the model… ${(f*100).toFixed(0)}%`})])
+  .then(([ex,m])=>{EX=ex;M=m;$("status").textContent="Model ready (runs in your browser).";next()})
+  .catch(e=>{$("status").textContent="Could not load: "+e.message});
+</script>
+</body>
+</html>

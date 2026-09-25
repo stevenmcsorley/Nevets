@@ -167,7 +167,7 @@ async function turn(){
   try{
     // The model runs here, in your browser (ONNX, onnxruntime-web). No server is involved.
     const q={move:{type:"choice",instructions:question,criteria:Object.fromEntries(LABELS.map(l=>[l,l]))}};
-    answer={probabilities:(await score(M.ort,M.session,pack(M.tok,state,q),true)).move};
+    answer={probabilities:(await score(M.ort,M.session,pack(M.tok,state,q,true),true,true)).move};  // GENERAL-1: isolated options
   }catch(e){$("decision").innerHTML=`<span class="no">Model unavailable: ${e.message}</span>`;busy=false;playing=false;syncPlay();return}
   const lat=performance.now()-t0;
   const ranked=Object.entries(answer.probabilities).sort((a,b)=>b[1]-a[1]);
@@ -247,7 +247,7 @@ $("mode").onchange=()=>{world=null;newRound()};
 $("noise").oninput=()=>{$("noiseV").textContent=$("noise").value};
 syncPlay();
 $("banner").textContent="Loading the model (≈40 MB, runs entirely in your browser)…";
-loadModel("model/spatial_reasoner.onnx",f=>{$("banner").textContent=`Loading the model… ${(f*100).toFixed(0)}%`})
+loadModel("model/general.onnx",f=>{$("banner").textContent=`Loading the model… ${(f*100).toFixed(0)}%`})
   .then(m=>{M=m;newRound();loop()})
   .catch(e=>{$("banner").textContent="Could not load the model: "+e.message});
 </script>
