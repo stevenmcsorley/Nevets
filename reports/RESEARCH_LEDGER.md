@@ -79,3 +79,17 @@ Format per entry: **ID** · parent → artifact · architecture · data · hypot
 **DEMO-1 (deployment)** · In-browser demos on GitHub Pages (https://stevenmcsorley.github.io/Nevets/): Treasure Hunt with `exp6a-noloop` and chess with `chess-base-r1`. ONNX export of backbone + head (`scripts/export_onnx.py`) with weight-only int8 (`scripts/quantize_weights_int8.py --min-size 200000`, 40 MB each). Dynamic int8 (activations quantized) was rejected: 96.25% argmax agreement. Parity against PyTorch: spatial 99.4% argmax / max |Δp| 0.040 (160 requests); chess 100% / 0.004 (100 positions), measured end to end through the JS pipeline in onnxruntime. JS tokenizer, packing, masks and chess rendering match Python exactly (`tests/test_js_parity.py`, about 2,800 chess positions). Models live in release `demo-models-v1`, verified against the committed `site/model/SHA256SUMS` at deploy time. Live check in headless Chrome: Treasure Hunt 6/6 treasures at ~115 ms/decision; chess ~500–650 ms/move on CPU WASM. **Found and fixed along the way:** RoPE/GQA `repeat_interleave` baked the sequence length into the ONNX graph (replaced with numerically identical ops; gates reproduce), and uneven board rows in both game UIs.
 
 **T-R2 (preliminary; K=8/12 still running)** · looped retrofit of exp6a, K ~ U[1,6] against a K=1 control with the same data and steps: at K=4, 3-hop **72.5% against 59.3%** and 4-hop 46.9% against 38.2%, with one-hop held-out still 100%. Accuracy saturates past K=4 and 6–10 hops barely move. **Early conclusion:** a trained loop adds effective composition depth up to about four hops but does not extrapolate with more test-time iterations on this task. Final analysis follows.
+
+**T-R2 — FINAL** · looped retrofit of exp6a (prelude 0–1, tied core 2–5, coda 6–7), trained with K ~ U[1,6], 6,000 × 16, seed 42 · K sweep on the dev chain suite (`reports/tournament/r2/gates_looped_k*.txt`):
+
+| K | overall | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 hops | ECE |
+|---|---|---|---|---|---|---|---|---|---|---|
+| control (K=1, same training) | 0.500 | .987 | .920 | .593 | .382 | — | .354 | .331 | .320 | .033 |
+| 1 | 0.508 | .987 | .904 | .652 | .404 | .410 | .366 | .325 | .326 | .046 |
+| 2 | 0.526 | .990 | .927 | .682 | .427 | .453 | .396 | .325 | .349 | .047 |
+| **4** | **0.537** | .997 | .929 | **.725** | **.469** | .472 | .376 | .338 | .315 | .057 |
+| 6 | 0.526 | 1.00 | .906 | .715 | .452 | .463 | .376 | .331 | .302 | .054 |
+| 8 (beyond training) | 0.513 | .997 | .881 | .677 | .433 | .445 | .386 | .322 | .292 | .049 |
+| 12 (beyond training) | 0.490 | .992 | .853 | .642 | .362 | .407 | .356 | .318 | .297 | .045 |
+
+All one-hop gates stay at 100% for every K. **Conclusion:** a *trained* weight-tied loop adds real composition depth (+13 points at 3 hops, +9 at 4 over a controlled baseline). This is the first mechanism in the programme that lifts 3–4 hops. But **it does not extrapolate**: iterations beyond the trained range degrade every hop count, so the recurrence has no stable fixed point. **Next (T-R3):** tie K to the problem during training (K ≥ hops, following Fan et al. 2024) and add a convergence objective (penalize ‖h_{K+1} − h_K‖, or train with extra no-gradient iterations) so that more test-time iterations refine rather than drift.

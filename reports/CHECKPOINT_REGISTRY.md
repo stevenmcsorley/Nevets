@@ -12,6 +12,6 @@ An entry changes only with measured evidence (link the report). Read-only (prote
 | BEST_ONEHOP_MINIMAL | `entity-binding-onehop-gate.pt` 🔒 | 32.2M | EB-1 | — | Smallest change that fixed role binding. |
 | BEST_CHESS | `chess/chess-base-r1.pt` | 32.2M | CH-1: top-1 25.2%, top-3 46.7%, cp loss 186; 9W/11D/0L vs random, 0W/6D/14L vs SF1320 | ~27 ms | Beginner level; options are order-dependent. |
 | BEST_GENERAL | — | | | | No multi-domain model yet |
-| BEST_SMALL | — | | | | T-R1 d=256 models pending |
-| REASONER | — | | | | T-R1 pending |
+| BEST_SMALL | — | | | | T-R1 d=256 from-scratch runs failed to learn (see ledger) |
+| REASONER | `tournament/r2/looped.pt` (run at K=4) | 32.2M | T-R2: dev chains 3-hop 72.5%, 4-hop 46.9% (control 59.3 / 38.2); one-hop gates 100% | ~2.5× flat (effective depth 20) | Best 3–4-hop model; degrades for K > 6. |
 | Rejected, kept for the record | `exp9-calibrated.pt` (C-1), `exp7-loop8.pt` (X-7), `role-*` (P-05 to P-07), `s1-35m-spatial.pt` (P-01) | | | | Do not use as initialization. |
