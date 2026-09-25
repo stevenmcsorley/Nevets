@@ -31,8 +31,8 @@ class DecisionGraph(nn.Module):
         dh = model.cfg.decision_head
         if dh.get("scorer") != "cosine" or dh.get("query_mode", "decide") not in ("decide", "entity_binding"):
             raise ValueError("export supports cosine scorers with decide/entity_binding queries")
-        if (model.cfg.arch or {}).get("type") == "looped" or model.loop_gate is not None:
-            raise ValueError("export does not support looped checkpoints yet")
+        if model.loop_gate is not None:
+            raise ValueError("export does not support the gated (zero-init) loop; use arch: looped")
         self.temperature = float(dh.get("temperature", 10.0))
         self.has_bind = model.ptr_bind is not None
 
@@ -62,8 +62,10 @@ def main():
     ap.add_argument("--ckpt", required=True); ap.add_argument("--out", required=True)
     ap.add_argument("--parity", required=True, help="jsonl of requests used for parity checks")
     ap.add_argument("--report", required=True); ap.add_argument("--limit", type=int, default=200)
+    ap.add_argument("--iters", type=int, help="looped arch: core iterations unrolled into the graph")
     a = ap.parse_args()
     model, ck = load_checkpoint(a.ckpt, SystemOneModel, "cpu"); model.eval(); tok = LabTokenizer(ck["tokenizer"])
+    if a.iters: model.iters = a.iters  # the recurrence is unrolled at this depth when traced
     g = DecisionGraph(model).eval()
     recs = [json.loads(l) for l in open(a.parity, encoding="utf-8")][:a.limit]
     packs = [pack_request(tok, r["state"], r["questions"], isolate_options=model.isolated_options) for r in recs]
@@ -92,7 +94,8 @@ def main():
             st["max_abs_prob_diff"] = max(st["max_abs_prob_diff"], float(d.max())); st["mean_abs_prob_diff"] += float(d.mean())
     for st in stats.values():
         st["argmax_agree"] /= len(packs); st["mean_abs_prob_diff"] /= len(packs)
-    report = {"ckpt": a.ckpt, "requests": len(packs), "fp32_bytes": fp32.stat().st_size, "int8_bytes": out.stat().st_size, **stats}
+    report = {"ckpt": a.ckpt, "iters": getattr(model, "iters", None), "isolated_options": model.isolated_options,
+              "bidirectional_state": model.bidirectional_state, "requests": len(packs), "fp32_bytes": fp32.stat().st_size, "int8_bytes": out.stat().st_size, **stats}
     Path(a.report).write_text(json.dumps(report, indent=2)); print(json.dumps(report, indent=2))
 
 

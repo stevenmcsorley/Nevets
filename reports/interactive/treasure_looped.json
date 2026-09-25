@@ -1,0 +1,25 @@
+{
+  "ckpt": "checkpoints/tournament/r2/looped.pt",
+  "iters": 4,
+  "episodes": 60,
+  "noise": 2,
+  "seed": 31,
+  "direct": {
+    "win_rate": 1.0,
+    "decision_accuracy": 0.9879154078549849,
+    "two_fact_accuracy": null,
+    "path_efficiency": 0.9818731117824774,
+    "mean_confidence": 0.9048927259769325,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 331
+  },
+  "landmark": {
+    "win_rate": 1.0,
+    "decision_accuracy": 0.9752321981424149,
+    "two_fact_accuracy": 0.9444444444444444,
+    "path_efficiency": 0.9814241486068112,
+    "mean_confidence": 0.8889459875345969,
+    "accuracy_when_conf_ge_0.9": 0.9955947136563876,
+    "turns": 323
+  }
+}

@@ -21,6 +21,7 @@ def cases():
     for path, step in (("reports/chain/eval_hops.jsonl", 40), ("reports/binding_stress/stress.jsonl", 40)):
         for line in itertools.islice(open(path, encoding="utf-8"), 0, 4000, step):
             r = json.loads(line); out.append({"state": r["state"], "questions": r["questions"], "bidirectional": True})
+            out.append({"state": r["state"], "questions": r["questions"], "bidirectional": True, "isolate": True})
     board = chess.Board()
     for mv in ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6", "O-O", "Be7", "Re1", "b5", "Bb3", "d6", "c3", "O-O", "h3"]:
         board.push_san(mv); r = chess_request(board)
@@ -42,9 +43,11 @@ def test_js_pack_matches_python(tmp_path):
             for (a, b), (x, y) in zip(j["offsets"], offs):
                 assert c["text"][a:b].strip() == c["text"][x:y].strip()
             continue
-        p = pack_request(tok, c["state"], c["questions"])
+        iso = bool(c.get("isolate"))
+        p = pack_request(tok, c["state"], c["questions"], isolate_options=iso)
         assert j["ids"] == p.input_ids.tolist() and j["pos"] == p.position_ids.tolist() and j["branch"] == p.branch_ids.tolist()
-        m = branch_attention_mask(p.branch_ids, c["bidirectional"])
+        assert j["opt"] == p.option_ids.tolist()
+        m = branch_attention_mask(p.branch_ids, c["bidirectional"], p.option_ids if iso else None)
         assert j["mask_sum"] == int(m.sum()) and j["mask_rows"] == m.sum(-1).tolist()
         for jl, pl in zip(j["layouts"], p.layouts):
             assert jl["keys"] == pl.option_keys and jl["optionEnds"] == pl.option_end_positions and jl["decide"] == pl.decide_position

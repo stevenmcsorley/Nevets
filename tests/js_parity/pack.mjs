@@ -6,9 +6,9 @@ const tok = new Tokenizer(JSON.parse(readFileSync(tokPath, "utf8")));
 const cases = JSON.parse(readFileSync(casesPath, "utf8"));
 const out = cases.map(c => {
   if (c.text !== undefined) { const e = tok.encode(c.text); return { ids: e.ids, offsets: e.offsets }; }
-  const p = pack(tok, c.state, c.questions);
-  const m = mask(p.branch, c.bidirectional);
-  return { ids: p.ids, pos: p.pos, branch: p.branch, mask_sum: m.reduce((s, v) => s + v, 0),
+  const p = pack(tok, c.state, c.questions, !!c.isolate);
+  const m = mask(p.branch, c.bidirectional, c.isolate ? p.opt : null);
+  return { ids: p.ids, pos: p.pos, branch: p.branch, opt: p.opt, mask_sum: m.reduce((s, v) => s + v, 0),
            mask_rows: Array.from({ length: p.ids.length }, (_, i) => m.subarray(i * p.ids.length, (i + 1) * p.ids.length).reduce((s, v) => s + v, 0)),
            layouts: p.layouts.map(l => ({ keys: l.keys, optionEnds: l.optionEnds, decide: l.decide, statePositions: l.statePositions })) };
 });

@@ -74,12 +74,13 @@ function entityStatePositions(stateText, offsets, name, first) {
   return out;
 }
 
-// Pack one request (choice questions). Same layout as formatting.pack_request (causal options).
-export function pack(tok, state, questions) {
-  const ids = [tok.id("<bos>"), tok.id("<state>")], branch = [0, 0], pos = [0, 1];
+// Pack one request (choice questions). Same layout as formatting.pack_request; with isolate=true,
+// options share position ids after the question text and carry option ids for the isolating mask.
+export function pack(tok, state, questions, isolate = false) {
+  const ids = [tok.id("<bos>"), tok.id("<state>")], branch = [0, 0], pos = [0, 1], opt = [0, 0];
   const st = tok.encode(state);
-  st.ids.forEach((t, i) => { ids.push(t); branch.push(0); pos.push(2 + i); });
-  ids.push(tok.id("</state>")); branch.push(0); pos.push(2 + st.ids.length);
+  st.ids.forEach((t, i) => { ids.push(t); branch.push(0); pos.push(2 + i); opt.push(0); });
+  ids.push(tok.id("</state>")); branch.push(0); pos.push(2 + st.ids.length); opt.push(0);
   const stateLen = ids.length, layouts = [];
   Object.entries(questions).forEach(([key, q], qi) => {
     const b = qi + 1, local = [tok.id("<q>"), tok.id(`<${q.type.toLowerCase()}>`)];
@@ -88,36 +89,42 @@ export function pack(tok, state, questions) {
     if (!entities) { const m = q.instructions.match(/^What is the spatial relation of (.+) to (.+)\?$/); if (m) entities = [m[1], m[2]]; }
     const statePositions = entities ? entities.map(n => entityStatePositions(state, st.offsets, n, 2)) : null;
     const keys = Object.keys(q.criteria), optionEnds = [];
-    for (const k of keys) {
-      local.push(tok.id("<opt>"), ...tok.encode(String(q.criteria[k])).ids, tok.id("</opt>"));
+    const head = local.length, lopt = new Array(head).fill(0), lpos = [...Array(head).keys()];
+    keys.forEach((k, ki) => {
+      const toks = [tok.id("<opt>"), ...tok.encode(String(q.criteria[k])).ids, tok.id("</opt>")];
+      const start = isolate ? head : local.length;
+      toks.forEach((t, i) => { local.push(t); lopt.push(ki + 1); lpos.push(start + i); });
       optionEnds.push(ids.length + local.length - 1);
-    }
-    local.push(tok.id("<decide>")); const decide = ids.length + local.length - 1; local.push(tok.id("</q>"));
-    local.forEach((t, i) => { ids.push(t); branch.push(b); pos.push(stateLen + i); });
+    });
+    const tail = isolate ? head : local.length;
+    local.push(tok.id("<decide>")); lopt.push(0); lpos.push(tail); const decide = ids.length + local.length - 1;
+    local.push(tok.id("</q>")); lopt.push(0); lpos.push(tail + 1);
+    local.forEach((t, i) => { ids.push(t); branch.push(b); pos.push(stateLen + lpos[i]); opt.push(lopt[i]); });
     layouts.push({ key, keys, optionEnds, decide, statePositions });
   });
-  return { ids, pos, branch, layouts };
+  return { ids, pos, branch, opt, layouts };
 }
 
 // Boolean [T,T] mask (1 = may attend), same rule as formatting.branch_attention_mask.
-export function mask(branch, bidirectionalState) {
+export function mask(branch, bidirectionalState, opt = null) {
   const T = branch.length, m = new Uint8Array(T * T);
   for (let i = 0; i < T; i++) for (let j = 0; j < T; j++) {
     const causal = j <= i, stateKey = branch[j] === 0;
-    const ok = branch[i] === 0 ? (bidirectionalState ? stateKey : causal && stateKey)
-                               : stateKey || (branch[i] === branch[j] && causal);
+    let same = branch[i] === branch[j] && causal;
+    if (opt && same) same = opt[j] === 0 || opt[j] === opt[i];  // isolated options never see siblings
+    const ok = branch[i] === 0 ? (bidirectionalState ? stateKey : causal && stateKey) : stateKey || same;
     m[i * T + j] = ok ? 1 : 0;
   }
   return m;
 }
 
 // Score every question of a packed request with an onnxruntime-web session; returns {key: {option: p}}.
-export async function score(ort, session, packed, bidirectionalState) {
+export async function score(ort, session, packed, bidirectionalState, isolate = false) {
   const T = packed.ids.length, i64 = a => BigInt64Array.from(a, BigInt);
   const base = {
     input_ids: new ort.Tensor("int64", i64(packed.ids), [1, T]),
     position_ids: new ort.Tensor("int64", i64(packed.pos), [1, T]),
-    mask: new ort.Tensor("bool", mask(packed.branch, bidirectionalState), [1, T, T]),
+    mask: new ort.Tensor("bool", mask(packed.branch, bidirectionalState, isolate ? packed.opt : null), [1, T, T]),
   };
   const out = {};
   for (const l of packed.layouts) {

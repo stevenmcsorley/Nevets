@@ -1,0 +1,25 @@
+{
+  "ckpt": "checkpoints/exp6a-noloop.pt",
+  "iters": 1,
+  "episodes": 60,
+  "noise": 2,
+  "seed": 31,
+  "direct": {
+    "win_rate": 1.0,
+    "decision_accuracy": 0.97953216374269,
+    "two_fact_accuracy": null,
+    "path_efficiency": 0.9678362573099415,
+    "mean_confidence": 0.9065173948891678,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 342
+  },
+  "landmark": {
+    "win_rate": 1.0,
+    "decision_accuracy": 0.9686520376175548,
+    "two_fact_accuracy": 0.9036144578313253,
+    "path_efficiency": 0.9811912225705329,
+    "mean_confidence": 0.8925500662536083,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 319
+  }
+}
