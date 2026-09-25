@@ -83,3 +83,23 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
 ## 10. Highest-value research question
 
 *Can a weight-tied recurrent reasoning core, trained from scratch with input injection and variable iteration counts, learn path composition that extrapolates to longer chains through more test-time iterations?* If yes, the same core becomes the REASONER lineage and is tested for transfer: chess, then new domains. If no, the next candidates are explicit entity-slot message passing and scale.
+
+
+## 11. Synthesis — 25 September (end of session)
+
+**What moved the frontier (controlled evidence):**
+1. *Isolated options* (ISO-B): exact option-order invariance and higher accuracy. Adopted everywhere.
+2. *Trained weight-tied loop* (T-R2): +13 points at 3 hops against a matched control. The first mechanism to lift 3–4-hop composition.
+3. *Spatial training transfers* to unseen symbolic domains (TM-1), above all on counterfactual interventions. LM pretraining beats scratch, and spatial beats both.
+4. *Multi-domain training* (GENERAL-1) gave the best model on every spatial dev gate and the first broad multi-domain model (confounded with 5× more steps).
+
+**What failed (and why it matters):** from-scratch small models never left chance (T-R1); convergence training stabilized the loop but cost 18 points at 3 hops (T-R3); per-iteration BFS hints did not reach the answer head (T-R4); spatial training did not transfer to chess (CH-2).
+
+**Current bottlenecks, ranked:**
+1. *Readout, not depth*: length extrapolation fails because the decision head never reads the propagated coordinates. Next: a coordinate-readout head.
+2. *Causal see-versus-do* is unlearned (8.7%). Next: train on paired see/do twins.
+3. *Held-out format generalization* is partial and miscalibrated (table 54%, ECE 0.157).
+4. *Chess* is limited by data and targets, not by transfer. Next: action-value targets and much larger position sets.
+5. *Inference latency* is overhead-bound (`reports/frontier/latency_*.json`).
+
+**Public artefacts:** https://stevenmcsorley.github.io/Nevets/ (General playground, Treasure Hunt, Chess), release `demo-models-v3`.
