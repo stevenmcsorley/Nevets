@@ -93,3 +93,13 @@ Format per entry: **ID** · parent → artifact · architecture · data · hypot
 | 12 (beyond training) | 0.490 | .992 | .853 | .642 | .362 | .407 | .356 | .318 | .297 | .045 |
 
 All one-hop gates stay at 100% for every K. **Conclusion:** a *trained* weight-tied loop adds real composition depth (+13 points at 3 hops, +9 at 4 over a controlled baseline). This is the first mechanism in the programme that lifts 3–4 hops. But **it does not extrapolate**: iterations beyond the trained range degrade every hop count, so the recurrence has no stable fixed point. **Next (T-R3):** tie K to the problem during training (K ≥ hops, following Fan et al. 2024) and add a convergence objective (penalize ‖h_{K+1} − h_K‖, or train with extra no-gradient iterations) so that more test-time iterations refine rather than drift.
+
+**ISO-A / ISO-B — FINAL** · exp6a → chain data (the same as T-R2), 6,000 × 16, seed 42; the T-R2 control is the no-fix baseline (`reports/tournament/iso/`):
+
+| Arm | dev chains overall | 1 / 2 / 3 hops | option shuffle changes prediction (chains / stress) | one-hop gates |
+|---|---|---|---|---|
+| control (no fix) | 0.500 | .987 / .920 / .593 | 0.490 / 0.458 | 100% |
+| ISO-A shuffle augmentation | 0.505 | .971 / .924 / .627 | 0.037 / 0.000 | 100% |
+| **ISO-B isolated options** | **0.524** | .977 / .927 / **.655** | **0.000 / 0.000** | 100% |
+
+**Conclusion:** architectural isolation is strictly better than augmentation. It gives exact order invariance *and* higher accuracy (+2.4 overall, +6.2 at 3 hops against the control), because each option is encoded without sibling interference. Augmentation leaves 3.7% residual order dependence. **Decision:** `option_attention: isolated` is the default for every new lineage (GENERAL, CHESS r2, REASONER r3+). Existing demo checkpoints keep causal options and a fixed option order.
