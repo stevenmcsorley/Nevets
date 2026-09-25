@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nevets demos</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--accent:#2f6fdb}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--accent:#6ea0ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:920px;margin:0 auto;padding:28px 16px 48px}
+img.banner{width:100%;border-radius:14px;display:block;margin-bottom:22px}
+h1{font-size:26px;margin:0 0 6px}p{margin:0 0 12px}.muted{color:var(--muted)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
+@media (max-width:700px){.cards{grid-template-columns:1fr}}
+a.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;color:inherit;text-decoration:none}
+a.card:hover{border-color:var(--accent)}
+a.card h2{margin:0 0 6px;font-size:19px}a.card .go{color:var(--accent);font-weight:600;margin-top:8px;display:block}
+ul{padding-left:20px;margin:0 0 12px}li{margin:4px 0}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+<img class="banner" src="nevets-banner.svg" alt="Nevets: state, question and candidates go into one forward pass and come out as a calibrated probability for every candidate.">
+<h1>Nevets — live demos</h1>
+<p>Both demos run a <strong>32M-parameter decision model trained from random weights</strong> directly in your browser (ONNX + onnxruntime-web). Nothing is sent to a server. The page describes the situation in words; the model returns a probability for every option in one forward pass, with no generated text.</p>
+<div class="cards">
+  <a class="card" href="treasure.html"><h2>🤖 Treasure Hunt</h2>
+    <p class="muted">The model steers a robot to the treasure by answering one spatial question per turn from a text description, including distractors and two-fact reasoning via landmarks.</p>
+    <span class="go">Watch it play →</span></a>
+  <a class="card" href="chess.html"><h2>♟ Chess</h2>
+    <p class="muted">A separate model picks every move from the full list of legal moves. Play against it, or watch it face a random mover or itself.</p>
+    <span class="go">Play chess →</span></a>
+</div>
+<h2 style="font-size:18px">What to expect</h2>
+<ul>
+  <li><strong>Treasure Hunt</strong> uses <code>exp6a-noloop</code>. In direct-sight mode it made about 97% correct moves in our tests; combining two facts via a landmark, about 89%.</li>
+  <li><strong>Chess</strong> uses <code>chess-base-r1</code>, trained on 150k Stockfish-labelled Lichess positions. It is <em>beginner level</em>: it matches Stockfish's best move about 25% of the time and often cannot finish a won game.</li>
+  <li><strong>Faithfulness:</strong> the browser models store weights as int8 (≈40 MB each). Against the original PyTorch models they choose the same answer on 99.4% (Treasure Hunt) and 100% (chess) of our test requests; the tokenizer and request packing match Python exactly (checked by the repository's tests).</li>
+  <li>The first load downloads the model once (≈40 MB); after that each decision takes tens to hundreds of milliseconds on a typical laptop CPU.</li>
+</ul>
+<p class="muted">Source, research log and honest limitations: <a href="https://github.com/stevenmcsorley/Nevets">github.com/stevenmcsorley/Nevets</a>.</p>
+</main>
+</body>
+</html>

@@ -24,8 +24,9 @@ def apply_rope(q, k, position_ids, theta=10000.0):
     d = q.shape[-1]
     inv = 1.0 / (theta ** (torch.arange(0, d, 2, device=q.device, dtype=torch.float32) / d))
     ang = position_ids.float().unsqueeze(-1) * inv.unsqueeze(0)
-    cos = torch.repeat_interleave(ang.cos(), 2, -1).to(q.dtype).unsqueeze(2)
-    sin = torch.repeat_interleave(ang.sin(), 2, -1).to(q.dtype).unsqueeze(2)
+    # stack+flatten == repeat_interleave(2, -1), but keeps the sequence length dynamic in ONNX export
+    cos = torch.stack((ang.cos(), ang.cos()), -1).flatten(-2).to(q.dtype).unsqueeze(2)
+    sin = torch.stack((ang.sin(), ang.sin()), -1).flatten(-2).to(q.dtype).unsqueeze(2)
     return q * cos + rotate_half(q) * sin, k * cos + rotate_half(k) * sin
 
 class Attention(nn.Module):
@@ -50,8 +51,9 @@ class Attention(nn.Module):
         q, k = apply_rope(q, k, position_ids, self.theta)
         if self.nkv != self.nh:
             rep = self.nh // self.nkv
-            k = k.repeat_interleave(rep, dim=2)
-            v = v.repeat_interleave(rep, dim=2)
+            # expand+flatten == repeat_interleave(rep, dim=2), export-friendly
+            k = k.unsqueeze(3).expand(-1, -1, -1, rep, -1).flatten(2, 3)
+            v = v.unsqueeze(3).expand(-1, -1, -1, rep, -1).flatten(2, 3)
         q = q.transpose(1,2)
         k = k.transpose(1,2)
         v = v.transpose(1,2)

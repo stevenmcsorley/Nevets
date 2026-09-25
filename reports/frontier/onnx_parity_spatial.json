@@ -1,0 +1,16 @@
+{
+  "ckpt": "checkpoints/exp6a-noloop.pt",
+  "requests": 160,
+  "fp32_bytes": 129001409,
+  "int8_bytes": 32637994,
+  "fp32": {
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 1.7881393432617188e-06,
+    "mean_abs_prob_diff": 8.474722367028675e-08
+  },
+  "int8": {
+    "argmax_agree": 0.9625,
+    "max_abs_prob_diff": 0.10714781284332275,
+    "mean_abs_prob_diff": 0.004747334486955879
+  }
+}

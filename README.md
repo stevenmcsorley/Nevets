@@ -2,6 +2,11 @@
 
 <p align="center"><img src="docs/nevets-banner.svg" alt="Nevets: a state, a question and candidate answers go into one forward pass with a shared state and isolated question branches, returning a calibrated probability for every candidate." width="100%"></p>
 
+<p align="center"><strong>▶ Live demos, running entirely in your browser:</strong>
+<a href="https://stevenmcsorley.github.io/Nevets/treasure.html">Treasure Hunt</a> ·
+<a href="https://stevenmcsorley.github.io/Nevets/chess.html">Chess</a> ·
+<a href="https://stevenmcsorley.github.io/Nevets/">all demos</a></p>
+
 This repository is a **from-scratch** research lab for a small, prefill-only, calibrated decision model inspired by the public System One contract: one shared `state`, isolated typed questions, direct probability distributions, and no autoregressive answer generation.
 
 It does **not** use Jev outputs as labels, does not query Jev for reverse-engineering, and does not contain Jev weights or proprietary data. The architecture is derived from public documentation, ordinary transformer techniques, and independently published open research.
@@ -13,6 +18,7 @@ The code, configs, tests, evaluation suites and research records (`reports/FRONT
 - **Checkpoints** (`checkpoints/`, about 130 MB each). The registry records each checkpoint's lineage and the exact training command.
 - **Datasets** (`data/`) and **generated training splits** under `reports/**/train*.jsonl`. Every generator is seeded, and the seeds are recorded in the ledger and the reproduce commands.
 - **Lichess dumps.** Download `lichess_db_standard_rated_2013-01/02.pgn.zst` from https://database.lichess.org/ (CC0). Their SHA-256 values are in `reports/FRONTIER_STATE.md`.
+- **Demo models** for the in-browser demos (`site/`) are int8 ONNX exports published as the [`demo-models-v1`](https://github.com/stevenmcsorley/Nevets/releases/tag/demo-models-v1) release. The Pages workflow downloads them and checks them against `site/model/SHA256SUMS`.
 - **Stockfish** (GPL-3). Download the official build from https://github.com/official-stockfish/Stockfish/releases and unpack it under `tools/stockfish/`.
 
 ## Current status: usable one-hop decision model, not promotable (25 September 2026)

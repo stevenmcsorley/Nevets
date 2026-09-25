@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Treasure Hunt</title>
+<title>Nevets Treasure Hunt</title>
 <style>
 :root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--cell:#efeee9;--accent:#2f6fdb;--good:#1f8a4c;--bad:#c2412d;--warn:#b86e00;--trail:#cfe0fb}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--cell:#2a2927;--accent:#6ea0ff;--good:#4fc27f;--bad:#f07a63;--warn:#e0a440;--trail:#233a60}}
@@ -42,7 +42,7 @@ select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid va
 <body>
 <main>
 <h1>Treasure Hunt: the model plays by itself</h1>
-<p class="sub">Each turn the page describes the world <em>only in words</em>, asks the model “What is the spatial relation of the treasure to the robot?”, and steps the robot that way. The board is for you; the model never sees it.</p>
+<p class="sub"><a href="./">← Nevets demos</a> · The model runs in your browser. Each turn the page describes the world <em>only in words</em>, asks the model “What is the spatial relation of the treasure to the robot?”, and steps the robot that way. The board is for you; the model never sees it.</p>
 
 <div class="panel controls">
   <button class="primary" id="play">Pause</button>
@@ -87,7 +87,10 @@ select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid va
   </div>
 </div>
 </main>
-<script>
+<script type="module">
+import { loadModel } from "./js/loader.js";
+import { pack, score } from "./js/s1.js";
+let M=null;
 const N=9, STEP_LIMIT=30;
 const LABELS=["upper-left","above","upper-right","left","overlap","right","lower-left","below","lower-right"];
 const VEC={"upper-left":[-1,1],"above":[0,1],"upper-right":[1,1],"left":[-1,0],"overlap":[0,0],"right":[1,0],"lower-left":[-1,-1],"below":[0,-1],"lower-right":[1,-1]};
@@ -162,9 +165,9 @@ async function turn(){
   $("facts").textContent=state; $("question").textContent="Q: "+question;
   const t0=performance.now(); let answer;
   try{
-    const r=await fetch("/v1/systemone",{method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({state,questions:{move:{type:"choice",instructions:question,criteria:Object.fromEntries(LABELS.map(l=>[l,l]))}}})});
-    answer=(await r.json()).answers.move;
+    // The model runs here, in your browser (ONNX, onnxruntime-web). No server is involved.
+    const q={move:{type:"choice",instructions:question,criteria:Object.fromEntries(LABELS.map(l=>[l,l]))}};
+    answer={probabilities:(await score(M.ort,M.session,pack(M.tok,state,q),true)).move};
   }catch(e){$("decision").innerHTML=`<span class="no">Model unavailable: ${e.message}</span>`;busy=false;playing=false;syncPlay();return}
   const lat=performance.now()-t0;
   const ranked=Object.entries(answer.probabilities).sort((a,b)=>b[1]-a[1]);
@@ -242,7 +245,11 @@ $("step").onclick=()=>{playing=false;syncPlay();if(!world)newRound();turn()};
 $("reset").onclick=()=>{world=null;newRound()};
 $("mode").onchange=()=>{world=null;newRound()};
 $("noise").oninput=()=>{$("noiseV").textContent=$("noise").value};
-syncPlay();newRound();loop();
+syncPlay();
+$("banner").textContent="Loading the model (≈40 MB, runs entirely in your browser)…";
+loadModel("model/spatial.onnx",f=>{$("banner").textContent=`Loading the model… ${(f*100).toFixed(0)}%`})
+  .then(m=>{M=m;newRound();loop()})
+  .catch(e=>{$("banner").textContent="Could not load the model: "+e.message});
 </script>
 </body>
 </html>

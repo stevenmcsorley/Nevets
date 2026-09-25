@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="480" viewBox="0 0 1280 480" role="img" aria-labelledby="t d">
+  <title id="t">Nevets</title>
+  <desc id="d">A state, a question and candidate answers go into one model with a shared state and isolated question branches, which returns a calibrated probability for every candidate.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#111a2e"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7a99"/>
+    </marker>
+    <style>
+      .sans{font-family:"Segoe UI",Inter,Helvetica,Arial,sans-serif}
+      .mono{font-family:"Cascadia Code",Consolas,"SF Mono",Menlo,monospace}
+      .muted{fill:#8b98b5}
+      .label{fill:#8b98b5;font-size:12px;letter-spacing:.12em;font-weight:600}
+      .box{fill:#162036;stroke:#2a3857;stroke-width:1.5}
+    </style>
+  </defs>
+
+  <rect width="1280" height="480" rx="18" fill="url(#bg)"/>
+  <!-- faint grid, a nod to the spatial worlds the model learns from -->
+  <g stroke="#1a2440" stroke-width="1">
+    <path d="M920 40 V200 M960 40 V200 M1000 40 V200 M1040 40 V200 M1080 40 V200 M1120 40 V200 M1160 40 V200 M1200 40 V200"/>
+    <path d="M920 40 H1200 M920 80 H1200 M920 120 H1200 M920 160 H1200 M920 200 H1200"/>
+  </g>
+  <g class="sans" font-weight="700" font-size="13">
+    <circle cx="960" cy="80" r="14" fill="#4c8dff"/><text x="960" y="85" text-anchor="middle" fill="#fff">A</text>
+    <circle cx="1080" cy="80" r="14" fill="#2f4a7f"/><text x="1080" y="85" text-anchor="middle" fill="#cfe0ff">B</text>
+    <circle cx="1080" cy="160" r="14" fill="#2f4a7f"/><text x="1080" y="165" text-anchor="middle" fill="#cfe0ff">C</text>
+  </g>
+
+  <text x="64" y="112" class="sans" font-size="68" font-weight="800" fill="#eef3ff" letter-spacing="-1">Nevets</text>
+  <text x="66" y="152" class="sans" font-size="22" fill="#c9d4ec">Clean-room decision intelligence, trained from random weights.</text>
+  <text x="66" y="184" class="sans muted" font-size="17">One shared state · many isolated questions · a calibrated probability for every candidate · no generated text</text>
+
+  <!-- inputs -->
+  <text x="64" y="246" class="sans label">INPUTS</text>
+  <rect x="64" y="258" width="300" height="52" rx="10" class="box"/>
+  <text x="80" y="279" class="sans label">STATE</text>
+  <text x="80" y="299" class="mono" font-size="14" fill="#dfe7fb">A is left of B. C is below B.</text>
+  <rect x="64" y="322" width="300" height="52" rx="10" class="box"/>
+  <text x="80" y="343" class="sans label">QUESTION</text>
+  <text x="80" y="363" class="mono" font-size="14" fill="#dfe7fb">Relation of A to C?</text>
+  <rect x="64" y="386" width="300" height="52" rx="10" class="box"/>
+  <text x="80" y="407" class="sans label">CANDIDATES</text>
+  <text x="80" y="427" class="mono" font-size="14" fill="#dfe7fb">upper-left · left · above · …</text>
+
+  <path d="M372 348 H430" stroke="#6b7a99" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- model -->
+  <text x="444" y="246" class="sans label">ONE FORWARD PASS</text>
+  <rect x="444" y="258" width="360" height="180" rx="14" fill="#121b30" stroke="#3a5a9a" stroke-width="1.5"/>
+  <rect x="466" y="280" width="316" height="34" rx="8" fill="#23365e"/>
+  <text x="624" y="302" text-anchor="middle" class="sans" font-size="14" font-weight="600" fill="#dbe6ff">shared state (encoded once)</text>
+  <g stroke="#4c6aa8" stroke-width="1.5" fill="none">
+    <path d="M530 314 V346"/><path d="M624 314 V346"/><path d="M718 314 V346"/>
+  </g>
+  <g class="sans" font-size="12.5" font-weight="600">
+    <rect x="488" y="346" width="84" height="30" rx="7" fill="#4c8dff"/><text x="530" y="366" text-anchor="middle" fill="#fff">question 1</text>
+    <rect x="582" y="346" width="84" height="30" rx="7" fill="#2b4478" opacity=".9"/><text x="624" y="366" text-anchor="middle" fill="#cfe0ff">question 2</text>
+    <rect x="676" y="346" width="84" height="30" rx="7" fill="#2b4478" opacity=".9"/><text x="718" y="366" text-anchor="middle" fill="#cfe0ff">question 3</text>
+  </g>
+  <text x="624" y="410" text-anchor="middle" class="sans muted" font-size="13">branches read the state, never each other</text>
+
+  <path d="M812 348 H870" stroke="#6b7a99" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- output distribution -->
+  <text x="884" y="246" class="sans label">CALIBRATED DISTRIBUTION</text>
+  <g class="sans" font-size="15">
+    <text x="884" y="286" fill="#eef3ff" font-weight="600">upper-left</text>
+    <rect x="990" y="273" width="200" height="16" rx="4" fill="#1d2944"/><rect x="990" y="273" width="176" height="16" rx="4" fill="#4c8dff"/>
+    <text x="1200" y="286" fill="#eef3ff" font-weight="600">0.88</text>
+    <text x="884" y="322" class="muted">left</text>
+    <rect x="990" y="309" width="200" height="16" rx="4" fill="#1d2944"/><rect x="990" y="309" width="14" height="16" rx="4" fill="#5a6d95"/>
+    <text x="1200" y="322" class="muted">0.07</text>
+    <text x="884" y="358" class="muted">above</text>
+    <rect x="990" y="345" width="200" height="16" rx="4" fill="#1d2944"/><rect x="990" y="345" width="6" height="16" rx="3" fill="#5a6d95"/>
+    <text x="1200" y="358" class="muted">0.03</text>
+    <text x="884" y="394" class="muted">others</text>
+    <rect x="990" y="381" width="200" height="16" rx="4" fill="#1d2944"/><rect x="990" y="381" width="4" height="16" rx="2" fill="#5a6d95"/>
+    <text x="1200" y="394" class="muted">0.02</text>
+  </g>
+  <text x="884" y="430" class="sans muted" font-size="13">probabilities you can threshold, not text to parse</text>
+</svg>

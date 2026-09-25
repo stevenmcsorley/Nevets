@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SystemOne Chess</title>
+<title>Nevets Chess</title>
 <style>
 :root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--light:#ecdab9;--dark:#b58863;--accent:#2f6fdb;--good:#1f8a4c;--bad:#c2412d;--hl:rgba(47,111,219,.35);--last:rgba(255,213,0,.45)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--light:#c9b28e;--dark:#8b6a4c;--accent:#6ea0ff;--good:#4fc27f;--bad:#f07a63}}
@@ -39,16 +39,14 @@ select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid va
 </head>
 <body>
 <main>
-<h1>SystemOne plays chess</h1>
-<p class="sub">Each turn the board is sent to the model as text (a piece list) with every legal move as an option; it returns a probability for each move and plays the most likely one. Rules are enforced by python-chess; the move choice is the model's alone.</p>
+<h1>Nevets plays chess</h1>
+<p class="sub"><a href="./">← Nevets demos</a> · The model runs in your browser. Each turn the board is sent to the model as text (a piece list) with every legal move as an option; it returns a probability for each move and plays the most likely one. Rules are enforced by chess.js; the move choice is the model's alone. Expect beginner-level play: it matches Stockfish's best move about 25% of the time.</p>
 <div class="panel controls">
   <label>Match <select id="match">
     <option value="random">Model vs random mover</option>
-    <option value="stockfish">Model vs Stockfish</option>
     <option value="self">Model vs itself</option>
     <option value="human">You vs model</option>
   </select></label>
-  <label id="eloBox">Stockfish Elo <select id="elo"><option>1320</option><option>1500</option><option>1800</option><option>2200</option></select></label>
   <label id="colorBox">Model plays <select id="color"><option value="w">White</option><option value="b">Black</option></select></label>
   <button class="primary" id="play">Pause</button>
   <button id="reset">New game</button>
@@ -73,82 +71,73 @@ select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid va
   </div>
 </div>
 </main>
-<script>
-const START="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+<script type="module">
+import { Chess } from "./vendor/chess.js";
+import { loadModel } from "./js/loader.js";
+import { pack, score } from "./js/s1.js";
+import { request, uci } from "./js/chessfmt.js";
 const GLYPH={k:"♚",q:"♛",r:"♜",b:"♝",n:"♞",p:"♟"};
 const $=id=>document.getElementById(id);
-let fen=START,legal=[],sanList=[],last=null,sel=null,playing=true,over=false,busy=false,tally={W:0,D:0,L:0};
-const sqName=(f,r)=>"abcdefgh"[f]+(r+1);
-function parse(fen){const rows=fen.split(" ")[0].split("/"),b={};rows.forEach((row,i)=>{let f=0;for(const c of row){if(/\d/.test(c))f+=+c;else{b[sqName(f,7-i)]=c;f++}}});return b}
-const turnOf=f=>f.split(" ")[1];
+let M=null,game=new Chess(),last=null,sel=null,playing=true,busy=false,tally={W:0,D:0,L:0};
+const legal=()=>game.moves({verbose:true});
 function draw(){
-  const b=parse(fen),flip=$("match").value==="human"&&$("color").value==="w";
+  const flip=$("match").value==="human"&&$("color").value==="w",b={};
+  game.board().flat().filter(Boolean).forEach(c=>{b[c.square]=c.color==="w"?c.type.toUpperCase():c.type});
   const cells=[];
   for(let i=0;i<8;i++)for(let j=0;j<8;j++){
-    const r=flip?i:7-i,f=flip?7-j:j,n=sqName(f,r),p=b[n];
-    const cls=["sq",(f+r)%2?"l":"d"];
-    if(last&&(last.slice(0,2)===n||last.slice(2,4)===n))cls.push("last");
+    const r=flip?i:7-i,f=flip?7-j:j,n="abcdefgh"[f]+(r+1),p=b[n],cls=["sq",(f+r)%2?"l":"d"];
+    if(last&&(last.from===n||last.to===n))cls.push("last");
     if(sel===n)cls.push("sel");
-    if(sel&&legal.some(m=>m.startsWith(sel)&&m.slice(2,4)===n))cls.push("tgt");
-    cells.push(`<div class="${cls.join(" ")}" data-sq="${n}">${(j===0)?`<span class="coord">${r+1}</span>`:""}${p?`<span class="${p===p.toUpperCase()?"w":"b"}">${GLYPH[p.toLowerCase()]}</span>`:""}</div>`);
+    if(sel&&legal().some(m=>m.from===sel&&m.to===n))cls.push("tgt");
+    cells.push(`<div class="${cls.join(" ")}" data-sq="${n}">${j===0?`<span class="coord">${r+1}</span>`:""}${p?`<span class="${p===p.toUpperCase()?"w":"b"}">${GLYPH[p.toLowerCase()]}</span>`:""}</div>`);
   }
   $("board").innerHTML=cells.join("");
-  $("moves").innerHTML=sanList.reduce((s,m,i)=>s+(i%2===0?`${i/2+1}. `:"")+m+(i%2?"<br>":" "),"");
-  $("moves").scrollTop=1e9;
+  const h=game.history();$("moves").innerHTML=h.reduce((s,m,i)=>s+(i%2===0?`${i/2+1}. `:"")+m+(i%2?"<br>":" "),"");$("moves").scrollTop=1e9;
 }
-function whoMoves(){
-  const m=$("match").value,t=turnOf(fen),modelColor=$("color").value;
-  if(m==="self")return"model";
-  if(t===modelColor)return"model";
-  return m==="human"?"human":m;
+function whoMoves(){const m=$("match").value;if(m==="self"||game.turn()===$("color").value)return"model";return m==="human"?"human":"random"}
+function status(){
+  if(!game.isGameOver()&&game.history().length<300){$("status").textContent=`${game.turn()==="w"?"White":"Black"} to move${game.inCheck()?" · check":""}`;return false}
+  const m=$("match").value,mc=$("color").value;let verdict="Draw",why="draw";
+  if(game.isCheckmate()){const winner=game.turn()==="w"?"b":"w";why="checkmate";verdict=m==="self"?(winner==="w"?"White wins":"Black wins"):(winner===mc?"Model wins":"Model loses")}
+  else if(game.isStalemate())why="stalemate";else if(game.isThreefoldRepetition())why="repetition";else if(game.isInsufficientMaterial())why="insufficient material";else if(game.history().length>=300)why="300-ply limit";
+  if(m!=="self"){if(verdict==="Model wins")tally.W++;else if(verdict==="Model loses")tally.L++;else tally.D++}
+  $("tW").textContent=tally.W;$("tD").textContent=tally.D;$("tL").textContent=tally.L;
+  $("status").textContent=`${verdict} (${why}) after ${game.history().length} plies`;
+  if(playing&&m!=="human")setTimeout(()=>{if(playing)reset()},2500);
+  return true;
 }
-async function send(body){
-  const r=await fetch("/v1/chess",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({fen,...body})});
-  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.statusText);return j;
-}
-function apply(j){
-  fen=j.fen;legal=j.legal;last=j.uci;sanList.push(j.san);sel=null;
-  if(j.player==="model"&&j.candidates){
-    $("cands").innerHTML=j.candidates.map((c,i)=>`<div class="${i?"":"top"}"><span>${c.san}</span><span class="track"><span class="fill" style="display:block;width:${(c.p*100).toFixed(1)}%"></span></span><span class="num">${(c.p*100).toFixed(1)}%</span></div>`).join("");
-    $("lat").textContent=`played ${j.san} · ${j.ms.toFixed(0)} ms (model inference, all legal moves scored)`;
-  }
-  if(j.result){
-    over=true;const m=$("match").value,modelColor=$("color").value;
-    let verdict="Draw";
-    if(j.result!=="1/2-1/2"){const winner=j.result==="1-0"?"w":"b";verdict=m==="self"?(winner==="w"?"White wins":"Black wins"):(winner===modelColor?"Model wins":"Model loses")}
-    if(m!=="self"){if(verdict==="Model wins")tally.W++;else if(verdict==="Model loses")tally.L++;else tally.D++}
-    $("tW").textContent=tally.W;$("tD").textContent=tally.D;$("tL").textContent=tally.L;
-    $("status").textContent=`${verdict} (${j.status}, ${j.result}) after ${sanList.length} plies`;
-    if(playing&&m!=="human")setTimeout(()=>{if(playing)reset()},2500);
-  } else $("status").textContent=`${turnOf(fen)==="w"?"White":"Black"} to move${j.status==="check"?" · check":""}`;
-  draw();
+async function modelMove(){
+  const req=request(game),t0=performance.now();
+  const p=(await score(M.ort,M.session,pack(M.tok,req.state,req.questions),true)).move;
+  const ranked=Object.entries(p).sort((a,b)=>b[1]-a[1]),ms=performance.now()-t0;
+  const byUci=Object.fromEntries(legal().map(m=>[uci(m),m]));
+  $("cands").innerHTML=ranked.slice(0,6).map(([u,pr],i)=>`<div class="${i?"":"top"}"><span>${byUci[u].san}</span><span class="track"><span class="fill" style="display:block;width:${(pr*100).toFixed(1)}%"></span></span><span class="num">${(pr*100).toFixed(1)}%</span></div>`).join("");
+  $("lat").textContent=`played ${byUci[ranked[0][0]].san} · ${ms.toFixed(0)} ms in your browser (all ${ranked.length} legal moves scored)`;
+  return byUci[ranked[0][0]];
 }
 async function tick(){
-  if(busy||over||!playing)return;const who=whoMoves();if(who==="human")return;
+  if(busy||!M||!playing||game.isGameOver())return;const who=whoMoves();if(who==="human")return;
   busy=true;
-  try{apply(await send({player:who==="self"?"model":who,elo:+$("elo").value}))}
+  try{const mv=who==="model"?await modelMove():legal()[Math.floor(Math.random()*legal().length)];last=game.move(mv);sel=null;draw();status()}
   catch(e){$("status").textContent="Error: "+e.message;playing=false;syncPlay()}
   busy=false;
 }
-$("board").addEventListener("click",async e=>{
-  const n=e.target.closest(".sq")?.dataset.sq;if(!n||over||busy||whoMoves()!=="human")return;
-  if(sel){const mv=legal.find(m=>m.startsWith(sel)&&m.slice(2,4)===n);
-    if(mv){busy=true;try{apply(await send({player:"human",move:mv}))}catch(err){$("status").textContent=err.message}busy=false;return}}
-  sel=legal.some(m=>m.startsWith(n))?n:null;draw();
+$("board").addEventListener("click",e=>{
+  const n=e.target.closest(".sq")?.dataset.sq;if(!n||busy||game.isGameOver()||whoMoves()!=="human")return;
+  if(sel){const mv=legal().find(m=>m.from===sel&&m.to===n&&(!m.promotion||m.promotion==="q"));
+    if(mv){last=game.move(mv);sel=null;draw();status();return}}
+  sel=legal().some(m=>m.from===n)?n:null;draw();
 });
-async function reset(){
-  fen=START;sanList=[];last=null;sel=null;over=false;
-  legal=(await (await fetch("/v1/chess/legal")).json()).legal;
-  $("status").textContent="White to move";$("cands").innerHTML='<span class="meta">Waiting for the model\'s move…</span>';$("lat").textContent="";
-  draw();
-}
+function reset(){game=new Chess();last=null;sel=null;$("cands").innerHTML=`<span class="meta">Waiting for the model's move…</span>`;$("lat").textContent="";draw();status()}
 function syncPlay(){$("play").textContent=playing?"Pause":"Play";$("play").className=playing?"":"primary"}
-function syncControls(){const m=$("match").value;$("eloBox").style.display=m==="stockfish"?"":"none";$("colorBox").style.display=m==="self"?"none":""}
+function syncControls(){$("colorBox").style.display=$("match").value==="self"?"none":""}
 $("play").onclick=()=>{playing=!playing;syncPlay()};
-$("reset").onclick=reset;
-$("match").onchange=()=>{syncControls();reset()};$("color").onchange=reset;
-async function loop(){while(true){await tick();await new Promise(r=>setTimeout(r,+$("speed").value))}}
-syncControls();syncPlay();reset().then(loop);
+$("reset").onclick=reset;$("match").onchange=()=>{syncControls();reset()};$("color").onchange=reset;
+syncControls();syncPlay();draw();
+$("status").textContent="Loading the chess model (≈40 MB, runs entirely in your browser)…";
+loadModel("model/chess.onnx",f=>{$("status").textContent=`Loading the chess model… ${(f*100).toFixed(0)}%`})
+  .then(m=>{M=m;status();(async function loop(){for(;;){await tick();await new Promise(r=>setTimeout(r,+$("speed").value))}})()})
+  .catch(e=>{$("status").textContent="Could not load the model: "+e.message});
 </script>
 </body>
 </html>
