@@ -10,7 +10,7 @@ An entry changes only with measured evidence (link the report). Read-only (prote
 | BEST_FAST (spatial) | `exp6a-noloop.pt` | 32.2M | dev chains 92.7 / 86.9 / 54.7%; one-hop gates 100% | 28 ms | About 5 points below BEST_SPATIAL on 1–3 hops, at 2.7× lower latency. |
 | BEST_CALIBRATED | `exp6a-noloop.pt` | 32.2M | dev chain ECE 0.049; one-hop held-out ECE 0.004 | 28 ms | exp9 chain ECE is 0.071. |
 | BEST_ONEHOP_MINIMAL | `entity-binding-onehop-gate.pt` 🔒 | 32.2M | EB-1 | — | Smallest change that fixed role binding. |
-| BEST_CHESS | — | | | | CH-1 pending |
+| BEST_CHESS | `chess/chess-base-r1.pt` | 32.2M | CH-1: top-1 25.2%, top-3 46.7%, cp loss 186; 9W/11D/0L vs random, 0W/6D/14L vs SF1320 | ~27 ms | Beginner level; options are order-dependent. |
 | BEST_GENERAL | — | | | | No multi-domain model yet |
 | BEST_SMALL | — | | | | T-R1 d=256 models pending |
 | REASONER | — | | | | T-R1 pending |

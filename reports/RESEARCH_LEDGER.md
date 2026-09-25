@@ -54,7 +54,11 @@ Format per entry: **ID** · parent → artifact · architecture · data · hypot
 
 **T-R2 (running)** · `exp6a-noloop` restructured as prelude (blocks 0–1) / weight-tied core (2–5) / coda (6–7); K=1 is exactly the flat model (test `test_looped_k1_equals_flat_checkpoint`) · control K=1 against looped K ~ U[1,6], same data (T-R1 chains), 6,000 steps × 16, seed 42 · K sweep at evaluation · `scripts/tournament_r2.sh`, `reports/tournament/r2/`.
 
-**CH-1 / CH-2 (running)** · BASE→CHESS (LM init) against SPATIAL→CHESS (`exp6a-noloop` init) · `train_2013-01.jsonl` (150,001 positions, zero overlap with eval by `scripts/check_chess_leakage.py`), 18,000 steps × 16 · `scripts/chess_r1.sh`, `reports/chess/r1/` · *H: spatial decision training transfers to chess (faster or better move choice).*
+**CH-1 — BASE→CHESS (done)** · LM → `checkpoints/chess/chess-base-r1.pt` · 18,000 × 16 (≈1.9 passes over 150k positions), soft MultiPV targets, causal (order-dependent) options sorted by UCI · loss 3.18 → 2.98 (plateau) · 3,000 held-out positions (Lichess 2013-02): **top-1 25.2%** (random ≈ 3%), top-3 46.7%, mean cp loss 186, blunder rate (≥ 200 cp) 26.6%, ECE 0.091; games: random mover 9W/11D/0L, Stockfish UCI_Elo 1320 0W/6D/14L (`reports/chess/r1/eval_base.json`) · **Conclusion:** beginner-level move choice; it cannot convert won positions against a random mover (11 draws). This matches the literature expectation (Ruoss et al. 2024: strength needs far more data plus action-value targets). **Next (CH-3):** isolated options, per-move action-value targets, and a much larger position set.
+
+**CH-2 (queued, SPATIAL→CHESS)** · identical recipe from `exp6a-noloop`, for the transfer comparison.
+
+**CH-1 / CH-2 (setup)** · BASE→CHESS (LM init) against SPATIAL→CHESS (`exp6a-noloop` init) · `train_2013-01.jsonl` (150,001 positions, zero overlap with eval by `scripts/check_chess_leakage.py`), 18,000 steps × 16 · `scripts/chess_r1.sh`, `reports/chess/r1/` · *H: spatial decision training transfers to chess (faster or better move choice).*
 
 **CH-0 (data, running)** · Lichess 2013-01 (train, 150k positions) / 2013-02 (eval, 3,000), Stockfish 19 MultiPV over all legal moves, depth 10, τ = 80 cp · `data/processed/chess/`.
 
@@ -67,3 +71,7 @@ Format per entry: **ID** · parent → artifact · architecture · data · hypot
 **R-1 (reproducibility defect, 25 September)** · regenerating `worlds_v1` with the same seed gave different files: temporal and dependency facts came from a Python `set`, whose order depends on `PYTHONHASHSEED`. Contents and labels are identical; only fact order differed (3,229/5,000 eval records byte-identical). **The stored `worlds_v1` remains canonical** (read-only; TM-1 uses it). The generators now sort set-derived facts; `test_generation_is_independent_of_python_hash_seed` regenerates in two processes with different hash seeds and requires identical bytes.
 
 **INFO-1 (data factory)** · new `infogather` domain: repair a part now, or pay for a diagnostic first. The label is the exact expected-utility optimum (a correct repair is worth 1; EU(test) = −cost + Σ_o P(o) max_h P(h | o)). Act/test ≈ 57/43. Tested against the utility definition and for cost monotonicity. The domain goes into worlds_v2, not v1.
+
+**CAUSAL-1 (data factory)** · new `causal` domain: a confounded SCM (Z → X, Z → Y, X → Y) with exact CPTs; questions ask P(Y | do(X)) or P(Y | X) as exact soft targets. Confounding is forced strong (Z shifts X by ≥ 0.4 and Y by ≥ 0.3) because the first version separated seeing from doing in only 25% of worlds. Tested against brute-force enumeration. Twins ask *see* against *do* on the same state, keeping pairs whose answers differ.
+
+**WV-2 (data)** · `data/processed/worlds_v2`, seed 91001: 7 domains (plus infogather and causal), 120,000 train (prose/JSON/kv), 7,000 in-format eval, 7,000 held-out-table eval, and 1,200 counterfactual twins (rules, dependency, infogather cost flips, causal see/do).
