@@ -415,3 +415,19 @@ def test_nograd_warmup_and_convergence_loss(tok):
     m.eval(); m.iters_nograd=0
     with torch.no_grad(): decision_batch_loss(m,tok,[r],torch.device('cpu'))
     assert m.fixed_point_delta is None  # eval never pays for the extra iteration
+
+
+
+def test_hinted_loop_supervises_each_iteration_within_its_hop_radius(tok):
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=3,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional'},
+                    arch={'type':'looped','prelude':1,'core':1,'coda':1,'iters':3,'hint_weight':1.0})
+    m=SystemOneModel(cfg); m.train(); assert m.coord_head is not None
+    r=rec(); r['state']='A is left of B. B is left of C.'
+    r['meta']={'aux_coords':{'A':[0,0],'B':[1,0],'C':[2,0]},'aux_dist':{'A':0,'B':1,'C':2}}
+    stats={}; loss=decision_batch_loss(m,tok,[r],torch.device('cpu'),stats); loss.backward()
+    assert 'hint_loss' in stats and len(m.iter_states)==3
+    assert m.coord_head.weight.grad is not None and m.coord_head.weight.grad.abs().sum()>0
+    m.eval()
+    with torch.no_grad(): decision_batch_loss(m,tok,[r],torch.device('cpu'))
+    assert m.iter_states is None

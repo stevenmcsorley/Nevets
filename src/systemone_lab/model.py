@@ -105,9 +105,10 @@ class SystemOneModel(nn.Module):
         self.ptr_bind = (nn.Linear(cfg.d_model, cfg.pointer_dim, bias=False)
                          if cfg.decision_head.get("query_mode") == "entity_binding" else None)
         self.loop_gate = None
+        self.coord_head = None
         self.set_arch(cfg.arch or {})
-        self.coord_head = (nn.Linear(cfg.d_model, 2)
-                           if float(cfg.decision_head.get("aux_coord_weight", 0)) > 0 else None)
+        if self.coord_head is None and float(cfg.decision_head.get("aux_coord_weight", 0)) > 0:
+            self.coord_head = nn.Linear(cfg.d_model, 2)
         self.apply(self._init)
         if self.ptr_bind is not None:
             nn.init.zeros_(self.ptr_bind.weight)
@@ -152,6 +153,9 @@ class SystemOneModel(nn.Module):
         self.cfg.arch = arch
         self.iters = int(arch.get("iters", 1))  # overridable per call for test-time depth sweeps
         self.iters_nograd = 0   # training only: warm-up core iterations run without gradient
+        self.iter_states = None  # training only: per-iteration core states for hint supervision
+        if float(arch.get("hint_weight", 0)) > 0 and getattr(self, "coord_head", None) is None:
+            self.coord_head = nn.Linear(self.cfg.d_model, 2, device=self.ptr_q.weight.device)
         self.fixed_point_delta = None  # set when arch["converge_weight"] > 0 during training
 
     def enable_state_loop(self, decision_head):
@@ -224,8 +228,11 @@ class SystemOneModel(nn.Module):
                     for _ in range(self.iters_nograd):
                         h = step(h)
                 h = h.detach()
+            keep = self.training and float(arch.get("hint_weight", 0)) > 0
+            self.iter_states = [] if keep else None
             for _ in range(self.iters):
                 h = step(h)
+                if keep: self.iter_states.append(h)
             self.fixed_point_delta = None
             if self.training and float(arch.get("converge_weight", 0)) > 0:
                 nxt = step(h)  # one more iteration should change little at a fixed point

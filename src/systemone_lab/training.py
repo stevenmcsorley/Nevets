@@ -106,6 +106,21 @@ def _packed(tokenizer, rec, isolate_options=False):
     return cached
 
 
+def _aux_targets(tokenizer, rec):
+    """Cached (state position, [dx, dy], hop distance) for every mention of a supervised object."""
+    cached = rec.get("_aux3")
+    if cached is None:
+        meta = rec.get("meta", {}); coords = meta.get("aux_coords") or {}; dist = meta.get("aux_dist") or {}
+        cached = []
+        if coords and dist:
+            text = _text(rec["state"]); _, offsets = tokenizer.encode_with_offsets(text)
+            for name, xy in coords.items():
+                if name in dist:
+                    cached += [(p, xy, dist[name]) for p in entity_state_positions(text, offsets, name, 2)]
+        if isinstance(rec, dict): rec["_aux3"] = cached
+    return cached
+
+
 def _target_distribution(layout, rec):
     dist = rec.get("distributions", {}).get(layout.key)
     if dist:
@@ -157,6 +172,26 @@ def decision_batch_loss(model, tokenizer, records, device, diagnostics=None, for
         loss = loss + cw * model.fixed_point_delta
         if diagnostics is not None:
             diagnostics["fixed_point_delta"] = model.fixed_point_delta.detach().float().item()
+    hint_w = float((model.cfg.arch or {}).get("hint_weight", 0))
+    if hint_w > 0 and getattr(model, "iter_states", None):
+        hops_per_iter = float((model.cfg.arch or {}).get("hint_hops_per_iter", 1))
+        gb, gp, goal, gd = [], [], [], []
+        for i, rec in enumerate(records):
+            for p, xy, d in _aux_targets(tokenizer, rec):
+                gb.append(i); gp.append(p); goal.append(xy); gd.append(d)
+        if gb:
+            gb_t, gp_t = move(torch.tensor(gb)), move(torch.tensor(gp))
+            goal_t = move(torch.tensor(goal, dtype=torch.float32)) / 4; dist_t = move(torch.tensor(gd, dtype=torch.float32))
+            terms = []
+            for t_idx, hs in enumerate(model.iter_states, start=1):
+                sel = dist_t <= t_idx * hops_per_iter  # iteration t is responsible for objects within t hops
+                if sel.any():
+                    with torch.autocast(device_type=h.device.type, enabled=False):
+                        pred = model.coord_head(model.norm(hs[gb_t[sel], gp_t[sel]]).float())
+                    terms.append(F.smooth_l1_loss(pred, goal_t[sel]))
+            if terms:
+                hint = torch.stack(terms).mean(); loss = loss + hint_w * hint
+                if diagnostics is not None: diagnostics["hint_loss"] = hint.detach().float().item()
     weight = float(model.cfg.decision_head.get("aux_coord_weight", 0))
     if weight > 0 and model.coord_head is not None:
         gb, gp, goal = [], [], []

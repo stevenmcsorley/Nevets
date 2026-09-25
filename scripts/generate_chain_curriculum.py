@@ -53,6 +53,25 @@ def aux_coords(world, state):
     return {n: [world["coords"][n][0] - rx, world["coords"][n][1] - ry] for n in sorted(component)}
 
 
+def aux_dist(world, coords):
+    """Hop distance from the reference (the object at [0, 0]) over the undirected fact graph.
+
+    Training-only hints for looped models: iteration t should know every object within t hops.
+    """
+    ref = next(n for n, xy in coords.items() if xy == [0, 0] and n in coords)
+    adj = {}
+    for a, b in world["edges"]:
+        adj.setdefault(a, []).append(b); adj.setdefault(b, []).append(a)
+    dist, frontier = {ref: 0}, [ref]
+    while frontier:
+        nxt = []
+        for x in frontier:
+            for y in sorted(adj.get(x, [])):
+                if y not in dist and y in coords: dist[y] = dist[x] + 1; nxt.append(y)
+        frontier = nxt
+    return {n: dist[n] for n in sorted(coords) if n in dist}
+
+
 def generate(n_worlds, seed, min_hops, max_hops, max_branches, max_disconnected, prefix):
     rng = random.Random(seed); rows = []
     for i in range(n_worlds):
@@ -67,7 +86,8 @@ def generate(n_worlds, seed, min_hops, max_hops, max_branches, max_disconnected,
                              "labels": {"spatial": ex.label},
                              "meta": {"suite": f"hops{hops}", "pair_id": pair_id, "names": variant, "query_role": role,
                                       "hops": hops, "facts": len(lat["edges"]),
-                                      "aux_coords": aux_coords(world, ex.state)}})
+                                      "aux_coords": (ac := aux_coords(world, ex.state)),
+                                      "aux_dist": aux_dist(world, ac)}})
     return rows
 
 

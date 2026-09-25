@@ -114,3 +114,14 @@ def test_binding_stress_pairs_are_role_swaps(tmp_path):
         if f['meta']['suite'] == 'onehop_mention':
             assert len(re.findall(rf'(?<![\w-]){re.escape(x)}(?![\w-])', f['state'])) + \
                    len(re.findall(rf'(?<![\w-]){re.escape(y)}(?![\w-])', f['state'])) > 2
+
+
+
+def test_chain_aux_dist_is_bfs_from_reference():
+    from scripts.generate_chain_curriculum import generate
+    for r in generate(40, 13, 1, 5, 2, 1, 'd'):
+        c, d = r['meta']['aux_coords'], r['meta']['aux_dist']
+        ref = [n for n, xy in c.items() if xy == [0, 0]]
+        assert d[ref[0]] == 0 and set(d) == set(c)
+        # a unit-step fact graph: hop distance bounds the Chebyshev distance of the coordinates
+        assert all(max(abs(c[n][0]), abs(c[n][1])) <= d[n] for n in d)
