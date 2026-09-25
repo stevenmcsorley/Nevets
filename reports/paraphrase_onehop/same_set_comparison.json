@@ -1,0 +1,43 @@
+{
+  "old_name_pairs": {
+    "paired_600_step": {
+      "numbered_correct": 0.89,
+      "renamed_correct": 0.87,
+      "both_correct": 0.82,
+      "prediction_changed": 0.12
+    },
+    "paraphrase_800_step": {
+      "numbered_correct": 0.93,
+      "renamed_correct": 0.92,
+      "both_correct": 0.885,
+      "prediction_changed": 0.08
+    }
+  },
+  "same_vertical_probe": {
+    "paired_600_step": {
+      "numbered_correct": 0.5866666666666667,
+      "renamed_correct": 0.5566666666666666,
+      "both_correct": 0.34,
+      "prediction_changed": 0.4633333333333333
+    },
+    "paraphrase_800_step": {
+      "numbered_correct": 0.65,
+      "renamed_correct": 0.6233333333333333,
+      "both_correct": 0.45666666666666667,
+      "prediction_changed": 0.36
+    }
+  },
+  "same_counterfactual_pairs": {
+    "paired_600_step": {
+      "pairs": 100,
+      "both_correct": 0.82,
+      "correct_probability_shift": 1.0
+    },
+    "paraphrase_800_step": {
+      "pairs": 100,
+      "both_correct": 0.86,
+      "correct_probability_shift": 1.0
+    }
+  },
+  "note": "Checkpoints differ in curriculum and training steps; paired test sets are identical."
+}

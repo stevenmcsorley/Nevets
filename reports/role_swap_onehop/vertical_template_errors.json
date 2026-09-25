@@ -1,0 +1,126 @@
+[
+  {
+    "label": "above",
+    "template": "{a} is above {b}.",
+    "names": "numbered",
+    "n": 50,
+    "accuracy": 1.0,
+    "predictions": {
+      "above": 50
+    }
+  },
+  {
+    "label": "above",
+    "template": "{a} is above {b}.",
+    "names": "renamed",
+    "n": 50,
+    "accuracy": 1.0,
+    "predictions": {
+      "above": 50
+    }
+  },
+  {
+    "label": "above",
+    "template": "{a} sits north of {b}.",
+    "names": "numbered",
+    "n": 50,
+    "accuracy": 0.12,
+    "predictions": {
+      "above": 6,
+      "below": 44
+    }
+  },
+  {
+    "label": "above",
+    "template": "{a} sits north of {b}.",
+    "names": "renamed",
+    "n": 50,
+    "accuracy": 0.98,
+    "predictions": {
+      "above": 49,
+      "below": 1
+    }
+  },
+  {
+    "label": "above",
+    "template": "{b} is below {a}.",
+    "names": "numbered",
+    "n": 50,
+    "accuracy": 1.0,
+    "predictions": {
+      "above": 50
+    }
+  },
+  {
+    "label": "above",
+    "template": "{b} is below {a}.",
+    "names": "renamed",
+    "n": 50,
+    "accuracy": 1.0,
+    "predictions": {
+      "above": 50
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} is below {b}.",
+    "names": "numbered",
+    "n": 50,
+    "accuracy": 0.0,
+    "predictions": {
+      "above": 50
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} is below {b}.",
+    "names": "renamed",
+    "n": 50,
+    "accuracy": 0.0,
+    "predictions": {
+      "above": 50
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} sits south of {b}.",
+    "names": "numbered",
+    "n": 50,
+    "accuracy": 1.0,
+    "predictions": {
+      "below": 50
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} sits south of {b}.",
+    "names": "renamed",
+    "n": 50,
+    "accuracy": 0.18,
+    "predictions": {
+      "above": 41,
+      "below": 9
+    }
+  },
+  {
+    "label": "below",
+    "template": "{b} is above {a}.",
+    "names": "numbered",
+    "n": 50,
+    "accuracy": 0.02,
+    "predictions": {
+      "above": 49,
+      "below": 1
+    }
+  },
+  {
+    "label": "below",
+    "template": "{b} is above {a}.",
+    "names": "renamed",
+    "n": 50,
+    "accuracy": 0.0,
+    "predictions": {
+      "above": 50
+    }
+  }
+]

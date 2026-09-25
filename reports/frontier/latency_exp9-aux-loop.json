@@ -1,0 +1,14 @@
+{
+  "ckpt": "checkpoints/exp9-aux-loop.pt",
+  "parameters": 32187908,
+  "device": "NVIDIA GeForce RTX 3060",
+  "loop_iters": 2,
+  "spatial_1_questions_ms": 75.17611000027196,
+  "spatial_1_questions_tokens": 81,
+  "spatial_8_questions_ms": 79.64358666601281,
+  "spatial_8_questions_tokens": 424,
+  "spatial_32_questions_ms": 106.44206333284576,
+  "spatial_32_questions_tokens": 1600,
+  "chess_56_moves_ms": 69.27130333400176,
+  "chess_tokens": 574
+}

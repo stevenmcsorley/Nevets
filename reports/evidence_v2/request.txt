@@ -1,0 +1,889 @@
+We need to stop and repair the decision-training path in the existing `E:\systemone-lab` repository.
+
+Do NOT launch another 10,000-step training run until the trainer has passed the sanity gates below.
+
+Do NOT modify or retrain the successfully completed language-model checkpoint unless absolutely necessary.
+
+## CURRENT STATE
+
+Our from-scratch language model finished successfully:
+
+`checkpoints/s1-35m-pretrain.pt`
+
+It is approximately 32.1M parameters and completed 50,000 LM steps without numerical instability.
+
+We then ran:
+
+```powershell
+python scripts/train_decision.py `
+  --init checkpoints/s1-35m-pretrain.pt `
+  --tokenizer data/tokenizer.json `
+  --data data/processed/spatial_train.jsonl `
+  --batch 8 `
+  --steps 10000 `
+  --out checkpoints/s1-35m-spatial.pt
+```
+
+The decision run is catastrophically unstable.
+
+Examples:
+
+```text
+step=50    loss=2.1934
+step=100   loss=2.0352
+step=250   loss=2.2031
+
+step=300   loss=18.1309
+step=400   loss=65.3896
+step=500   loss=257.3613
+step=750   loss=1280.5024
+step=1050  loss=4096.8804
+step=1750  loss=8192.8643
+step=2400  loss=20480.3398
+step=3050  loss=49152.3398
+
+later:
+
+65536
+98304
+131072
+163840
+196608
+262144
+327680
+```
+
+But between catastrophic spikes there are batches with losses around:
+
+```text
+0.79
+0.90
+1.05
+1.2
+1.5
+```
+
+The near powers-of-two pattern is highly suspicious.
+
+This has now happened:
+
+1. from random initialization
+2. AGAIN starting from the successfully pretrained LM checkpoint
+
+Therefore do NOT assume the language model is the cause.
+
+Treat the decision head, loss path, precision handling, optimizer and target/candidate mapping as suspect until proven otherwise.
+
+---
+
+# FIRST: PRESERVE EVIDENCE
+
+Before changing code:
+
+1. inspect current git status
+2. preserve current configs
+3. preserve the failed log/checkpoint for debugging
+4. do not overwrite `checkpoints/s1-35m-pretrain.pt`
+
+Create:
+
+`reports/decision_failure_v2.md`
+
+Document the current failure and the exact configuration that produced it.
+
+---
+
+# TASK 1 — FIND THE ACTUAL ROOT CAUSE
+
+Inspect all relevant code, especially:
+
+```text
+scripts/train_decision.py
+src/systemone_lab/model.py
+src/systemone_lab/training.py
+src/systemone_lab/formatting.py
+src/systemone_lab/eval.py
+configs/s1_35m.yaml
+```
+
+Trace one decision example completely:
+
+```text
+raw record
+→ formatting
+→ token IDs
+→ option positions
+→ decide position
+→ transformer hidden state
+→ ptr_q / ptr_k
+→ logits
+→ loss
+→ backward
+→ optimizer
+```
+
+Do not simply lower the learning rate and declare it fixed.
+
+We want the cause.
+
+Check specifically:
+
+* pointer q/k magnitude
+* hidden-state magnitude
+* BF16 arithmetic
+* dot-product scale
+* option positions
+* candidate ordering
+* target index mapping
+* cross-entropy input dtype
+* optimizer LR
+* weight decay
+* Adam epsilon
+* gradient accumulation
+* zero_grad placement
+* gradient norm
+* scheduler
+* accidental repeated optimizer steps
+* accidental loss multiplication
+* malformed attention masks
+* duplicated or invalid candidate positions
+
+---
+
+# TASK 2 — ADD FULL NUMERICAL INSTRUMENTATION
+
+Modify decision training so every N steps it can log:
+
+```text
+loss
+learning_rate
+
+hidden_mean
+hidden_std
+hidden_max_abs
+
+q_norm_mean
+q_norm_max
+
+k_norm_mean
+k_norm_max
+
+logit_min
+logit_max
+logit_max_abs
+logit_std
+
+probability_min
+probability_max
+
+grad_norm_pre_clip
+grad_norm_post_clip
+
+parameter_norm
+```
+
+Add CLI/config option:
+
+```text
+--diagnostics
+```
+
+For diagnostics mode, log every 10 steps.
+
+We need to see exactly which quantity explodes first.
+
+---
+
+# TASK 3 — DECISION LOGITS AND LOSS MUST USE FP32
+
+The transformer can remain BF16 for efficiency.
+
+But after q/k representations are created, test computing the decision score path in FP32.
+
+For example:
+
+```python
+q = q.float()
+k = k.float()
+
+logits = ...
+loss = ...
+```
+
+Cross entropy / soft-target distribution loss must be evaluated in FP32.
+
+Do not allow BF16 precision to quantise huge decision logits into these bizarre power-of-two-like losses.
+
+Add a unit test verifying decision loss dtype is FP32.
+
+---
+
+# TASK 4 — FIX POINTER SCORING
+
+The current scaled dot-product scorer may be unbounded.
+
+Support TWO scorers as an ablation:
+
+```yaml
+decision_head:
+  scorer: cosine
+```
+
+and:
+
+```yaml
+decision_head:
+  scorer: scaled_dot
+```
+
+### Cosine scorer
+
+Implement:
+
+```python
+q = F.normalize(Wq(h_decide).float(), dim=-1)
+k = F.normalize(Wk(h_options).float(), dim=-1)
+
+logits = temperature * (k @ q)
+```
+
+Use a configurable temperature.
+
+Start around:
+
+```yaml
+temperature: 10.0
+```
+
+Do not let temperature become negative.
+
+If learnable, parameterise safely, e.g. softplus/log-scale.
+
+### Scaled-dot scorer
+
+Keep for comparison:
+
+```python
+logits = (q @ k.T) / sqrt(d)
+```
+
+but calculate it in FP32 and instrument q/k norms.
+
+We need to determine empirically whether the unbounded scorer caused the failure.
+
+---
+
+# TASK 5 — GRADIENT CLIPPING
+
+Implement:
+
+```yaml
+training:
+  max_grad_norm: 1.0
+```
+
+Use:
+
+```python
+torch.nn.utils.clip_grad_norm_
+```
+
+Log the PRE-CLIP norm.
+
+If gradient norms are thousands/millions, report it.
+
+Do not hide instability merely by clipping it.
+
+---
+
+# TASK 6 — SAFE OPTIMIZER BASELINE
+
+Inspect the current LR from the actual config.
+
+For the diagnostic run, create a conservative config:
+
+`configs/s1_35m_decision_safe.yaml`
+
+Use AdamW.
+
+Suggested STARTING POINT only:
+
+```yaml
+optimizer:
+  lr: 1.0e-5
+  betas: [0.9, 0.95]
+  eps: 1.0e-8
+  weight_decay: 0.01
+```
+
+Add:
+
+```yaml
+scheduler:
+  warmup_steps: 100
+  type: cosine
+```
+
+Do not assume these exact values are optimal.
+
+They are for stable diagnosis.
+
+---
+
+# TASK 7 — DIFFERENTIAL LEARNING RATES
+
+We are loading a pretrained backbone but initializing/using a decision head that has not received LM training.
+
+Support separate learning rates:
+
+```yaml
+optimizer:
+  backbone_lr: ...
+  decision_head_lr: ...
+```
+
+For example during diagnostics:
+
+```text
+backbone:      3e-6
+decision head: 1e-5
+```
+
+Also support:
+
+```text
+--freeze-backbone
+```
+
+This is an important diagnostic experiment.
+
+Run:
+
+A. decision head only, frozen backbone
+
+then:
+
+B. full model with small backbone LR
+
+If A is unstable, the bug is almost certainly the head/loss path.
+
+If A works and B explodes, investigate full-backbone optimization.
+
+---
+
+# TASK 8 — MICRO-OVERFIT TEST
+
+Create:
+
+`scripts/sanity_decision_overfit.py`
+
+Generate a tiny deterministic dataset of exactly 32 simple spatial examples.
+
+Prefer direct one-hop relationships.
+
+Balance classes as evenly as practical.
+
+The model must be able to memorise them.
+
+Run first with:
+
+```text
+pretrained LM
++
+frozen backbone
++
+decision head training
+```
+
+Required:
+
+```text
+training accuracy >= 99%
+loss decreases smoothly
+no NaN
+no Inf
+max absolute logits remain sane
+```
+
+Then repeat with unfrozen backbone.
+
+DO NOT run the full spatial corpus until this passes.
+
+Print a confusion matrix and predictions.
+
+---
+
+# TASK 9 — EVEN SMALLER TEST
+
+Before 32 examples, create a single-batch test.
+
+Take 8 fixed examples.
+
+Repeatedly train on the EXACT SAME batch for several hundred steps.
+
+We expect monotonically meaningful learning.
+
+If the loss alternates between ~1 and ~65536 on the SAME batch, we have conclusively isolated an implementation/numerical problem.
+
+This test is crucial.
+
+---
+
+# TASK 10 — VERIFY TARGET INDEXING
+
+For every training sample verify:
+
+```text
+candidate names
+candidate ordering
+candidate token positions
+target label
+target candidate index
+```
+
+Add assertions:
+
+```python
+0 <= target_idx < num_candidates
+```
+
+and verify:
+
+```python
+candidate_names[target_idx] == expected_label
+```
+
+Do not rely on accidental dictionary ordering.
+
+Write tests for all nine spatial relations.
+
+---
+
+# TASK 11 — VERIFY OPTION POSITION EXTRACTION
+
+Inspect:
+
+```text
+layout.option_end_positions
+layout.decide_position
+```
+
+For hand-authored examples, print:
+
+```text
+token
+token_id
+position
+structural role
+```
+
+Confirm option representations are being read from the correct tokens.
+
+An off-by-one / wrong-token representation here could completely poison training.
+
+Add tests.
+
+---
+
+# TASK 12 — CHECK ATTENTION MASK
+
+Inspect the custom block-causal mask.
+
+Test that there is no row with all values masked.
+
+Test:
+
+```text
+state → causal state
+question → state + own branch
+option → state + own branch
+decide → state + own question/options
+```
+
+Sibling questions must remain isolated.
+
+Use automated tests.
+
+Also check whether SDPA interprets boolean/float masks exactly as intended.
+
+Do not assume mask semantics without testing.
+
+---
+
+# TASK 13 — REMOVE THE TENSOR-TO-FLOAT WARNING
+
+Current code apparently contains something similar to:
+
+```python
+float(loss)
+```
+
+while `loss.requires_grad`.
+
+Change logging to:
+
+```python
+loss.detach().float().item()
+```
+
+Audit similar conversions.
+
+This may not be the root cause, but clean it up.
+
+---
+
+# TASK 14 — FAIL FAST
+
+Add trainer safeguards.
+
+Config:
+
+```yaml
+safety:
+  max_loss: 25.0
+  max_abs_logit: 100.0
+  abort_on_nonfinite: true
+```
+
+If exceeded:
+
+1. DO NOT continue another 9,000 steps.
+2. save diagnostics
+3. save offending batch IDs
+4. save q/k/logit statistics
+5. abort with an informative exception
+
+The previous run should have terminated around step 300–500.
+
+---
+
+# TASK 15 — LR SWEEP AFTER MICRO-OVERFIT
+
+Once numerical correctness is demonstrated, implement a tiny LR sweep script:
+
+```text
+3e-6
+1e-5
+3e-5
+1e-4
+```
+
+Run on the same fixed 32-example dataset and same seed.
+
+Compare:
+
+```text
+final training accuracy
+steps to 99%
+max logit
+max gradient norm
+loss stability
+```
+
+Choose the largest stable LR.
+
+Do not guess.
+
+---
+
+# TASK 16 — SCORER ABLATION
+
+On the same tiny dataset compare:
+
+```text
+scaled_dot
+cosine
+```
+
+Generate:
+
+`reports/pointer_scorer_ablation.json`
+
+and Markdown table:
+
+```text
+scorer
+LR
+final accuracy
+final loss
+max q norm
+max k norm
+max logit
+max gradient norm
+numerical failures
+```
+
+Our priority is stability first.
+
+---
+
+# TASK 17 — 800/200 HELD-OUT TEST
+
+Only after micro-overfit succeeds:
+
+Generate:
+
+```text
+800 training examples
+200 held-out examples
+```
+
+Use simple balanced 1–2-hop relations.
+
+Train briefly.
+
+Report:
+
+```text
+train accuracy
+held-out accuracy
+ECE
+Brier
+confusion matrix
+```
+
+Compare against:
+
+```text
+random baseline
+majority-class baseline
+```
+
+We want clear generalisation before moving back to 50k examples.
+
+---
+
+# TASK 18 — COUNTERFACTUAL MICRO TEST
+
+Generate at least 100 paired counterfactual examples.
+
+Example:
+
+```text
+BEFORE
+A x=2
+B x=5
+→ B RIGHT of A
+
+AFTER
+A x=2
+B x=1
+→ B LEFT of A
+```
+
+Report:
+
+```text
+original correct
+counterfactual correct
+both correct
+correct label flip
+probability moved in correct direction
+```
+
+This is a mandatory reasoning test.
+
+---
+
+# TASK 19 — CHECK CLASS DISTRIBUTION OF CURRENT DATA
+
+Analyse:
+
+```text
+data/processed/spatial_train.jsonl
+data/processed/spatial_dev.jsonl
+```
+
+Report class counts and percentages.
+
+If heavily imbalanced, fix generator or introduce balanced sampling.
+
+The model should not be rewarded for collapsing onto common directional classes.
+
+---
+
+# TASK 20 — CHECKPOINT/TOKENIZER SAFETY
+
+Every checkpoint should store:
+
+```text
+tokenizer SHA256
+vocab size
+special token IDs
+model config hash
+training step
+```
+
+On load, verify tokenizer hash.
+
+Fail if mismatch unless explicitly overridden.
+
+This prevents silent corruption.
+
+---
+
+# TASK 21 — EVALUATION FIXES
+
+Review `eval_spatial.py` and `eval.py`.
+
+There was previously an inference-mode/autograd issue.
+
+Ensure:
+
+```python
+model.eval()
+```
+
+and the ENTIRE model + decision head prediction path is consistently under:
+
+```python
+torch.inference_mode()
+```
+
+or:
+
+```python
+torch.no_grad()
+```
+
+Do not mix inference tensors with gradient-enabled layers.
+
+Add tests.
+
+---
+
+# TASK 22 — DO NOT RETRAIN LANGUAGE MODEL
+
+The 50k-step language checkpoint is valuable and appears healthy.
+
+Protect:
+
+```text
+checkpoints/s1-35m-pretrain.pt
+```
+
+Do not overwrite it.
+
+All diagnostic decision experiments should start from that same frozen checkpoint so comparisons are controlled.
+
+---
+
+# ORDER OF EXECUTION
+
+Do this in this exact order:
+
+```text
+1. Audit current decision code
+2. Write failure report
+3. Add diagnostics
+4. FP32 decision scoring/loss
+5. Add cosine scorer
+6. Add gradient clipping
+7. Fix optimizer/scheduler
+8. Add freeze-backbone mode
+9. Validate target mapping
+10. Validate option positions
+11. Validate attention mask
+12. Run fixed 8-example repeated-batch test
+13. Run 32-example overfit
+14. Run scorer/LR ablation
+15. Run 800/200 generalisation
+16. Run 100-pair counterfactual test
+17. STOP
+```
+
+DO NOT start another 10,000-step full run automatically.
+
+---
+
+# ACCEPTANCE CRITERIA
+
+Before recommending a real spatial training run, all of these must be true:
+
+```text
+unit tests                    PASS
+fixed 8-example batch         stable
+32-example overfit            >= 99%
+no NaNs                       PASS
+no infinities                 PASS
+max logits sane              PASS
+gradient norms sane           PASS
+target mapping tests          PASS
+option-position tests         PASS
+attention-mask tests          PASS
+800/200 generalisation        clearly > baseline
+counterfactual paired test    meaningful > chance
+```
+
+If any fail, keep debugging.
+
+Do not hide failures.
+
+---
+
+# FINAL RESPONSE I WANT FROM YOU
+
+When finished, give me:
+
+## Root cause
+
+Explain specifically what caused the enormous loss spikes.
+
+Show code/evidence.
+
+## Changes made
+
+List every relevant file changed.
+
+## Numerical evidence
+
+Before vs after:
+
+```text
+max |logit|
+q norm
+k norm
+gradient norm
+loss range
+```
+
+## Sanity results
+
+```text
+8-example repeated batch
+32-example overfit
+800/200 held-out
+counterfactual pairs
+```
+
+## Scorer result
+
+Tell me whether:
+
+```text
+scaled_dot
+```
+
+or:
+
+```text
+cosine
+```
+
+was more stable/better.
+
+## LR result
+
+Tell me which learning rate won the controlled sweep.
+
+## Recommended next command
+
+Give me ONE exact PowerShell command for the next real spatial training run.
+
+Do NOT start that run yourself.
+
+The goal is to prove the decision machinery is correct before spending another 10,000 steps of GPU time.
+
+The core research principle remains:
+
+A tiny model that genuinely responds to changes in the spatial world is more valuable than a larger model that gets high accuracy through shortcuts.

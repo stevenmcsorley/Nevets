@@ -1,0 +1,432 @@
+{
+  "stress_data": {
+    "eval": "reports/binding_stress/stress.jsonl (seed 30917, 150 worlds/suite x 2 name styles x 2 query orders)",
+    "train": "reports/binding_stress/train_mixed.jsonl = multi-fact seed 41011 (12,308 records after dropping 246 pairs whose states occur in any eval set) + reports/role_swap_onehop/train.jsonl (6,996)"
+  },
+  "stress_results": {
+    "reference paired-paraphrase-onehop-gate": {
+      "overall": {
+        "n": 2400,
+        "accuracy": 0.19333333333333333,
+        "ece15": 0.5763024639027814,
+        "brier": 1.306411283885987,
+        "role_swap_both_correct": 0.0008333333333333334
+      },
+      "suites": {
+        "onehop_disconnected": {
+          "n": 600,
+          "accuracy": 0.21333333333333335,
+          "ece15": 0.539891627530257,
+          "brier": 1.2514325725716389,
+          "role_swap_both_correct": 0.0033333333333333335
+        },
+        "onehop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.21666666666666667,
+          "ece15": 0.5384636098146438,
+          "brier": 1.2341987064325077,
+          "role_swap_both_correct": 0.006666666666666667
+        },
+        "onehop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.21,
+          "ece15": 0.5413196452458701,
+          "brier": 1.2686664387107702,
+          "role_swap_both_correct": 0.0
+        },
+        "onehop_mention": {
+          "n": 600,
+          "accuracy": 0.25166666666666665,
+          "ece15": 0.5300745451450348,
+          "brier": 1.2061385858743423,
+          "role_swap_both_correct": 0.0
+        },
+        "onehop_mention/numbered": {
+          "n": 300,
+          "accuracy": 0.22333333333333333,
+          "ece15": 0.5514080039660136,
+          "brier": 1.225447372851969,
+          "role_swap_both_correct": 0.0
+        },
+        "onehop_mention/renamed": {
+          "n": 300,
+          "accuracy": 0.28,
+          "ece15": 0.5087410863240559,
+          "brier": 1.1868297988967158,
+          "role_swap_both_correct": 0.0
+        },
+        "twohop": {
+          "n": 600,
+          "accuracy": 0.19666666666666666,
+          "ece15": 0.6283742390076319,
+          "brier": 1.3707913798129208,
+          "role_swap_both_correct": 0.0
+        },
+        "twohop/numbered": {
+          "n": 300,
+          "accuracy": 0.20333333333333334,
+          "ece15": 0.6224824006358782,
+          "brier": 1.3605227215573537,
+          "role_swap_both_correct": 0.0
+        },
+        "twohop/renamed": {
+          "n": 300,
+          "accuracy": 0.19,
+          "ece15": 0.6342660773793857,
+          "brier": 1.3810600380684879,
+          "role_swap_both_correct": 0.0
+        },
+        "twohop_disconnected": {
+          "n": 600,
+          "accuracy": 0.11166666666666666,
+          "ece15": 0.606869443928202,
+          "brier": 1.397282597285046,
+          "role_swap_both_correct": 0.0
+        },
+        "twohop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.11666666666666667,
+          "ece15": 0.6020199600855509,
+          "brier": 1.3871735560600722,
+          "role_swap_both_correct": 0.0
+        },
+        "twohop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.10666666666666667,
+          "ece15": 0.6117189277708531,
+          "brier": 1.4073916385100198,
+          "role_swap_both_correct": 0.0
+        }
+      }
+    },
+    "entity-binding-onehop-gate": {
+      "overall": {
+        "n": 2400,
+        "accuracy": 0.31708333333333333,
+        "ece15": 0.37288211772839225,
+        "brier": 1.0111652101023343,
+        "role_swap_both_correct": 0.17916666666666667
+      },
+      "suites": {
+        "onehop_disconnected": {
+          "n": 600,
+          "accuracy": 0.41333333333333333,
+          "ece15": 0.26260612371067205,
+          "brier": 0.8726773108752667,
+          "role_swap_both_correct": 0.25666666666666665
+        },
+        "onehop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.4533333333333333,
+          "ece15": 0.2357147488494714,
+          "brier": 0.8082816517490443,
+          "role_swap_both_correct": 0.26666666666666666
+        },
+        "onehop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.37333333333333335,
+          "ece15": 0.2894974985718727,
+          "brier": 0.9370729700014891,
+          "role_swap_both_correct": 0.24666666666666667
+        },
+        "onehop_mention": {
+          "n": 600,
+          "accuracy": 0.42,
+          "ece15": 0.2918231268475453,
+          "brier": 0.854995797500132,
+          "role_swap_both_correct": 0.24
+        },
+        "onehop_mention/numbered": {
+          "n": 300,
+          "accuracy": 0.42333333333333334,
+          "ece15": 0.2920439523458481,
+          "brier": 0.8552942088117461,
+          "role_swap_both_correct": 0.25333333333333335
+        },
+        "onehop_mention/renamed": {
+          "n": 300,
+          "accuracy": 0.4166666666666667,
+          "ece15": 0.2995991269250711,
+          "brier": 0.8546973861885179,
+          "role_swap_both_correct": 0.22666666666666666
+        },
+        "twohop": {
+          "n": 600,
+          "accuracy": 0.29,
+          "ece15": 0.4275012736270825,
+          "brier": 1.0779082728388836,
+          "role_swap_both_correct": 0.16666666666666666
+        },
+        "twohop/numbered": {
+          "n": 300,
+          "accuracy": 0.2966666666666667,
+          "ece15": 0.4538173262278239,
+          "brier": 1.1039642124514988,
+          "role_swap_both_correct": 0.18
+        },
+        "twohop/renamed": {
+          "n": 300,
+          "accuracy": 0.2833333333333333,
+          "ece15": 0.4011852210263411,
+          "brier": 1.0518523332262681,
+          "role_swap_both_correct": 0.15333333333333332
+        },
+        "twohop_disconnected": {
+          "n": 600,
+          "accuracy": 0.145,
+          "ece15": 0.5095979467282692,
+          "brier": 1.2390794591950545,
+          "role_swap_both_correct": 0.05333333333333334
+        },
+        "twohop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.15333333333333332,
+          "ece15": 0.5141797700027625,
+          "brier": 1.2472921646783732,
+          "role_swap_both_correct": 0.07333333333333333
+        },
+        "twohop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.13666666666666666,
+          "ece15": 0.5063894599676132,
+          "brier": 1.2308667537117355,
+          "role_swap_both_correct": 0.03333333333333333
+        }
+      }
+    },
+    "arm A entity-binding-multifact-bindonly": {
+      "overall": {
+        "n": 2400,
+        "accuracy": 0.3854166666666667,
+        "ece15": 0.028726887982338665,
+        "brier": 0.7589742052723526,
+        "role_swap_both_correct": 0.26916666666666667
+      },
+      "suites": {
+        "onehop_disconnected": {
+          "n": 600,
+          "accuracy": 0.4666666666666667,
+          "ece15": 0.05587842283149559,
+          "brier": 0.6704037481572043,
+          "role_swap_both_correct": 0.3466666666666667
+        },
+        "onehop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.55,
+          "ece15": 0.10388816098372143,
+          "brier": 0.5948253810518981,
+          "role_swap_both_correct": 0.42
+        },
+        "onehop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.38333333333333336,
+          "ece15": 0.05073994363347689,
+          "brier": 0.7459821152625106,
+          "role_swap_both_correct": 0.2733333333333333
+        },
+        "onehop_mention": {
+          "n": 600,
+          "accuracy": 0.5083333333333333,
+          "ece15": 0.1027496019502481,
+          "brier": 0.6601656857813022,
+          "role_swap_both_correct": 0.35333333333333333
+        },
+        "onehop_mention/numbered": {
+          "n": 300,
+          "accuracy": 0.5533333333333333,
+          "ece15": 0.1514747049411138,
+          "brier": 0.6260079722544339,
+          "role_swap_both_correct": 0.41333333333333333
+        },
+        "onehop_mention/renamed": {
+          "n": 300,
+          "accuracy": 0.4633333333333333,
+          "ece15": 0.07585890879233677,
+          "brier": 0.6943233993081706,
+          "role_swap_both_correct": 0.29333333333333333
+        },
+        "twohop": {
+          "n": 600,
+          "accuracy": 0.35833333333333334,
+          "ece15": 0.05069066385428111,
+          "brier": 0.8060767023210185,
+          "role_swap_both_correct": 0.27
+        },
+        "twohop/numbered": {
+          "n": 300,
+          "accuracy": 0.38666666666666666,
+          "ece15": 0.0632398046553135,
+          "brier": 0.7853572339942952,
+          "role_swap_both_correct": 0.3333333333333333
+        },
+        "twohop/renamed": {
+          "n": 300,
+          "accuracy": 0.33,
+          "ece15": 0.07703586940964065,
+          "brier": 0.8267961706477417,
+          "role_swap_both_correct": 0.20666666666666667
+        },
+        "twohop_disconnected": {
+          "n": 600,
+          "accuracy": 0.20833333333333334,
+          "ece15": 0.09213850761453309,
+          "brier": 0.8992506848298853,
+          "role_swap_both_correct": 0.10666666666666667
+        },
+        "twohop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.22333333333333333,
+          "ece15": 0.07275630424420039,
+          "brier": 0.87509210187015,
+          "role_swap_both_correct": 0.14
+        },
+        "twohop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.19333333333333333,
+          "ece15": 0.11810061991214754,
+          "brier": 0.9234092677896206,
+          "role_swap_both_correct": 0.07333333333333333
+        }
+      }
+    },
+    "arm B entity-binding-multifact-full": {
+      "overall": {
+        "n": 2400,
+        "accuracy": 0.6220833333333333,
+        "ece15": 0.029873697770138586,
+        "brier": 0.490919602182622,
+        "role_swap_both_correct": 0.5675
+      },
+      "suites": {
+        "onehop_disconnected": {
+          "n": 600,
+          "accuracy": 0.9316666666666666,
+          "ece15": 0.15080290968219437,
+          "brier": 0.14147328706117349,
+          "role_swap_both_correct": 0.9033333333333333
+        },
+        "onehop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.9866666666666667,
+          "ece15": 0.12766252994537353,
+          "brier": 0.05179221047776467,
+          "role_swap_both_correct": 0.9733333333333334
+        },
+        "onehop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.8766666666666667,
+          "ece15": 0.1767312263449033,
+          "brier": 0.23115436364458228,
+          "role_swap_both_correct": 0.8333333333333334
+        },
+        "onehop_mention": {
+          "n": 600,
+          "accuracy": 0.8033333333333333,
+          "ece15": 0.14572963016728557,
+          "brier": 0.32489018368571737,
+          "role_swap_both_correct": 0.7433333333333333
+        },
+        "onehop_mention/numbered": {
+          "n": 300,
+          "accuracy": 0.87,
+          "ece15": 0.16851043795545897,
+          "brier": 0.25433784948402927,
+          "role_swap_both_correct": 0.84
+        },
+        "onehop_mention/renamed": {
+          "n": 300,
+          "accuracy": 0.7366666666666667,
+          "ece15": 0.13177431176106136,
+          "brier": 0.3954425178874055,
+          "role_swap_both_correct": 0.6466666666666666
+        },
+        "twohop": {
+          "n": 600,
+          "accuracy": 0.4116666666666667,
+          "ece15": 0.17671112204591433,
+          "brier": 0.723503501197438,
+          "role_swap_both_correct": 0.3466666666666667
+        },
+        "twohop/numbered": {
+          "n": 300,
+          "accuracy": 0.41,
+          "ece15": 0.1595964753627777,
+          "brier": 0.7045477093602434,
+          "role_swap_both_correct": 0.3466666666666667
+        },
+        "twohop/renamed": {
+          "n": 300,
+          "accuracy": 0.41333333333333333,
+          "ece15": 0.19792221675316493,
+          "brier": 0.7424592930346327,
+          "role_swap_both_correct": 0.3466666666666667
+        },
+        "twohop_disconnected": {
+          "n": 600,
+          "accuracy": 0.3416666666666667,
+          "ece15": 0.14282782984276612,
+          "brier": 0.7738114367861589,
+          "role_swap_both_correct": 0.27666666666666667
+        },
+        "twohop_disconnected/numbered": {
+          "n": 300,
+          "accuracy": 0.35333333333333333,
+          "ece15": 0.1402841196457545,
+          "brier": 0.7414190153938596,
+          "role_swap_both_correct": 0.2866666666666667
+        },
+        "twohop_disconnected/renamed": {
+          "n": 300,
+          "accuracy": 0.33,
+          "ece15": 0.15278867706656454,
+          "brier": 0.8062038581784582,
+          "role_swap_both_correct": 0.26666666666666666
+        }
+      }
+    }
+  },
+  "arm_B_train_sample_accuracy": {
+    "onehop_disconnected": 0.955,
+    "onehop_mention": 0.805,
+    "twohop": 0.355,
+    "twohop_disconnected": 0.385
+  },
+  "onehop_gates": {
+    "bindonly": {
+      "vertical_role_swap": 0.8833333333333333,
+      "heldout_role_swap": 0.89587852494577,
+      "old_name_pairs": 0.95,
+      "vertical_name_pairs": 0.8966666666666666,
+      "counterfactual": {
+        "pairs": 100,
+        "both_correct": 0.85,
+        "correct_probability_shift": 1.0
+      },
+      "heldout": {
+        "n": 1844,
+        "accuracy": 0.9408893709327549,
+        "ece15": 0.16960773520866598,
+        "brier": 0.14670590894017405
+      },
+      "checkpoint_sha256": "3d673c992e721e8f245ec2d5520b1648e7d79b9be412e7fffab0840138108c58"
+    },
+    "full": {
+      "vertical_role_swap": 1.0,
+      "heldout_role_swap": 0.9967462039045553,
+      "old_name_pairs": 1.0,
+      "vertical_name_pairs": 1.0,
+      "counterfactual": {
+        "pairs": 100,
+        "both_correct": 1.0,
+        "correct_probability_shift": 1.0
+      },
+      "heldout": {
+        "n": 1844,
+        "accuracy": 0.9983731019522777,
+        "ece15": 0.028448688169363495,
+        "brier": 0.004388365242654687
+      },
+      "checkpoint_sha256": "922f2969cd80dc054ad5ca0ada121bf0d0858c6de0529571203993d1d9ace67a"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "dev_groups": {
+    "overall": {
+      "n": 5000,
+      "accuracy": 0.3864,
+      "prediction_counts": {
+        "above": 265,
+        "right": 1459,
+        "lower-left": 519,
+        "upper-right": 650,
+        "left": 270,
+        "lower-right": 472,
+        "below": 470,
+        "upper-left": 454,
+        "overlap": 441
+      }
+    },
+    "renamed=False": {
+      "n": 2494,
+      "accuracy": 0.5284683239775461,
+      "prediction_counts": {
+        "above": 253,
+        "lower-left": 326,
+        "right": 182,
+        "below": 222,
+        "lower-right": 339,
+        "upper-left": 408,
+        "upper-right": 362,
+        "overlap": 216,
+        "left": 186
+      }
+    },
+    "renamed=True": {
+      "n": 2506,
+      "accuracy": 0.24501197126895452,
+      "prediction_counts": {
+        "right": 1277,
+        "upper-right": 288,
+        "left": 84,
+        "lower-right": 133,
+        "lower-left": 193,
+        "below": 248,
+        "overlap": 225,
+        "upper-left": 46,
+        "above": 12
+      }
+    }
+  },
+  "name_only_pairs": {
+    "overall": {
+      "n": 200,
+      "original_correct": 0.72,
+      "renamed_correct": 0.255,
+      "both_correct": 0.2,
+      "prediction_changed": 0.71
+    },
+    "by_hops": {
+      "1": {
+        "n": 20,
+        "original_correct": 0.9,
+        "renamed_correct": 0.3,
+        "both_correct": 0.3,
+        "prediction_changed": 0.65
+      },
+      "2": {
+        "n": 180,
+        "original_correct": 0.7,
+        "renamed_correct": 0.25,
+        "both_correct": 0.18888888888888888,
+        "prediction_changed": 0.7166666666666667
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "exp9-aux-loop": {
+    "n": 400,
+    "prediction_changed_by_option_shuffle": 0.52,
+    "acc_original_order": 0.485,
+    "acc_shuffled_order": 0.3025,
+    "mean_total_variation": 0.38606147996619994
+  },
+  "exp6a-noloop": {
+    "n": 400,
+    "prediction_changed_by_option_shuffle": 0.5,
+    "acc_original_order": 0.4475,
+    "acc_shuffled_order": 0.29,
+    "mean_total_variation": 0.3268617129069648
+  }
+}

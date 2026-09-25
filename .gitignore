@@ -1,0 +1,30 @@
+# Environments and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Model weights (hundreds of MB each; publish via releases / an artifact store, not git)
+checkpoints/
+*.pt
+*.bin
+*.safetensors
+
+# Datasets: raw downloads, tokenised corpora and generated splits (regenerate with scripts/)
+data/raw/
+data/processed/
+data/*.bin
+data/*.jsonl
+
+# Third-party binaries (Stockfish is GPL-3; download it, see README)
+tools/
+
+# Run artefacts
+runs/
+*.log
+*.diagnostics.jsonl
+*.failure.json
+
+# Generated training splits under reports/ (rebuild from the seeds recorded in RESEARCH_LEDGER.md)
+reports/**/train*.jsonl
+reports/**/*_raw.jsonl

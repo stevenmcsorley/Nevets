@@ -1,0 +1,634 @@
+{
+  "scorer": "cosine",
+  "lr": 1e-05,
+  "freeze": false,
+  "steps": 200,
+  "steps_to_99": 100,
+  "accuracy": 1.0,
+  "final_loss": 3.364422119119711e-05,
+  "loss_range": [
+    3.1012164981802925e-05,
+    2.2186295986175537
+  ],
+  "max_q_norm": 23.930879592895508,
+  "max_k_norm": 30.38227081298828,
+  "max_logit": 9.18838119506836,
+  "max_gradient_norm": 20.890050888061523,
+  "numerical_failures": 0,
+  "loss_increases": 0,
+  "confusion_matrix": [
+    [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3
+    ]
+  ],
+  "predictions": [
+    {
+      "id": "tiny-42-0",
+      "target": "upper-left",
+      "prediction": "upper-left",
+      "probabilities": {
+        "upper-left": 0.9999513626098633,
+        "above": 7.826660294085741e-06,
+        "upper-right": 4.4175239963806234e-06,
+        "left": 2.1982014004606754e-06,
+        "overlap": 2.4143510017893277e-06,
+        "right": 2.0167733509879326e-06,
+        "lower-left": 2.027094342338387e-05,
+        "below": 2.0568211311911e-06,
+        "lower-right": 7.538104455306893e-06
+      }
+    },
+    {
+      "id": "tiny-42-1",
+      "target": "above",
+      "prediction": "above",
+      "probabilities": {
+        "upper-left": 3.178849965479458e-07,
+        "above": 0.9999878406524658,
+        "upper-right": 1.9054091637826787e-07,
+        "left": 6.652964657405391e-06,
+        "overlap": 9.080771405933774e-07,
+        "right": 2.2382751296845527e-07,
+        "lower-left": 1.9659438521557604e-07,
+        "below": 1.6289305904138018e-06,
+        "lower-right": 2.126984782080399e-06
+      }
+    },
+    {
+      "id": "tiny-42-2",
+      "target": "upper-right",
+      "prediction": "upper-right",
+      "probabilities": {
+        "upper-left": 1.0791617569338996e-05,
+        "above": 1.0732908606314595e-07,
+        "upper-right": 0.9999475479125977,
+        "left": 2.4073096938082017e-07,
+        "overlap": 4.674074105537329e-08,
+        "right": 4.084536087134438e-08,
+        "lower-left": 6.341073230942129e-07,
+        "below": 3.930773573301849e-08,
+        "lower-right": 4.054190139868297e-05
+      }
+    },
+    {
+      "id": "tiny-42-3",
+      "target": "left",
+      "prediction": "left",
+      "probabilities": {
+        "upper-left": 1.0015528317808275e-07,
+        "above": 3.065323426199029e-06,
+        "upper-right": 4.700941644841805e-07,
+        "left": 0.9999949932098389,
+        "overlap": 1.1386591580730965e-07,
+        "right": 4.012428576061211e-07,
+        "lower-left": 2.572812718426576e-07,
+        "below": 1.000002924911314e-07,
+        "lower-right": 5.088313628220931e-07
+      }
+    },
+    {
+      "id": "tiny-42-4",
+      "target": "overlap",
+      "prediction": "overlap",
+      "probabilities": {
+        "upper-left": 1.903270572256588e-07,
+        "above": 5.202798547543352e-07,
+        "upper-right": 9.389258792680266e-08,
+        "left": 3.410207796150644e-07,
+        "overlap": 0.9999959468841553,
+        "right": 1.9433659872447606e-06,
+        "lower-left": 1.19396020181739e-07,
+        "below": 7.687470429118548e-07,
+        "lower-right": 1.0494592572740657e-07
+      }
+    },
+    {
+      "id": "tiny-42-5",
+      "target": "right",
+      "prediction": "right",
+      "probabilities": {
+        "upper-left": 8.25300645601601e-08,
+        "above": 8.214247770865768e-08,
+        "upper-right": 2.2153864165375126e-07,
+        "left": 1.933517296492937e-06,
+        "overlap": 1.682996924046165e-07,
+        "right": 0.9999516010284424,
+        "lower-left": 3.992010704223503e-07,
+        "below": 1.1292524959571892e-07,
+        "lower-right": 4.5331278670346364e-05
+      }
+    },
+    {
+      "id": "tiny-42-6",
+      "target": "lower-left",
+      "prediction": "lower-left",
+      "probabilities": {
+        "upper-left": 1.0078587365569547e-05,
+        "above": 1.74271860942099e-06,
+        "upper-right": 2.9624859507748624e-06,
+        "left": 1.5920138594083255e-06,
+        "overlap": 2.0156132904958213e-06,
+        "right": 2.0399368168000365e-06,
+        "lower-left": 0.9999645948410034,
+        "below": 2.35708444051852e-06,
+        "lower-right": 1.2599087312992197e-05
+      }
+    },
+    {
+      "id": "tiny-42-7",
+      "target": "below",
+      "prediction": "below",
+      "probabilities": {
+        "upper-left": 1.27597957089165e-06,
+        "above": 1.5114565940166358e-05,
+        "upper-right": 5.154017230779573e-07,
+        "left": 5.76237994209805e-07,
+        "overlap": 1.0011333415604895e-06,
+        "right": 5.102222075947793e-07,
+        "lower-left": 9.44091254950763e-07,
+        "below": 0.9999790191650391,
+        "lower-right": 1.0743800658019609e-06
+      }
+    },
+    {
+      "id": "tiny-42-8",
+      "target": "lower-right",
+      "prediction": "lower-right",
+      "probabilities": {
+        "upper-left": 5.42697898708866e-06,
+        "above": 4.9420841605751775e-06,
+        "upper-right": 1.1575323696888518e-05,
+        "left": 3.272142521382193e-06,
+        "overlap": 6.494604804174742e-06,
+        "right": 4.366284429124789e-06,
+        "lower-left": 7.972191269800533e-06,
+        "below": 5.122513357491698e-06,
+        "lower-right": 0.9999507665634155
+      }
+    },
+    {
+      "id": "tiny-42-9",
+      "target": "upper-left",
+      "prediction": "upper-left",
+      "probabilities": {
+        "upper-left": 0.9999663829803467,
+        "above": 7.233569249365246e-06,
+        "upper-right": 1.1426214996390627e-06,
+        "left": 1.6534460201000911e-06,
+        "overlap": 5.963593139313161e-07,
+        "right": 5.286646000968176e-07,
+        "lower-left": 1.9535744286258705e-05,
+        "below": 6.651238209087751e-07,
+        "lower-right": 2.2726753741153516e-06
+      }
+    },
+    {
+      "id": "tiny-42-10",
+      "target": "above",
+      "prediction": "above",
+      "probabilities": {
+        "upper-left": 1.142153337241325e-06,
+        "above": 0.9999895095825195,
+        "upper-right": 6.905906957399566e-07,
+        "left": 2.668375600478612e-06,
+        "overlap": 1.1926614433832583e-06,
+        "right": 7.859582638047868e-07,
+        "lower-left": 8.38479706999351e-07,
+        "below": 1.5807794397915131e-06,
+        "lower-right": 1.5244193036778597e-06
+      }
+    },
+    {
+      "id": "tiny-42-11",
+      "target": "upper-right",
+      "prediction": "upper-right",
+      "probabilities": {
+        "upper-left": 2.50672833601584e-08,
+        "above": 4.0069174644941086e-08,
+        "upper-right": 0.9999418258666992,
+        "left": 9.269377869713935e-07,
+        "overlap": 2.953191469146077e-08,
+        "right": 2.2657765441636002e-08,
+        "lower-left": 2.586167191509503e-08,
+        "below": 2.2366261731576742e-08,
+        "lower-right": 5.714245344279334e-05
+      }
+    },
+    {
+      "id": "tiny-42-12",
+      "target": "left",
+      "prediction": "left",
+      "probabilities": {
+        "upper-left": 4.249557605362497e-06,
+        "above": 7.344565347011667e-06,
+        "upper-right": 6.209172624949133e-07,
+        "left": 0.9999852180480957,
+        "overlap": 2.928271101154678e-07,
+        "right": 9.489208423474338e-07,
+        "lower-left": 5.243738314675284e-07,
+        "below": 2.0650209364703187e-07,
+        "lower-right": 4.791244805346651e-07
+      }
+    },
+    {
+      "id": "tiny-42-13",
+      "target": "overlap",
+      "prediction": "overlap",
+      "probabilities": {
+        "upper-left": 1.301268781617182e-07,
+        "above": 2.4722196485527093e-06,
+        "upper-right": 7.33056282342659e-08,
+        "left": 4.250179586051672e-07,
+        "overlap": 0.9999947547912598,
+        "right": 1.679438696555735e-06,
+        "lower-left": 8.872520140812412e-08,
+        "below": 3.4525055525591597e-07,
+        "lower-right": 9.227473896089577e-08
+      }
+    },
+    {
+      "id": "tiny-42-14",
+      "target": "right",
+      "prediction": "right",
+      "probabilities": {
+        "upper-left": 3.0760654112782504e-07,
+        "above": 7.503318784074509e-07,
+        "upper-right": 2.25626749283947e-07,
+        "left": 2.162676082662074e-06,
+        "overlap": 1.0799338951983373e-06,
+        "right": 0.999992847442627,
+        "lower-left": 2.0151735213858046e-07,
+        "below": 3.9835194343140756e-07,
+        "lower-right": 2.1133112113602692e-06
+      }
+    },
+    {
+      "id": "tiny-42-15",
+      "target": "lower-left",
+      "prediction": "lower-left",
+      "probabilities": {
+        "upper-left": 1.2110588613722939e-05,
+        "above": 4.229661954013864e-06,
+        "upper-right": 3.430057176956325e-06,
+        "left": 4.337984137237072e-06,
+        "overlap": 6.035797468939563e-06,
+        "right": 4.887742306891596e-06,
+        "lower-left": 0.9999310970306396,
+        "below": 4.090784386789892e-06,
+        "lower-right": 2.980274257424753e-05
+      }
+    },
+    {
+      "id": "tiny-42-16",
+      "target": "below",
+      "prediction": "below",
+      "probabilities": {
+        "upper-left": 1.1249679801039747e-06,
+        "above": 4.471343800105387e-06,
+        "upper-right": 7.281080343091162e-07,
+        "left": 1.3345534171094187e-06,
+        "overlap": 7.420429028570652e-06,
+        "right": 3.0981191230239347e-06,
+        "lower-left": 1.0138224979527877e-06,
+        "below": 0.9999741315841675,
+        "lower-right": 6.703933195240097e-06
+      }
+    },
+    {
+      "id": "tiny-42-17",
+      "target": "lower-right",
+      "prediction": "lower-right",
+      "probabilities": {
+        "upper-left": 1.9868561139446683e-05,
+        "above": 1.8149805327993818e-05,
+        "upper-right": 3.036611269635614e-05,
+        "left": 1.0518776434764732e-05,
+        "overlap": 2.154960202460643e-05,
+        "right": 1.2918785614601802e-05,
+        "lower-left": 2.1692620066460222e-05,
+        "below": 1.720629006740637e-05,
+        "lower-right": 0.9998476505279541
+      }
+    },
+    {
+      "id": "tiny-42-18",
+      "target": "upper-left",
+      "prediction": "upper-left",
+      "probabilities": {
+        "upper-left": 0.9998787641525269,
+        "above": 1.4832176930212881e-05,
+        "upper-right": 1.5067775166244246e-05,
+        "left": 8.054207683017012e-06,
+        "overlap": 5.125565166963497e-06,
+        "right": 4.281206201994792e-06,
+        "lower-left": 3.655930777313188e-05,
+        "below": 4.920453648082912e-06,
+        "lower-right": 3.239580473746173e-05
+      }
+    },
+    {
+      "id": "tiny-42-19",
+      "target": "above",
+      "prediction": "above",
+      "probabilities": {
+        "upper-left": 3.036531779798679e-06,
+        "above": 0.9999822378158569,
+        "upper-right": 4.4651261532635544e-07,
+        "left": 7.542776643276738e-07,
+        "overlap": 6.33986019238364e-07,
+        "right": 4.110698625936493e-07,
+        "lower-left": 7.89743069162796e-07,
+        "below": 1.0851592378458008e-05,
+        "lower-right": 9.320092999587359e-07
+      }
+    },
+    {
+      "id": "tiny-42-20",
+      "target": "upper-right",
+      "prediction": "upper-right",
+      "probabilities": {
+        "upper-left": 9.212368468070053e-08,
+        "above": 4.492002503297954e-08,
+        "upper-right": 0.9999566078186035,
+        "left": 8.266817275170979e-08,
+        "overlap": 3.6612689768844575e-08,
+        "right": 3.15730090960642e-08,
+        "lower-left": 6.38719939161092e-08,
+        "below": 3.832873574083351e-08,
+        "lower-right": 4.29305546276737e-05
+      }
+    },
+    {
+      "id": "tiny-42-21",
+      "target": "left",
+      "prediction": "left",
+      "probabilities": {
+        "upper-left": 1.0434728210384492e-06,
+        "above": 6.101860776652757e-07,
+        "upper-right": 1.0910678156506037e-06,
+        "left": 0.9999864101409912,
+        "overlap": 6.896374884490797e-07,
+        "right": 5.6671829042898025e-06,
+        "lower-left": 2.667657554411562e-06,
+        "below": 3.9929983586262097e-07,
+        "lower-right": 1.4344702776725171e-06
+      }
+    },
+    {
+      "id": "tiny-42-22",
+      "target": "overlap",
+      "prediction": "overlap",
+      "probabilities": {
+        "upper-left": 5.935981448601524e-07,
+        "above": 7.448009569088754e-07,
+        "upper-right": 2.7213371822654153e-07,
+        "left": 4.2003270550594607e-07,
+        "overlap": 0.9999958276748657,
+        "right": 4.587872695083206e-07,
+        "lower-left": 3.816225842001586e-07,
+        "below": 9.996771268561133e-07,
+        "lower-right": 3.3520169040457404e-07
+      }
+    },
+    {
+      "id": "tiny-42-23",
+      "target": "right",
+      "prediction": "right",
+      "probabilities": {
+        "upper-left": 3.564984751847078e-07,
+        "above": 3.05046825133104e-07,
+        "upper-right": 3.3883537753354176e-07,
+        "left": 3.7275112845236436e-06,
+        "overlap": 1.0638785852279398e-06,
+        "right": 0.999991774559021,
+        "lower-left": 1.4493911066892906e-06,
+        "below": 3.0817145102446375e-07,
+        "lower-right": 6.296879178080417e-07
+      }
+    },
+    {
+      "id": "tiny-42-24",
+      "target": "lower-left",
+      "prediction": "lower-left",
+      "probabilities": {
+        "upper-left": 4.791000719706062e-06,
+        "above": 1.815639279811876e-06,
+        "upper-right": 1.997982280954602e-06,
+        "left": 1.415880774402467e-06,
+        "overlap": 1.9694919046742143e-06,
+        "right": 2.1690293579013087e-06,
+        "lower-left": 0.9999698400497437,
+        "below": 2.399447794232401e-06,
+        "lower-right": 1.360266742267413e-05
+      }
+    },
+    {
+      "id": "tiny-42-25",
+      "target": "below",
+      "prediction": "below",
+      "probabilities": {
+        "upper-left": 6.122926379248383e-07,
+        "above": 2.8274860142118996e-06,
+        "upper-right": 1.7385720241236413e-07,
+        "left": 1.8229098941446864e-07,
+        "overlap": 2.6532163133197173e-07,
+        "right": 1.7475217362061812e-07,
+        "lower-left": 3.677118911582511e-07,
+        "below": 0.9999947547912598,
+        "lower-right": 5.623135166388238e-07
+      }
+    },
+    {
+      "id": "tiny-42-26",
+      "target": "lower-right",
+      "prediction": "lower-right",
+      "probabilities": {
+        "upper-left": 7.699721209064592e-06,
+        "above": 6.707559350616066e-06,
+        "upper-right": 1.6618143490632065e-05,
+        "left": 5.491487172548659e-06,
+        "overlap": 8.628790055809077e-06,
+        "right": 9.623834557714872e-06,
+        "lower-left": 1.2564685675897636e-05,
+        "below": 9.090234016184695e-06,
+        "lower-right": 0.999923586845398
+      }
+    },
+    {
+      "id": "tiny-42-27",
+      "target": "upper-left",
+      "prediction": "upper-left",
+      "probabilities": {
+        "upper-left": 0.9999783039093018,
+        "above": 3.804151674557943e-06,
+        "upper-right": 2.0456848233152414e-06,
+        "left": 1.471903829042276e-06,
+        "overlap": 1.954602794285165e-06,
+        "right": 1.2253658496774733e-06,
+        "lower-left": 4.495434495765949e-06,
+        "below": 1.9959977635153336e-06,
+        "lower-right": 4.780826657224679e-06
+      }
+    },
+    {
+      "id": "tiny-42-28",
+      "target": "above",
+      "prediction": "above",
+      "probabilities": {
+        "upper-left": 2.0231323105690535e-06,
+        "above": 0.999995231628418,
+        "upper-right": 1.6356493404146022e-07,
+        "left": 2.4484697291882185e-07,
+        "overlap": 2.556292315603059e-07,
+        "right": 1.7403330332399491e-07,
+        "lower-left": 3.031008759535325e-07,
+        "below": 1.1786653431045124e-06,
+        "lower-right": 4.160160074206942e-07
+      }
+    },
+    {
+      "id": "tiny-42-29",
+      "target": "upper-right",
+      "prediction": "upper-right",
+      "probabilities": {
+        "upper-left": 7.38787366572069e-06,
+        "above": 3.868036912990647e-08,
+        "upper-right": 0.9999622106552124,
+        "left": 4.91846378736227e-07,
+        "overlap": 3.0536362771727e-08,
+        "right": 2.6422130261494203e-08,
+        "lower-left": 2.784123716992326e-05,
+        "below": 2.8289877107567918e-08,
+        "lower-right": 1.9111701021756744e-06
+      }
+    },
+    {
+      "id": "tiny-42-30",
+      "target": "left",
+      "prediction": "left",
+      "probabilities": {
+        "upper-left": 1.8000336865497957e-07,
+        "above": 6.646378096775152e-07,
+        "upper-right": 3.9672201523899275e-07,
+        "left": 0.9999831914901733,
+        "overlap": 3.0556421393157507e-07,
+        "right": 1.6545400285394862e-06,
+        "lower-left": 1.2774051356245764e-05,
+        "below": 2.1370527747421875e-07,
+        "lower-right": 7.015678988864238e-07
+      }
+    },
+    {
+      "id": "tiny-42-31",
+      "target": "overlap",
+      "prediction": "overlap",
+      "probabilities": {
+        "upper-left": 5.437960339804704e-07,
+        "above": 5.014121597923804e-06,
+        "upper-right": 2.491156863015931e-07,
+        "left": 8.349070412805304e-07,
+        "overlap": 0.9999775886535645,
+        "right": 8.803124842415855e-07,
+        "lower-left": 3.394039822524064e-07,
+        "below": 1.4289325918070972e-05,
+        "lower-right": 2.8054489575879415e-07
+      }
+    }
+  ]
+}

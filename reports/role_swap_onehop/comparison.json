@@ -1,0 +1,143 @@
+{
+  "new_checkpoint": "checkpoints/role-swap-onehop-gate.pt",
+  "numerical": {
+    "logged": 121,
+    "steps": [
+      1,
+      1200
+    ],
+    "max": {
+      "loss": 3.4124083518981934,
+      "hidden_max_abs": 82.92411804199219,
+      "q_norm_max": 36.14665603637695,
+      "k_norm_max": 43.07847213745117,
+      "logit_max_abs": 9.463964462280273,
+      "grad_norm_pre_clip": 323.6741943359375,
+      "grad_norm_post_clip": 1.0000001192092896
+    },
+    "nonfinite": 0,
+    "sampled_loss_first100": 1.6162492091005498,
+    "sampled_loss_last100": 0.650822103023529,
+    "vertical_by_label": {
+      "above": {
+        "n": 300,
+        "original": 0.85,
+        "swapped": 0.15333333333333332,
+        "both": 0.016666666666666666,
+        "same_prediction": 0.97
+      },
+      "below": {
+        "n": 300,
+        "original": 0.2,
+        "swapped": 0.8,
+        "both": 0.006666666666666667,
+        "same_prediction": 0.9866666666666667
+      }
+    },
+    "vertical_predicted": {
+      "above": 495,
+      "below": 105
+    },
+    "vertical_swapped_predicted": {
+      "above": 494,
+      "below": 106
+    }
+  },
+  "vertical_role_swap": {
+    "before": {
+      "original_correct": 0.6366666666666667,
+      "swapped_correct": 0.36666666666666664,
+      "both_correct": 0.07833333333333334,
+      "correct_flip": 0.07833333333333334
+    },
+    "after": {
+      "original_correct": 0.525,
+      "swapped_correct": 0.4766666666666667,
+      "both_correct": 0.011666666666666667,
+      "correct_flip": 0.011666666666666667
+    }
+  },
+  "old_name_pairs": {
+    "before": {
+      "numbered_correct": 0.93,
+      "renamed_correct": 0.92,
+      "both_correct": 0.885,
+      "prediction_changed": 0.08
+    },
+    "after": {
+      "numbered_correct": 0.615,
+      "renamed_correct": 0.61,
+      "both_correct": 0.495,
+      "prediction_changed": 0.235
+    }
+  },
+  "vertical_name_pairs": {
+    "before": {
+      "numbered_correct": 0.65,
+      "renamed_correct": 0.6233333333333333,
+      "both_correct": 0.45666666666666667,
+      "prediction_changed": 0.36
+    },
+    "after": {
+      "numbered_correct": 0.5233333333333333,
+      "renamed_correct": 0.5266666666666666,
+      "both_correct": 0.38333333333333336,
+      "prediction_changed": 0.2833333333333333
+    }
+  },
+  "counterfactual": {
+    "before": {
+      "pairs": 100,
+      "both_correct": 0.86,
+      "correct_probability_shift": 1.0
+    },
+    "after": {
+      "pairs": 100,
+      "both_correct": 0.3,
+      "correct_probability_shift": 0.96
+    }
+  },
+  "new_heldout": {
+    "n": 1844,
+    "accuracy": 0.5244034707158352,
+    "ece15": 0.023124215207234414,
+    "brier": 0.4780211913775125
+  },
+  "new_heldout_role_swap": {
+    "original_correct": 0.5704989154013015,
+    "swapped_correct": 0.47830802603036876,
+    "both_correct": 0.06399132321041215,
+    "correct_flip": 0.016268980477223426
+  },
+  "sensitivity": {
+    "before": {
+      "decide_hidden_cos_mean": 0.9995014280080795,
+      "logit_mean_abs_difference": 0.15249816067516803,
+      "changed_token_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "after": {
+      "decide_hidden_cos_mean": 0.9995137929916382,
+      "logit_mean_abs_difference": 0.07454323526471854,
+      "changed_token_counts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    }
+  },
+  "note": "Before/after share the old vertical, name and counterfactual examples. The continuation also changes optimizer state and training steps."
+}

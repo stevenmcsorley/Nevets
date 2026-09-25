@@ -1,0 +1,19 @@
+{
+  "logged": 81,
+  "steps": [
+    1,
+    800
+  ],
+  "max": {
+    "loss": 2.2247731685638428,
+    "hidden_max_abs": 71.0140380859375,
+    "q_norm_max": 24.147506713867188,
+    "k_norm_max": 28.83856964111328,
+    "logit_max_abs": 8.850732803344727,
+    "grad_norm_pre_clip": 212.92129516601562,
+    "grad_norm_post_clip": 1.0000001192092896
+  },
+  "nonfinite": 0,
+  "first100_mean_loss": 2.0802481174468994,
+  "last100_mean_loss": 0.13681061305105685
+}

@@ -1,0 +1,27 @@
+{
+  "source_dir": "reports\\paraphrase_onehop",
+  "inverse_labels": {
+    "upper-left": "lower-right",
+    "above": "below",
+    "upper-right": "lower-left",
+    "left": "right",
+    "overlap": "overlap",
+    "right": "left",
+    "lower-left": "upper-right",
+    "below": "above",
+    "lower-right": "upper-left"
+  },
+  "protected_evaluation_sources": [
+    "reports\\paraphrase_onehop\\heldout.jsonl",
+    "reports\\paired_onehop\\vertical_probe_pairs.json",
+    "reports\\paired_onehop\\counterfactual.jsonl"
+  ],
+  "query_roles_per_rendering": 2,
+  "train_records": 6996,
+  "train_four_rendering_groups": 1749,
+  "train_groups_skipped_for_duplicates_or_leakage": 118,
+  "heldout_records": 1844,
+  "heldout_four_rendering_groups": 461,
+  "heldout_groups_skipped_for_duplicates_or_leakage": 6,
+  "train_and_heldout_disjoint": true
+}

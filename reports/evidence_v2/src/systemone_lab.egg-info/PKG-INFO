@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: systemone-lab
+Version: 0.1.0
+Summary: Clean-room, from-scratch System-One/Jev-class decision model research lab
+Requires-Python: <3.15,>=3.11
+Requires-Dist: numpy>=2.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: tokenizers>=0.20
+Requires-Dist: datasets>=3.0
+Requires-Dist: huggingface-hub>=0.27
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn[standard]>=0.32
+Requires-Dist: pydantic>=2.9
+Requires-Dist: tqdm>=4.66
+Requires-Dist: safetensors>=0.4
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: ruff>=0.8; extra == "dev"

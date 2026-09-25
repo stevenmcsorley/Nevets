@@ -1,0 +1,17 @@
+# Checkpoint registry
+
+An entry changes only with measured evidence (link the report). Read-only (protected) files are marked 🔒. Latency is on an RTX 3060 at BF16, for one spatial question with an 81-token state (`scripts/bench_latency.py`).
+
+| Slot | Checkpoint | Params | Evidence | Latency | Notes |
+|---|---|---|---|---|---|
+| BASE | `s1-35m-pretrain.pt` 🔒 | 32.2M | 50k LM steps (FineWeb-Edu slice) | — | Root of every LM-initialized lineage. |
+| REFERENCE | `paired-paraphrase-onehop-gate.pt` 🔒 | 32.2M | P-04 | — | Frozen comparison point for the historical gates. |
+| BEST_SPATIAL | `exp9-aux-loop.pt` 🔒 | 32.2M | L-1: stress 100%, chains 96.6 / 81.4 / 57.1% (1–3 hops) | 75 ms | Loop ×2 costs 2.7× latency. |
+| BEST_FAST (spatial) | `exp6a-noloop.pt` | 32.2M | dev chains 92.7 / 86.9 / 54.7%; one-hop gates 100% | 28 ms | About 5 points below BEST_SPATIAL on 1–3 hops, at 2.7× lower latency. |
+| BEST_CALIBRATED | `exp6a-noloop.pt` | 32.2M | dev chain ECE 0.049; one-hop held-out ECE 0.004 | 28 ms | exp9 chain ECE is 0.071. |
+| BEST_ONEHOP_MINIMAL | `entity-binding-onehop-gate.pt` 🔒 | 32.2M | EB-1 | — | Smallest change that fixed role binding. |
+| BEST_CHESS | — | | | | CH-1 pending |
+| BEST_GENERAL | — | | | | No multi-domain model yet |
+| BEST_SMALL | — | | | | T-R1 d=256 models pending |
+| REASONER | — | | | | T-R1 pending |
+| Rejected, kept for the record | `exp9-calibrated.pt` (C-1), `exp7-loop8.pt` (X-7), `role-*` (P-05 to P-07), `s1-35m-spatial.pt` (P-01) | | | | Do not use as initialization. |

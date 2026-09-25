@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treasure Hunt</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--cell:#efeee9;--accent:#2f6fdb;--good:#1f8a4c;--bad:#c2412d;--warn:#b86e00;--trail:#cfe0fb}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--cell:#2a2927;--accent:#6ea0ff;--good:#4fc27f;--bad:#f07a63;--warn:#e0a440;--trail:#233a60}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{margin:0 0 16px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:16px}
+@media (max-width:820px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.board{display:grid;gap:3px;aspect-ratio:1;width:100%}
+.cell{background:var(--cell);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,3.2vw,20px);position:relative;transition:background .2s}
+.cell.trail{background:var(--trail)}
+.cell small{position:absolute;right:2px;bottom:0;font-size:9px;color:var(--muted);font-family:ui-monospace,monospace}
+.controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:14px}
+.controls button{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:7px;padding:5px 12px;cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+select,input[type=range]{accent-color:var(--accent)}
+select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.turn{font:13px/1.5 ui-monospace,Consolas,monospace}
+.facts{white-space:pre-wrap;margin:6px 0 8px;padding:8px 10px;border-left:3px solid var(--accent);background:var(--cell);border-radius:0 6px 6px 0}
+.decision{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-family:system-ui,sans-serif;font-size:14px}
+.pill{font-size:12px;border-radius:999px;padding:1px 8px;border:1px solid currentColor}
+.ok{color:var(--good)}.no{color:var(--bad)}.unsure{color:var(--warn)}
+.log{max-height:260px;overflow:auto;font:12.5px/1.6 ui-monospace,Consolas,monospace}
+.log div{border-bottom:1px solid var(--line);padding:2px 0}
+.legend{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
+.banner{font-weight:650;min-height:1.4em}
+</style>
+</head>
+<body>
+<main>
+<h1>Treasure Hunt: the model plays by itself</h1>
+<p class="sub">Each turn the page describes the world <em>only in words</em>, asks the model “What is the spatial relation of the treasure to the robot?”, and steps the robot that way. The board is for you; the model never sees it.</p>
+
+<div class="panel controls">
+  <button class="primary" id="play">Pause</button>
+  <button id="step">Step</button>
+  <button id="reset">New round</button>
+  <label>Mode <select id="mode">
+    <option value="direct">Direct sight (one fact)</option>
+    <option value="landmark">Via landmarks (combine two facts)</option>
+    <option value="mixed">Mixed</option>
+  </select></label>
+  <label>Distractor facts <input type="range" id="noise" min="0" max="4" value="2"> <span id="noiseV">2</span></label>
+  <label>Speed <input type="range" id="speed" min="0" max="4" value="2"></label>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel">
+      <div class="banner" id="banner"></div>
+      <div class="board" id="board"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="panel stats">
+      <div class="stat"><b id="sWins">0</b><span>treasures found</span></div>
+      <div class="stat"><b id="sAcc">–</b><span>decisions correct</span></div>
+      <div class="stat"><b id="sTwo">–</b><span>two-fact decisions correct</span></div>
+      <div class="stat"><b id="sEff">–</b><span>path efficiency</span></div>
+      <div class="stat"><b id="sTrust">–</b><span>correct when ≥ 0.9</span></div>
+      <div class="stat"><b id="sLat">–</b><span>model latency</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="panel turn">
+      <div style="font-family:system-ui,sans-serif;font-weight:600">What the model sees this turn</div>
+      <div class="facts" id="facts">…</div>
+      <div id="question" style="color:var(--muted)"></div>
+      <div class="decision" id="decision" style="margin-top:8px"></div>
+    </div>
+    <div class="panel">
+      <div style="font-weight:600;margin-bottom:6px">Decision log</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+const N=9, STEP_LIMIT=30;
+const LABELS=["upper-left","above","upper-right","left","overlap","right","lower-left","below","lower-right"];
+const VEC={"upper-left":[-1,1],"above":[0,1],"upper-right":[1,1],"left":[-1,0],"overlap":[0,0],"right":[1,0],"lower-left":[-1,-1],"below":[0,-1],"lower-right":[1,-1]};
+const TEMPLATES={ // same wording families the model was trained on
+ left:["{a} is left of {b}.","{a} sits west of {b}.","{b} is to the right of {a}."],
+ right:["{a} is right of {b}.","{a} sits east of {b}.","{b} is to the left of {a}."],
+ above:["{a} is above {b}.","{a} sits north of {b}.","{b} is below {a}."],
+ below:["{a} is below {b}.","{a} sits south of {b}.","{b} is above {a}."],
+ "upper-left":["{a} is upper-left of {b}.","{a} is northwest of {b}."],
+ "upper-right":["{a} is upper-right of {b}.","{a} is northeast of {b}."],
+ "lower-left":["{a} is lower-left of {b}.","{a} is southwest of {b}."],
+ "lower-right":["{a} is lower-right of {b}.","{a} is southeast of {b}."],
+ overlap:["{a} occupies the same position as {b}."]};
+const ICON={robot:"🤖",treasure:"💎",landmark:"🌳",rock:"🪨"};
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sgn=v=>v>0?1:v<0?-1:0;
+function rel(p,q){const dx=sgn(p.x-q.x),dy=sgn(p.y-q.y);return LABELS.find(l=>VEC[l][0]===dx&&VEC[l][1]===dy)}
+function say(a,b){const r=rel(a.pos,b.pos);return pick(TEMPLATES[r]).replace("{a}",a.name).replace("{b}",b.name)}
+const same=(p,q)=>p.x===q.x&&p.y===q.y;
+
+let world,stats={twoN:0,twoOk:0,wins:0,rounds:0,dec:0,ok:0,conf:0,trustN:0,trustOk:0,lat:0,optimal:0,taken:0},playing=true,busy=false;
+
+function newRound(){
+  const letters=shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ".split(""));
+  const free=[];for(let x=0;x<N;x++)for(let y=0;y<N;y++)free.push({x,y});shuffle(free);
+  const take=()=>free.pop();
+  let robot,treasure;
+  do{robot=take();treasure=take()}while(Math.max(Math.abs(robot.x-treasure.x),Math.abs(robot.y-treasure.y))<4&&free.length>10);
+  const mode=$("mode").value==="mixed"?pick(["direct","landmark"]):$("mode").value;
+  world={mode,steps:0,trail:[{...robot}],
+    robot:{kind:"robot",name:letters[0],pos:robot},
+    treasure:{kind:"treasure",name:letters[1],pos:treasure},
+    landmarks:Array.from({length:4},(_,i)=>({kind:"landmark",name:letters[2+i],pos:take()})),
+    rocks:Array.from({length:6},(_,i)=>({kind:"rock",name:letters[6+i],pos:take()}))};
+  world.optimal=Math.max(Math.abs(robot.x-treasure.x),Math.abs(robot.y-treasure.y));
+  $("banner").textContent=`Round ${stats.rounds+1} · ${mode==="direct"?"direct sight":"via landmarks"}`;
+  $("banner").className="banner";
+  draw();
+}
+
+// Relations only give a sign per axis, so two facts determine the answer only when they never
+// point opposite ways on the same axis. Only such landmarks are used; otherwise fall back to sight.
+function determinate(t,l,r){const a=VEC[rel(t,l)],b=VEC[rel(l,r)];return a[0]*b[0]>=0&&a[1]*b[1]>=0}
+function describe(){
+  const w=world,facts=[];let via=null;
+  if(w.mode==="landmark"){
+    const good=w.landmarks.filter(l=>!same(l.pos,w.robot.pos)&&!same(l.pos,w.treasure.pos)&&determinate(w.treasure.pos,l.pos,w.robot.pos));
+    if(good.length) via=pick(good);
+  }
+  if(via){
+    facts.push(Math.random()<.5?say(w.treasure,via):say(via,w.treasure));
+    facts.push(Math.random()<.5?say(via,w.robot):say(w.robot,via));
+  } else facts.push(Math.random()<.5?say(w.treasure,w.robot):say(w.robot,w.treasure));
+  w.via=via;
+  const noise=+$("noise").value, others=[...w.rocks,...w.landmarks.filter(l=>l!==via)];
+  for(let i=0;i<noise;i++){
+    const a=pick(others); let b=pick([...others,w.robot].filter(o=>o!==a));
+    if(same(a.pos,b.pos)) continue;
+    facts.push(say(a,b));
+  }
+  return shuffle(facts).join(" ");
+}
+
+function blocked(p){return p.x<0||p.y<0||p.x>=N||p.y>=N||world.rocks.some(r=>same(r.pos,p))}
+
+async function turn(){
+  if(busy||!world) return; busy=true;
+  const w=world, state=describe(), truth=rel(w.treasure.pos,w.robot.pos);
+  const question=`What is the spatial relation of ${w.treasure.name} to ${w.robot.name}?`;
+  $("facts").textContent=state; $("question").textContent="Q: "+question;
+  const t0=performance.now(); let answer;
+  try{
+    const r=await fetch("/v1/systemone",{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({state,questions:{move:{type:"choice",instructions:question,criteria:Object.fromEntries(LABELS.map(l=>[l,l]))}}})});
+    answer=(await r.json()).answers.move;
+  }catch(e){$("decision").innerHTML=`<span class="no">Model unavailable: ${e.message}</span>`;busy=false;playing=false;syncPlay();return}
+  const lat=performance.now()-t0;
+  const ranked=Object.entries(answer.probabilities).sort((a,b)=>b[1]-a[1]);
+  const [choice,conf]=ranked[0], correct=choice===truth;
+  // Move toward the model's best direction that is legal; fall back through its distribution.
+  let moved=null;
+  for(const [label] of ranked){
+    if(label==="overlap") continue;
+    const nxt={x:w.robot.pos.x+VEC[label][0],y:w.robot.pos.y+VEC[label][1]};
+    if(!blocked(nxt)){moved=label;w.robot.pos=nxt;break}
+  }
+  w.steps++; w.trail.push({...w.robot.pos});
+  stats.dec++; stats.ok+=correct; stats.conf+=conf; stats.lat+=lat;
+  if(w.via){stats.twoN++;stats.twoOk+=correct}
+  if(conf>=.9){stats.trustN++;stats.trustOk+=correct}
+  const trusted=conf>=.9;
+  $("decision").innerHTML=`<span class="pill" style="color:var(--muted)">${w.via?"combine 2 facts via "+w.via.name:"direct sight"}</span>
+    <span>Model: <b>${choice}</b></span>
+    <span class="pill ${trusted?"ok":"unsure"}">${(conf*100).toFixed(0)}% ${trusted?"trusted":"uncertain"}</span>
+    <span class="pill ${correct?"ok":"no"}">${correct?"correct":"wrong, truth: "+truth}</span>
+    ${moved&&moved!==choice?`<span class="unsure">blocked → took next choice: ${moved}</span>`:""}
+    <span style="color:var(--muted)">${lat.toFixed(0)} ms</span>`;
+  const line=document.createElement("div");
+  line.innerHTML=`<span class="${correct?"ok":"no"}">${correct?"✓":"✗"}</span> ${choice.padEnd(11)} ${(conf*100).toFixed(0).padStart(3)}%  <span style="color:var(--muted)">${state}</span>`;
+  $("log").prepend(line); while($("log").children.length>80) $("log").lastChild.remove();
+  draw(); updateStats();
+  if(same(w.robot.pos,w.treasure.pos)){
+    stats.wins++;stats.rounds++;stats.optimal+=w.optimal;stats.taken+=w.steps;updateStats();
+    $("banner").textContent=`💎 Found in ${w.steps} steps (shortest possible: ${w.optimal})`;$("banner").className="banner ok";
+    busy=false; world=null; setTimeout(()=>{newRound()},delay()*3+400); return;
+  }
+  if(w.steps>=STEP_LIMIT){
+    stats.rounds++;updateStats();
+    $("banner").textContent=`Out of steps after ${STEP_LIMIT} moves`;$("banner").className="banner no";
+    busy=false; world=null; setTimeout(()=>{newRound()},delay()*3+400); return;
+  }
+  busy=false;
+}
+
+function draw(){
+  const w=world,b=$("board"); if(!w) return;
+  b.style.gridTemplateColumns=`repeat(${N},1fr)`;
+  const cells=[];
+  for(let row=N-1;row>=0;row--)for(let x=0;x<N;x++){
+    const p={x,y:row};let icon="",name="";
+    const here=[w.robot,w.treasure,...w.landmarks,...w.rocks].filter(o=>same(o.pos,p));
+    if(here.length){const top=here.find(o=>o.kind==="robot")||here[0];icon=ICON[top.kind];name=top.name}
+    const trail=w.trail.some(t=>same(t,p))&&!here.length;
+    cells.push(`<div class="cell${trail?" trail":""}">${icon}${name?`<small>${name}</small>`:""}</div>`);
+  }
+  b.innerHTML=cells.join("");
+  $("legend").innerHTML=`<span>${ICON.robot} robot = ${w.robot.name}</span><span>${ICON.treasure} treasure = ${w.treasure.name}</span><span>${ICON.landmark} landmarks = ${w.landmarks.map(l=>l.name).join(", ")}</span><span>${ICON.rock} rocks block moves</span><span>step ${w.steps}/${STEP_LIMIT}</span>`;
+}
+
+function updateStats(){
+  const s=stats,pct=(a,b)=>b?(100*a/b).toFixed(1)+"%":"–";
+  $("sWins").textContent=`${s.wins}/${s.rounds}`;
+  $("sAcc").textContent=pct(s.ok,s.dec);
+  $("sEff").textContent=s.taken?pct(s.optimal,s.taken):"–";
+  $("sTwo").textContent=pct(s.twoOk,s.twoN);
+  $("sTrust").textContent=pct(s.trustOk,s.trustN);
+  $("sLat").textContent=s.dec?(s.lat/s.dec).toFixed(0)+" ms":"–";
+}
+
+const delay=()=>[1200,700,350,150,0][+$("speed").value];
+async function loop(){
+  while(true){
+    if(playing&&world) await turn();
+    await new Promise(r=>setTimeout(r,Math.max(30,delay())));
+  }
+}
+function syncPlay(){$("play").textContent=playing?"Pause":"Play";$("play").className=playing?"":"primary"}
+$("play").onclick=()=>{playing=!playing;syncPlay()};
+$("step").onclick=()=>{playing=false;syncPlay();if(!world)newRound();turn()};
+$("reset").onclick=()=>{world=null;newRound()};
+$("mode").onchange=()=>{world=null;newRound()};
+$("noise").oninput=()=>{$("noiseV").textContent=$("noise").value};
+syncPlay();newRound();loop();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "ckpt": "checkpoints/exp1-bb3e5.pt",
+  "vertical_role_swap": 1.0,
+  "heldout_role_swap": 1.0,
+  "name_pairs": 1.0,
+  "vertical_name_pairs": 1.0,
+  "counterfactual_both": 1.0,
+  "counterfactual_shift": 1.0,
+  "heldout": {
+    "n": 1844,
+    "accuracy": 1.0,
+    "ece15": 0.015604091084960206,
+    "brier": 0.0005231074012666073
+  },
+  "stress": {
+    "overall": {
+      "n": 2400,
+      "accuracy": 0.7495833333333334,
+      "ece15": 0.03636786205694079,
+      "brier": 0.3538505576197807
+    },
+    "onehop_disconnected": {
+      "n": 600,
+      "accuracy": 0.995,
+      "ece15": 0.08880212614933652,
+      "brier": 0.029046124720798126,
+      "pair_both_correct": 0.99
+    },
+    "onehop_mention": {
+      "n": 600,
+      "accuracy": 0.8416666666666667,
+      "ece15": 0.05577591627836225,
+      "brier": 0.25549849909137295,
+      "pair_both_correct": 0.8166666666666667
+    },
+    "twohop": {
+      "n": 600,
+      "accuracy": 0.6383333333333333,
+      "ece15": 0.05992638622721037,
+      "brier": 0.4810006761030997,
+      "pair_both_correct": 0.5333333333333333
+    },
+    "twohop_disconnected": {
+      "n": 600,
+      "accuracy": 0.5233333333333333,
+      "ece15": 0.11888714767992496,
+      "brier": 0.6498569305638519,
+      "pair_both_correct": 0.4166666666666667
+    }
+  }
+}

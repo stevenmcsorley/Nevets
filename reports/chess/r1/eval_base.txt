@@ -1,0 +1,21 @@
+{
+  "ckpt": "checkpoints/chess/chess-base-r1.pt",
+  "positions": 3000,
+  "top1_agreement": 0.25166666666666665,
+  "top3_agreement": 0.467,
+  "mean_cp_loss_capped1000": 185.579,
+  "blunder_rate_200cp": 0.2663333333333333,
+  "ece15_top1": 0.09089544379028183,
+  "games": {
+    "random": {
+      "win": 9,
+      "draw": 11,
+      "loss": 0
+    },
+    "stockfish_1320": {
+      "win": 0,
+      "draw": 6,
+      "loss": 14
+    }
+  }
+}

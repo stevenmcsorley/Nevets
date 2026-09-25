@@ -1,0 +1,19 @@
+[
+  "src\\systemone_lab\\config.py",
+  "src\\systemone_lab\\eval.py",
+  "src\\systemone_lab\\formatting.py",
+  "src\\systemone_lab\\model.py",
+  "src\\systemone_lab\\training.py",
+  "scripts\\audit_decision_failure.py",
+  "scripts\\eval_counterfactual.py",
+  "scripts\\eval_spatial.py",
+  "scripts\\sanity_decision_generalisation.py",
+  "scripts\\sanity_decision_overfit.py",
+  "scripts\\sweep_decision_lr.py",
+  "scripts\\train_decision.py",
+  "scripts\\train_lm.py",
+  "configs\\s1_35m_decision_safe.yaml",
+  "configs\\s1_35m_decision_validated.yaml",
+  "tests/test_decision_safety.py",
+  "README.md"
+]

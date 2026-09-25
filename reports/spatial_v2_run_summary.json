@@ -1,0 +1,27 @@
+{
+  "logged_rows": 1001,
+  "first_step": 1,
+  "last_step": 10000,
+  "max": {
+    "loss": 3.0079689025878906,
+    "hidden_max_abs": 73.26402282714844,
+    "q_norm_max": 66.73074340820312,
+    "k_norm_max": 70.12085723876953,
+    "logit_max_abs": 9.202872276306152,
+    "grad_norm_pre_clip": 287.1729431152344,
+    "grad_norm_post_clip": 1.0000001192092896
+  },
+  "min": {
+    "loss": 0.4625440835952759,
+    "hidden_max_abs": 57.17558288574219,
+    "q_norm_max": 23.39331817626953,
+    "k_norm_max": 23.265602111816406,
+    "logit_max_abs": 0.6209383606910706,
+    "grad_norm_pre_clip": 4.991467475891113,
+    "grad_norm_post_clip": 0.9999997615814209
+  },
+  "nonfinite": 0,
+  "sampled_loss_first100": 2.231803547252308,
+  "sampled_loss_last100": 1.1452353358268739,
+  "lm_checkpoint_sha256": "031c952b91ceb18314873969f60af595ce8b8e8df45cc7ec6c8882e077a804fc"
+}

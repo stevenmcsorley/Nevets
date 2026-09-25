@@ -1,0 +1,134 @@
+{
+  "checkpoints/s1-35m-pretrain.pt": {
+    "step": 50000,
+    "metrics": {
+      "lm_loss": 3.3938727378845215
+    },
+    "parameter_max": {
+      "norm.weight": 5.29710054397583,
+      "ptr_q.weight": 0.09409217536449432,
+      "ptr_k.weight": 0.09487422555685043
+    },
+    "hidden_max": 60.464481353759766,
+    "q_norm": 23.300212860107422,
+    "k_norm_max": 23.173166275024414,
+    "logits": [
+      1.34375,
+      1.25,
+      2.078125,
+      2.0625,
+      2.0,
+      1.984375,
+      2.375,
+      1.1640625,
+      1.75
+    ],
+    "loss": 2.3623046875,
+    "grad_norm": 94.40115356445312
+  },
+  "reports/evidence_v2/s1-35m-spatial.failed.pt": {
+    "step": 10000,
+    "metrics": {
+      "train_loss": 1.05029296875
+    },
+    "parameter_max": {
+      "norm.weight": 5.150705337524414,
+      "ptr_q.weight": 1.7434957027435303,
+      "ptr_k.weight": 1.6931345462799072
+    },
+    "hidden_max": 8.132128715515137,
+    "q_norm": 52160.7578125,
+    "k_norm_max": 37555.22265625,
+    "logits": [
+      122159104.0,
+      122159104.0,
+      122159104.0,
+      122683392.0,
+      122159104.0,
+      122159104.0,
+      122159104.0,
+      122159104.0,
+      122159104.0
+    ],
+    "loss": 131072.84375,
+    "grad_norm": 521268.625
+  },
+  "class_distribution": {
+    "data/processed/spatial_train.jsonl": {
+      "left": {
+        "count": 4722,
+        "percent": 9.444
+      },
+      "upper-left": {
+        "count": 7237,
+        "percent": 14.474
+      },
+      "above": {
+        "count": 4681,
+        "percent": 9.362
+      },
+      "right": {
+        "count": 4950,
+        "percent": 9.9
+      },
+      "lower-right": {
+        "count": 7065,
+        "percent": 14.13
+      },
+      "lower-left": {
+        "count": 7127,
+        "percent": 14.254
+      },
+      "upper-right": {
+        "count": 7181,
+        "percent": 14.362
+      },
+      "below": {
+        "count": 4656,
+        "percent": 9.312
+      },
+      "overlap": {
+        "count": 2381,
+        "percent": 4.762
+      }
+    },
+    "data/processed/spatial_dev.jsonl": {
+      "above": {
+        "count": 419,
+        "percent": 8.38
+      },
+      "upper-left": {
+        "count": 842,
+        "percent": 16.84
+      },
+      "upper-right": {
+        "count": 746,
+        "percent": 14.92
+      },
+      "lower-left": {
+        "count": 750,
+        "percent": 15.0
+      },
+      "lower-right": {
+        "count": 777,
+        "percent": 15.54
+      },
+      "left": {
+        "count": 413,
+        "percent": 8.26
+      },
+      "below": {
+        "count": 396,
+        "percent": 7.92
+      },
+      "right": {
+        "count": 386,
+        "percent": 7.72
+      },
+      "overlap": {
+        "count": 271,
+        "percent": 5.42
+      }
+    }
+  }
+}

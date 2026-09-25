@@ -1,0 +1,20 @@
+{
+  "seed": 19091,
+  "train_pairs": 800,
+  "train_records": 1600,
+  "heldout_pairs": 200,
+  "heldout_records": 400,
+  "counterfactual_pairs": 100,
+  "labels": [
+    "upper-left",
+    "above",
+    "upper-right",
+    "left",
+    "overlap",
+    "right",
+    "lower-left",
+    "below",
+    "lower-right"
+  ],
+  "numbered_and_letter_names_for_each_world": true
+}

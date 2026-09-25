@@ -1,0 +1,9 @@
+
+Algorithm : SHA256
+Hash      : 031C952B91CEB18314873969F60AF595CE8B8E8DF45CC7EC6C8882E077A804FC
+Path      : E:\systemone-lab\checkpoints\s1-35m-pretrain.pt
+
+Algorithm : SHA256
+Hash      : C7DFBACEB3C72E78B84EE0DE1727A09F56B7FCB5FF92975DBF44408170FEE6E3
+Path      : E:\systemone-lab\checkpoints\s1-35m-spatial.pt
+

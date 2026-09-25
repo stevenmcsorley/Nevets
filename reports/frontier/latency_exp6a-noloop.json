@@ -1,0 +1,14 @@
+{
+  "ckpt": "checkpoints/exp6a-noloop.pt",
+  "parameters": 32186880,
+  "device": "NVIDIA GeForce RTX 3060",
+  "loop_iters": 0,
+  "spatial_1_questions_ms": 28.21276333318868,
+  "spatial_1_questions_tokens": 81,
+  "spatial_8_questions_ms": 35.81978333337853,
+  "spatial_8_questions_tokens": 424,
+  "spatial_32_questions_ms": 68.7822466667664,
+  "spatial_32_questions_tokens": 1600,
+  "chess_56_moves_ms": 27.059373333274078,
+  "chess_tokens": 574
+}

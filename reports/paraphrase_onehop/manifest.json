@@ -1,0 +1,15 @@
+{
+  "seed": 20091,
+  "train_worlds": 800,
+  "train_records": 3734,
+  "heldout_worlds": 200,
+  "heldout_records": 934,
+  "heldout_name_pairs": 467,
+  "all_wording_templates_per_world": true,
+  "both_name_renderings_per_template": true,
+  "protected_evaluation_sources": [
+    "reports\\paired_onehop\\heldout.jsonl",
+    "reports\\paired_onehop\\counterfactual.jsonl",
+    "reports\\paired_onehop\\vertical_probe_pairs.json"
+  ]
+}

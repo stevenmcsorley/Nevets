@@ -1,0 +1,54 @@
+{
+  "data/processed/spatial_train.jsonl": {
+    "records_validated": 50000,
+    "counts": {
+      "left": 4722,
+      "upper-left": 7237,
+      "above": 4681,
+      "right": 4950,
+      "lower-right": 7065,
+      "lower-left": 7127,
+      "upper-right": 7181,
+      "below": 4656,
+      "overlap": 2381
+    },
+    "percent": {
+      "left": 9.444,
+      "upper-left": 14.474,
+      "above": 9.362,
+      "right": 9.9,
+      "lower-right": 14.13,
+      "lower-left": 14.254,
+      "upper-right": 14.362,
+      "below": 9.312,
+      "overlap": 4.762
+    }
+  },
+  "data/processed/spatial_dev.jsonl": {
+    "records_validated": 5000,
+    "counts": {
+      "above": 419,
+      "upper-left": 842,
+      "upper-right": 746,
+      "lower-left": 750,
+      "lower-right": 777,
+      "left": 413,
+      "below": 396,
+      "right": 386,
+      "overlap": 271
+    },
+    "percent": {
+      "above": 8.38,
+      "upper-left": 16.84,
+      "upper-right": 14.92,
+      "lower-left": 15.0,
+      "lower-right": 15.54,
+      "left": 8.26,
+      "below": 7.92,
+      "right": 7.72,
+      "overlap": 5.42
+    }
+  },
+  "checkpoint_sha256": "031c952b91ceb18314873969f60af595ce8b8e8df45cc7ec6c8882e077a804fc",
+  "tokenizer_sha256": "a78287861bc84f8d291fad598ae7d7c87f1da13bc3bc6e3019f1fa7924aeaa84"
+}

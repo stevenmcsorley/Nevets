@@ -1,0 +1,69 @@
+# Research ledger
+
+Append-only. Every significant experiment gets an entry, whether it succeeded or failed. Never delete or rewrite a past conclusion; add a later entry that supersedes it. Checkpoints are under `checkpoints/`, configs under `configs/`, and results under `reports/` at the paths given.
+
+Format per entry: **ID** · parent → artifact · architecture · data · hypothesis · compute · result · conclusion · next.
+
+---
+
+## Pre-September lineage (summarized from README and `reports/decision_failure_v2.md`; not re-run)
+
+| ID | Parent → checkpoint | Result | Conclusion |
+|---|---|---|---|
+| P-01 | LM → `s1-35m-spatial.pt` | pointer weights diverged (BF16, unbounded scores) | Superseded; do not use. |
+| P-02 | LM → `s1-35m-spatial-v2.pt` (10k steps, cosine) | stable, but 38.6% dev, 26% balanced held-out, 2/100 counterfactual pairs; 72% → 25.5% under renaming | Failed the reasoning gates. |
+| P-03 | LM → `paired-onehop-gate.pt` (600 steps, paired names) | 88% held-out; names both-correct 82%; vertical probe both-correct 34% | The aggregate hid an inverse-wording failure. |
+| P-04 | LM → `paired-paraphrase-onehop-gate.pt` (800 steps, all wordings) | 88.9% held-out; names 88.5%; counterfactual 86%; vertical role swap 7.8% | **Reference checkpoint** (protected). |
+| P-05 | P-04 → `role-swap-onehop-gate.pt` | role swap 7.8% → 1.2%; decision-state cosine across swaps 0.9995 | Failed: the model ignored query order. |
+| P-06 | P-04 → `role-aware-onehop-gate.pt` (name-embedding difference in the query) | role swap 46.2%, but names 33% and counterfactual 27% | Failed: traded away old skills. |
+| P-07 | P-04 → `role-adapter-only-gate.pt` (frozen, adapter only) | role swap 18.7%, names 87.5% | Failed: static embeddings carry no state information. |
+
+## September 2026 session
+
+**EB-1** · P-04 → `entity-binding-onehop-gate.pt` · `entity_binding` (zero-initialized `W_bind` on the difference of contextual name occurrences), trained alone with everything else frozen · `role_swap_onehop/train.jsonl`, 1,200 steps · *H: role information must come from the state occurrences, not the names.* · ~4 min · vertical role swap 7.8 → **90.0%**, held-out role swap 89.8%, names 98.5%, counterfactual 100%, held-out accuracy 94.6% (`reports/candidate_gate/summary.json`) · **Confirmed.** Linking query names to their state occurrences fixed role binding.
+
+**EB-2** · EB-1 → stress suite (read-only) · 4 suites × 600 records · one-hop with one irrelevant fact: 41%, two-hop 29% · **Failure found:** every curriculum since P-03 used one-sentence states.
+
+**EB-3A / EB-3B** · EB-1 → `entity-binding-multifact-{bindonly,full}.pt` · multi-fact mix, 1,200 steps · A (frozen): 46.7% disconnected; B (full): 93.2% disconnected, 80.3% mention, 41.2% two-hop, one-hop gates about 100% (`reports/binding_stress/summary.json`) · **B confirmed** for one-hop; two-hop is an *underfit* (train 35.5% ≈ held-out).
+
+**X-1** · EB-3B → `exp1-bb3e5.pt` · backbone LR 3e-6 → 3e-5 · 1,200 steps · two-hop 41 → 64%, disconnected 99.5% · **Optimization was a bottleneck.**
+
+**X-2** · X-1 → `exp2-chain.pt` · 1–6-hop chain curriculum (random names, branches, disconnected facts) · 3,000 steps · chain overall 33%; accuracy falls with fact count (1 hop: 100% at one fact → 61% at four) · Retrieval among many facts is weak.
+
+**X-3** · X-2 → `exp3-stageA.pt` · 1–2-hop curriculum stage · chain two-hop 43% · Marginal.
+
+**X-4** · X-1 → `exp4-bidir.pt` · **bidirectional state attention**, controlled against X-2 · stress 83.9 → 93.2%, two-hop disconnected 63.5 → 85.8%, chain 33 → 36% · **Confirmed.**
+
+**X-5** · X-4 → `exp5-bidir-long.pt` · 15,000 steps, 120k fresh chain records · stress 99.1%, chain 2-hop 73.6%, 4+ ≈ 27–40% · Longer training helps up to about three hops.
+
+**X-6A / X-6B** · X-5 → `exp6a-noloop.pt` / `exp6b-loop.pt` (top-4 loop, zero gate) · 1–4-hop curriculum, 6,000 steps · both: 2-hop 87%, 3-hop 55%; loop gates 0.01 · Curriculum helps; **the loop was never engaged**.
+
+**X-7** · X-5 → `exp7-loop8.pt` (8-block loop, gate LR 3e-3) · gates 0.11; no change against X-6A · **Rejected:** grafted loop.
+
+**X-8** · X-5 → `exp8-aux.pt` (coordinate auxiliary loss, weight 1) · no change; probe: exact position 28% at one link, 0% at three · **Rejected** at this weight.
+
+**X-9** · X-8 → `exp9-aux-loop.pt` (auxiliary weight 10 + 8-block loop) · 8,000 steps · 1–4 hops: 97.7 / 91.3 / 64.2 / 38.8%; 5+ unchanged; probe 37 / 27 / 6% · **Best spatial model**; composition is still unsolved.
+
+**C-1** · X-9 → `exp9-calibrated.pt` · global temperature fitted on a separate dev set (T = 6.87) · NLL 1.108 → 1.054, but ECE 0.062 → 0.076 · **Rejected:** mid-band overconfidence cannot be fixed with one temperature. The checkpoint is kept for the record.
+
+**L-1** · X-9 locked evaluation (one time) · `reports/locked_final/summary.json` · stress 100%; chains 96.6 / 81.4 / 57.1% at 1–3 hops; 7–10 hops 26–38%; transforms 85.4%; `spatial_locked` 38.4%; locked counterfactual 14.8% · **Not promotable.**
+
+**A-1 (audit, 25 September)** · see `FRONTIER_STATE.md` · found: spatial checkpoints crashed on non-spatial questions (fixed with a fallback when no entities are present); training was launch-bound (about 375 ms CPU against 30 ms GPU per step) · batched decision head, device-side masks, and packing caches: flat d256 step 280 → 50 ms (5.6×); equivalence test against the legacy path passes.
+
+**T-R1 — FAILED (optimization)** · from scratch, d=256, 1–6-hop chains (`data/processed/tournament/chain_h1_6_train.jsonl`, seed 81001, 239,932 records, eval and locked states excluded) · arms flat4 and loop (P1-C2×K-D1, input injection, K ~ U[2,10]) completed; flat8 and loopaux stopped early · 12,000 steps × 32 · *H: a weight-tied core with input injection and variable depth learns composition that extrapolates with test-time iterations (Fan et al. 2024; Yang et al. 2023; Dehghani et al. 2018).* · **No arm learned**: loss 2.197 → 2.14 (ln 9 = 2.197); dev chains at chance (flat4 one-hop 24%; loop 20% at every K) (`reports/tournament/r1/`) · **Conclusion:** from random weights with this data mix and LR, neither architecture leaves the plateau within 12k steps. This says nothing about architecture. **Next:** T-R2 retrofits the loop onto a competent checkpoint so that K=1 equals the flat model.
+
+**T-R2 (running)** · `exp6a-noloop` restructured as prelude (blocks 0–1) / weight-tied core (2–5) / coda (6–7); K=1 is exactly the flat model (test `test_looped_k1_equals_flat_checkpoint`) · control K=1 against looped K ~ U[1,6], same data (T-R1 chains), 6,000 steps × 16, seed 42 · K sweep at evaluation · `scripts/tournament_r2.sh`, `reports/tournament/r2/`.
+
+**CH-1 / CH-2 (running)** · BASE→CHESS (LM init) against SPATIAL→CHESS (`exp6a-noloop` init) · `train_2013-01.jsonl` (150,001 positions, zero overlap with eval by `scripts/check_chess_leakage.py`), 18,000 steps × 16 · `scripts/chess_r1.sh`, `reports/chess/r1/` · *H: spatial decision training transfers to chess (faster or better move choice).*
+
+**CH-0 (data, running)** · Lichess 2013-01 (train, 150k positions) / 2013-02 (eval, 3,000), Stockfish 19 MultiPV over all legal moves, depth 10, τ = 80 cp · `data/processed/chess/`.
+
+**S-1 (shortcut audit, 25 September)** · read-only on exp9 / exp6a · 400 dev chain questions, option order shuffled with a fixed seed · prediction changed on 52% / 50%; accuracy 48.5 → 30.3% / 44.8 → 29.0% (`reports/frontier/option_order_sensitivity.json`) · **Shortcut confirmed:** positional option identity. **Response:** `option_attention: isolated` (exact invariance, tested), `--shuffle-options` augmentation, and a permanent `option_shuffle_changed` gate.
+
+**ISO-A / ISO-B (queued, `scripts/queue_q1.sh`)** · exp6a → chain data (the same as T-R2), 6,000 × 16, seed 42 · A: causal options with shuffle augmentation; B: isolated options · compared with the T-R2 control (no augmentation) · *H: architectural invariance matches or beats augmentation on accuracy with zero order sensitivity.*
+
+**TM-1 (queued)** · `worlds_v1` (5 domains; train prose/JSON/kv; table held out; 600 counterfactual twins) · inits BASE / SPATIAL (exp6a) / SCRATCH · 6,000 × 16, seed 11 · `scripts/transfer_tm1.sh`, `reports/worlds/v1/` · *H: prior training (LM, spatial) transfers to new domains and formats.*
+
+**R-1 (reproducibility defect, 25 September)** · regenerating `worlds_v1` with the same seed gave different files: temporal and dependency facts came from a Python `set`, whose order depends on `PYTHONHASHSEED`. Contents and labels are identical; only fact order differed (3,229/5,000 eval records byte-identical). **The stored `worlds_v1` remains canonical** (read-only; TM-1 uses it). The generators now sort set-derived facts; `test_generation_is_independent_of_python_hash_seed` regenerates in two processes with different hash seeds and requires identical bytes.
+
+**INFO-1 (data factory)** · new `infogather` domain: repair a part now, or pay for a diagnostic first. The label is the exact expected-utility optimum (a correct repair is worth 1; EU(test) = −cost + Σ_o P(o) max_h P(h | o)). Act/test ≈ 57/43. Tested against the utility definition and for cost monotonicity. The domain goes into worlds_v2, not v1.

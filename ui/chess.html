@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SystemOne Chess</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--light:#ecdab9;--dark:#b58863;--accent:#2f6fdb;--good:#1f8a4c;--bad:#c2412d;--hl:rgba(47,111,219,.35);--last:rgba(255,213,0,.45)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--light:#c9b28e;--dark:#8b6a4c;--accent:#6ea0ff;--good:#4fc27f;--bad:#f07a63}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:22px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}.sub{margin:0 0 16px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.board{display:grid;grid-template-columns:repeat(8,1fr);aspect-ratio:1;width:100%;border-radius:6px;overflow:hidden;user-select:none}
+.sq{position:relative;display:flex;align-items:center;justify-content:center;font-size:clamp(22px,6.2vw,44px);line-height:1;cursor:pointer}
+.sq.l{background:var(--light)}.sq.d{background:var(--dark)}
+.sq.last::before{content:"";position:absolute;inset:0;background:var(--last)}
+.sq.sel::before{content:"";position:absolute;inset:0;background:var(--hl)}
+.sq.tgt::after{content:"";position:absolute;width:28%;height:28%;border-radius:50%;background:rgba(0,0,0,.25)}
+.sq span{position:relative;z-index:1}
+.w{color:#fff;text-shadow:0 0 2px #000,0 0 1px #000}.b{color:#111}
+.coord{position:absolute;left:3px;top:1px;font-size:10px;color:rgba(0,0,0,.45);z-index:1}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;font-size:14px}
+.controls button{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:7px;padding:5px 12px;cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.status{font-weight:650;min-height:1.4em;margin-bottom:8px}
+.cands div{display:grid;grid-template-columns:70px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:3px 0}
+.track{background:var(--line);border-radius:4px;height:10px;overflow:hidden}.fill{background:var(--muted);height:100%}
+.top .fill{background:var(--accent)}.num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.moves{font:13px/1.7 ui-monospace,Consolas,monospace;max-height:220px;overflow:auto}
+.tally{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:8px 10px}.stat b{display:block;font-size:20px}.stat span{font-size:12px;color:var(--muted)}
+.meta{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<h1>SystemOne plays chess</h1>
+<p class="sub">Each turn the board is sent to the model as text (a piece list) with every legal move as an option; it returns a probability for each move and plays the most likely one. Rules are enforced by python-chess; the move choice is the model's alone.</p>
+<div class="panel controls">
+  <label>Match <select id="match">
+    <option value="random">Model vs random mover</option>
+    <option value="stockfish">Model vs Stockfish</option>
+    <option value="self">Model vs itself</option>
+    <option value="human">You vs model</option>
+  </select></label>
+  <label id="eloBox">Stockfish Elo <select id="elo"><option>1320</option><option>1500</option><option>1800</option><option>2200</option></select></label>
+  <label id="colorBox">Model plays <select id="color"><option value="w">White</option><option value="b">Black</option></select></label>
+  <button class="primary" id="play">Pause</button>
+  <button id="reset">New game</button>
+  <label>Speed <select id="speed"><option value="900">slow</option><option value="400" selected>normal</option><option value="60">fast</option></select></label>
+</div>
+<div class="layout">
+  <div>
+    <div class="panel"><div class="status" id="status"></div><div class="board" id="board"></div></div>
+    <div class="panel tally">
+      <div class="stat"><b id="tW">0</b><span>model wins</span></div>
+      <div class="stat"><b id="tD">0</b><span>draws</span></div>
+      <div class="stat"><b id="tL">0</b><span>model losses</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="panel">
+      <div style="font-weight:600;margin-bottom:6px">Model's last decision</div>
+      <div class="cands" id="cands"><span class="meta">Waiting for the model's move…</span></div>
+      <div class="meta" id="lat" style="margin-top:6px"></div>
+    </div>
+    <div class="panel"><div style="font-weight:600;margin-bottom:6px">Moves</div><div class="moves" id="moves"></div></div>
+  </div>
+</div>
+</main>
+<script>
+const START="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const GLYPH={k:"♚",q:"♛",r:"♜",b:"♝",n:"♞",p:"♟"};
+const $=id=>document.getElementById(id);
+let fen=START,legal=[],sanList=[],last=null,sel=null,playing=true,over=false,busy=false,tally={W:0,D:0,L:0};
+const sqName=(f,r)=>"abcdefgh"[f]+(r+1);
+function parse(fen){const rows=fen.split(" ")[0].split("/"),b={};rows.forEach((row,i)=>{let f=0;for(const c of row){if(/\d/.test(c))f+=+c;else{b[sqName(f,7-i)]=c;f++}}});return b}
+const turnOf=f=>f.split(" ")[1];
+function draw(){
+  const b=parse(fen),flip=$("match").value==="human"&&$("color").value==="w";
+  const cells=[];
+  for(let i=0;i<8;i++)for(let j=0;j<8;j++){
+    const r=flip?i:7-i,f=flip?7-j:j,n=sqName(f,r),p=b[n];
+    const cls=["sq",(f+r)%2?"l":"d"];
+    if(last&&(last.slice(0,2)===n||last.slice(2,4)===n))cls.push("last");
+    if(sel===n)cls.push("sel");
+    if(sel&&legal.some(m=>m.startsWith(sel)&&m.slice(2,4)===n))cls.push("tgt");
+    cells.push(`<div class="${cls.join(" ")}" data-sq="${n}">${(j===0)?`<span class="coord">${r+1}</span>`:""}${p?`<span class="${p===p.toUpperCase()?"w":"b"}">${GLYPH[p.toLowerCase()]}</span>`:""}</div>`);
+  }
+  $("board").innerHTML=cells.join("");
+  $("moves").innerHTML=sanList.reduce((s,m,i)=>s+(i%2===0?`${i/2+1}. `:"")+m+(i%2?"<br>":" "),"");
+  $("moves").scrollTop=1e9;
+}
+function whoMoves(){
+  const m=$("match").value,t=turnOf(fen),modelColor=$("color").value;
+  if(m==="self")return"model";
+  if(t===modelColor)return"model";
+  return m==="human"?"human":m;
+}
+async function send(body){
+  const r=await fetch("/v1/chess",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({fen,...body})});
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.statusText);return j;
+}
+function apply(j){
+  fen=j.fen;legal=j.legal;last=j.uci;sanList.push(j.san);sel=null;
+  if(j.player==="model"&&j.candidates){
+    $("cands").innerHTML=j.candidates.map((c,i)=>`<div class="${i?"":"top"}"><span>${c.san}</span><span class="track"><span class="fill" style="display:block;width:${(c.p*100).toFixed(1)}%"></span></span><span class="num">${(c.p*100).toFixed(1)}%</span></div>`).join("");
+    $("lat").textContent=`played ${j.san} · ${j.ms.toFixed(0)} ms (model inference, all legal moves scored)`;
+  }
+  if(j.result){
+    over=true;const m=$("match").value,modelColor=$("color").value;
+    let verdict="Draw";
+    if(j.result!=="1/2-1/2"){const winner=j.result==="1-0"?"w":"b";verdict=m==="self"?(winner==="w"?"White wins":"Black wins"):(winner===modelColor?"Model wins":"Model loses")}
+    if(m!=="self"){if(verdict==="Model wins")tally.W++;else if(verdict==="Model loses")tally.L++;else tally.D++}
+    $("tW").textContent=tally.W;$("tD").textContent=tally.D;$("tL").textContent=tally.L;
+    $("status").textContent=`${verdict} (${j.status}, ${j.result}) after ${sanList.length} plies`;
+    if(playing&&m!=="human")setTimeout(()=>{if(playing)reset()},2500);
+  } else $("status").textContent=`${turnOf(fen)==="w"?"White":"Black"} to move${j.status==="check"?" · check":""}`;
+  draw();
+}
+async function tick(){
+  if(busy||over||!playing)return;const who=whoMoves();if(who==="human")return;
+  busy=true;
+  try{apply(await send({player:who==="self"?"model":who,elo:+$("elo").value}))}
+  catch(e){$("status").textContent="Error: "+e.message;playing=false;syncPlay()}
+  busy=false;
+}
+$("board").addEventListener("click",async e=>{
+  const n=e.target.closest(".sq")?.dataset.sq;if(!n||over||busy||whoMoves()!=="human")return;
+  if(sel){const mv=legal.find(m=>m.startsWith(sel)&&m.slice(2,4)===n);
+    if(mv){busy=true;try{apply(await send({player:"human",move:mv}))}catch(err){$("status").textContent=err.message}busy=false;return}}
+  sel=legal.some(m=>m.startsWith(n))?n:null;draw();
+});
+async function reset(){
+  fen=START;sanList=[];last=null;sel=null;over=false;
+  legal=(await (await fetch("/v1/chess/legal")).json()).legal;
+  $("status").textContent="White to move";$("cands").innerHTML='<span class="meta">Waiting for the model\'s move…</span>';$("lat").textContent="";
+  draw();
+}
+function syncPlay(){$("play").textContent=playing?"Pause":"Play";$("play").className=playing?"":"primary"}
+function syncControls(){const m=$("match").value;$("eloBox").style.display=m==="stockfish"?"":"none";$("colorBox").style.display=m==="self"?"none":""}
+$("play").onclick=()=>{playing=!playing;syncPlay()};
+$("reset").onclick=reset;
+$("match").onchange=()=>{syncControls();reset()};$("color").onchange=reset;
+async function loop(){while(true){await tick();await new Promise(r=>setTimeout(r,+$("speed").value))}}
+syncControls();syncPlay();reset().then(loop);
+</script>
+</body>
+</html>

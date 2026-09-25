@@ -1,0 +1,52 @@
+{
+  "ckpt": "checkpoints/exp6a-noloop.pt",
+  "split": "data/processed/worlds_v1",
+  "eval_heldout_table": {
+    "overall": {
+      "n": 500,
+      "accuracy": 0.106,
+      "ece15": 0.3487443111240864,
+      "brier": 1.1115713371499627,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    },
+    "kinship": {
+      "n": 500,
+      "accuracy": 0.106,
+      "ece15": 0.3487443111240864,
+      "brier": 1.1115713371499627,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    }
+  },
+  "eval_in_format": {
+    "overall": {
+      "n": 500,
+      "accuracy": 0.128,
+      "ece15": 0.11353571660816668,
+      "brier": 0.9348822392061734,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    },
+    "kinship": {
+      "n": 500,
+      "accuracy": 0.128,
+      "ece15": 0.11353571660816668,
+      "brier": 0.9348822392061734,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    }
+  },
+  "counterfactual": {
+    "rules": {
+      "pairs": 300,
+      "both_correct": 0.0033333333333333335,
+      "correct_direction": 0.4033333333333333
+    },
+    "dependency": {
+      "pairs": 300,
+      "both_correct": 0.006666666666666667,
+      "correct_direction": 0.29
+    }
+  }
+}

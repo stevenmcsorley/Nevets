@@ -1,0 +1,84 @@
+{
+  "n_logged": 61,
+  "step_range": [
+    1,
+    600
+  ],
+  "max": {
+    "loss": 2.2472891807556152,
+    "q_norm_max": 24.124225616455078,
+    "k_norm_max": 31.79338264465332,
+    "logit_max_abs": 8.672454833984375,
+    "grad_norm_pre_clip": 197.37477111816406,
+    "grad_norm_post_clip": 1.0000001192092896
+  },
+  "nonfinite": 0,
+  "loss_first100": 2.0944465615532617,
+  "loss_last100": 0.21342090889811516,
+  "per_class": {
+    "upper-left": {
+      "n": 23,
+      "numbered_correct": 1.0,
+      "renamed_correct": 1.0,
+      "both_correct": 1.0,
+      "prediction_changed": 0.0
+    },
+    "above": {
+      "n": 23,
+      "numbered_correct": 0.6956521739130435,
+      "renamed_correct": 0.43478260869565216,
+      "both_correct": 0.30434782608695654,
+      "prediction_changed": 0.5217391304347826
+    },
+    "upper-right": {
+      "n": 22,
+      "numbered_correct": 1.0,
+      "renamed_correct": 1.0,
+      "both_correct": 1.0,
+      "prediction_changed": 0.0
+    },
+    "left": {
+      "n": 22,
+      "numbered_correct": 1.0,
+      "renamed_correct": 0.9545454545454546,
+      "both_correct": 0.9545454545454546,
+      "prediction_changed": 0.045454545454545456
+    },
+    "overlap": {
+      "n": 22,
+      "numbered_correct": 1.0,
+      "renamed_correct": 1.0,
+      "both_correct": 1.0,
+      "prediction_changed": 0.0
+    },
+    "right": {
+      "n": 22,
+      "numbered_correct": 1.0,
+      "renamed_correct": 1.0,
+      "both_correct": 1.0,
+      "prediction_changed": 0.0
+    },
+    "lower-left": {
+      "n": 22,
+      "numbered_correct": 1.0,
+      "renamed_correct": 1.0,
+      "both_correct": 1.0,
+      "prediction_changed": 0.0
+    },
+    "below": {
+      "n": 22,
+      "numbered_correct": 0.3181818181818182,
+      "renamed_correct": 0.45454545454545453,
+      "both_correct": 0.13636363636363635,
+      "prediction_changed": 0.5
+    },
+    "lower-right": {
+      "n": 22,
+      "numbered_correct": 1.0,
+      "renamed_correct": 1.0,
+      "both_correct": 1.0,
+      "prediction_changed": 0.0
+    }
+  },
+  "lm_sha256": "031c952b91ceb18314873969f60af595ce8b8e8df45cc7ec6c8882e077a804fc"
+}

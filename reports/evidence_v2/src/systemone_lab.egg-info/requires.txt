@@ -1,0 +1,14 @@
+numpy>=2.0
+pyyaml>=6.0
+tokenizers>=0.20
+datasets>=3.0
+huggingface-hub>=0.27
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+tqdm>=4.66
+safetensors>=0.4
+
+[dev]
+pytest>=8.0
+ruff>=0.8

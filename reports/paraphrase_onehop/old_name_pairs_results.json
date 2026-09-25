@@ -1,0 +1,2011 @@
+{
+  "n": 200,
+  "rates": {
+    "numbered_correct": 0.93,
+    "renamed_correct": 0.92,
+    "both_correct": 0.885,
+    "prediction_changed": 0.08
+  },
+  "results": [
+    {
+      "id": "heldout-0",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-1",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-2",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-3",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-4",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-5",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-6",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-7",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-8",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-9",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-10",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-11",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-12",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-13",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-14",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-15",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-16",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-17",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-18",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-19",
+      "label": "above",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-20",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-21",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-22",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-23",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-24",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-25",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-26",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-27",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-28",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-29",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-30",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-31",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-32",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-33",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-34",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-35",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-36",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-37",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-38",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-39",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-40",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-41",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-42",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-43",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-44",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-45",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-46",
+      "label": "above",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-47",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-48",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-49",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-50",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-51",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-52",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-53",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-54",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-55",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-56",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-57",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-58",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-59",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-60",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-61",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-62",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-63",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-64",
+      "label": "above",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-65",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-66",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-67",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-68",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-69",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-70",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-71",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-72",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-73",
+      "label": "above",
+      "numbered": "below",
+      "renamed": "above",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-74",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-75",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-76",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-77",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-78",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-79",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-80",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-81",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-82",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-83",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-84",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-85",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-86",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-87",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-88",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-89",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-90",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-91",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-92",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-93",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-94",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-95",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-96",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-97",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-98",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-99",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-100",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-101",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-102",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-103",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-104",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-105",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-106",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-107",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-108",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-109",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-110",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-111",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-112",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-113",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-114",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-115",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-116",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-117",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-118",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-119",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-120",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-121",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-122",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-123",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-124",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-125",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-126",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-127",
+      "label": "above",
+      "numbered": "below",
+      "renamed": "above",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-128",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-129",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-130",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-131",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-132",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-133",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-134",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-135",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-136",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-137",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-138",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-139",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-140",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-141",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-142",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-143",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-144",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-145",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-146",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-147",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-148",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-149",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-150",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-151",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-152",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-153",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-154",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-155",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-156",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-157",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-158",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-159",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-160",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "below",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-161",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-162",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-163",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-164",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-165",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-166",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-167",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-168",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-169",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-170",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-171",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-172",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-173",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-174",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-175",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-176",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-177",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-178",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "below",
+      "numbered_correct": false,
+      "renamed_correct": true,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-179",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-180",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-181",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-182",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-183",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-184",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-185",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-186",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-187",
+      "label": "below",
+      "numbered": "below",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": true
+    },
+    {
+      "id": "heldout-188",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-189",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-190",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-191",
+      "label": "upper-right",
+      "numbered": "upper-right",
+      "renamed": "upper-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-192",
+      "label": "left",
+      "numbered": "left",
+      "renamed": "left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-193",
+      "label": "overlap",
+      "numbered": "overlap",
+      "renamed": "overlap",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-194",
+      "label": "right",
+      "numbered": "right",
+      "renamed": "right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-195",
+      "label": "lower-left",
+      "numbered": "lower-left",
+      "renamed": "lower-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-196",
+      "label": "below",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": false,
+      "renamed_correct": false,
+      "both_correct": false,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-197",
+      "label": "lower-right",
+      "numbered": "lower-right",
+      "renamed": "lower-right",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-198",
+      "label": "upper-left",
+      "numbered": "upper-left",
+      "renamed": "upper-left",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    },
+    {
+      "id": "heldout-199",
+      "label": "above",
+      "numbered": "above",
+      "renamed": "above",
+      "numbered_correct": true,
+      "renamed_correct": true,
+      "both_correct": true,
+      "prediction_changed": false
+    }
+  ]
+}

@@ -1,0 +1,433 @@
+[
+  {
+    "label": "above",
+    "template": "{a} is above {b}.",
+    "names": "numbered",
+    "n": 6,
+    "accuracy": 0.8333333333333334,
+    "predictions": {
+      "above": 5,
+      "below": 1
+    }
+  },
+  {
+    "label": "above",
+    "template": "{a} is above {b}.",
+    "names": "renamed",
+    "n": 6,
+    "accuracy": 0.6666666666666666,
+    "predictions": {
+      "above": 4,
+      "below": 2
+    }
+  },
+  {
+    "label": "above",
+    "template": "{a} sits north of {b}.",
+    "names": "numbered",
+    "n": 6,
+    "accuracy": 0.6666666666666666,
+    "predictions": {
+      "above": 4,
+      "below": 2
+    }
+  },
+  {
+    "label": "above",
+    "template": "{a} sits north of {b}.",
+    "names": "renamed",
+    "n": 6,
+    "accuracy": 1.0,
+    "predictions": {
+      "above": 6
+    }
+  },
+  {
+    "label": "above",
+    "template": "{b} is below {a}.",
+    "names": "numbered",
+    "n": 11,
+    "accuracy": 0.6363636363636364,
+    "predictions": {
+      "above": 7,
+      "below": 4
+    }
+  },
+  {
+    "label": "above",
+    "template": "{b} is below {a}.",
+    "names": "renamed",
+    "n": 11,
+    "accuracy": 0.0,
+    "predictions": {
+      "below": 11
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} is below {b}.",
+    "names": "numbered",
+    "n": 8,
+    "accuracy": 0.125,
+    "predictions": {
+      "above": 7,
+      "below": 1
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} is below {b}.",
+    "names": "renamed",
+    "n": 8,
+    "accuracy": 0.75,
+    "predictions": {
+      "below": 6,
+      "above": 2
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} sits south of {b}.",
+    "names": "numbered",
+    "n": 6,
+    "accuracy": 0.8333333333333334,
+    "predictions": {
+      "below": 5,
+      "above": 1
+    }
+  },
+  {
+    "label": "below",
+    "template": "{a} sits south of {b}.",
+    "names": "renamed",
+    "n": 6,
+    "accuracy": 0.3333333333333333,
+    "predictions": {
+      "above": 4,
+      "below": 2
+    }
+  },
+  {
+    "label": "below",
+    "template": "{b} is above {a}.",
+    "names": "numbered",
+    "n": 8,
+    "accuracy": 0.125,
+    "predictions": {
+      "above": 7,
+      "below": 1
+    }
+  },
+  {
+    "label": "below",
+    "template": "{b} is above {a}.",
+    "names": "renamed",
+    "n": 8,
+    "accuracy": 0.25,
+    "predictions": {
+      "above": 6,
+      "below": 2
+    }
+  },
+  {
+    "label": "left",
+    "template": "{a} is left of {b}.",
+    "names": "numbered",
+    "n": 9,
+    "accuracy": 1.0,
+    "predictions": {
+      "left": 9
+    }
+  },
+  {
+    "label": "left",
+    "template": "{a} is left of {b}.",
+    "names": "renamed",
+    "n": 9,
+    "accuracy": 1.0,
+    "predictions": {
+      "left": 9
+    }
+  },
+  {
+    "label": "left",
+    "template": "{a} sits west of {b}.",
+    "names": "numbered",
+    "n": 6,
+    "accuracy": 1.0,
+    "predictions": {
+      "left": 6
+    }
+  },
+  {
+    "label": "left",
+    "template": "{a} sits west of {b}.",
+    "names": "renamed",
+    "n": 6,
+    "accuracy": 0.8333333333333334,
+    "predictions": {
+      "left": 5,
+      "right": 1
+    }
+  },
+  {
+    "label": "left",
+    "template": "{b} is to the right of {a}.",
+    "names": "numbered",
+    "n": 7,
+    "accuracy": 1.0,
+    "predictions": {
+      "left": 7
+    }
+  },
+  {
+    "label": "left",
+    "template": "{b} is to the right of {a}.",
+    "names": "renamed",
+    "n": 7,
+    "accuracy": 1.0,
+    "predictions": {
+      "left": 7
+    }
+  },
+  {
+    "label": "lower-left",
+    "template": "{a} is lower-left of {b}.",
+    "names": "numbered",
+    "n": 10,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-left": 10
+    }
+  },
+  {
+    "label": "lower-left",
+    "template": "{a} is lower-left of {b}.",
+    "names": "renamed",
+    "n": 10,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-left": 10
+    }
+  },
+  {
+    "label": "lower-left",
+    "template": "{a} is southwest of {b}.",
+    "names": "numbered",
+    "n": 12,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-left": 12
+    }
+  },
+  {
+    "label": "lower-left",
+    "template": "{a} is southwest of {b}.",
+    "names": "renamed",
+    "n": 12,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-left": 12
+    }
+  },
+  {
+    "label": "lower-right",
+    "template": "{a} is lower-right of {b}.",
+    "names": "numbered",
+    "n": 11,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-right": 11
+    }
+  },
+  {
+    "label": "lower-right",
+    "template": "{a} is lower-right of {b}.",
+    "names": "renamed",
+    "n": 11,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-right": 11
+    }
+  },
+  {
+    "label": "lower-right",
+    "template": "{a} is southeast of {b}.",
+    "names": "numbered",
+    "n": 11,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-right": 11
+    }
+  },
+  {
+    "label": "lower-right",
+    "template": "{a} is southeast of {b}.",
+    "names": "renamed",
+    "n": 11,
+    "accuracy": 1.0,
+    "predictions": {
+      "lower-right": 11
+    }
+  },
+  {
+    "label": "overlap",
+    "template": "{a} occupies the same position as {b}.",
+    "names": "numbered",
+    "n": 22,
+    "accuracy": 1.0,
+    "predictions": {
+      "overlap": 22
+    }
+  },
+  {
+    "label": "overlap",
+    "template": "{a} occupies the same position as {b}.",
+    "names": "renamed",
+    "n": 22,
+    "accuracy": 1.0,
+    "predictions": {
+      "overlap": 22
+    }
+  },
+  {
+    "label": "right",
+    "template": "{a} is right of {b}.",
+    "names": "numbered",
+    "n": 11,
+    "accuracy": 1.0,
+    "predictions": {
+      "right": 11
+    }
+  },
+  {
+    "label": "right",
+    "template": "{a} is right of {b}.",
+    "names": "renamed",
+    "n": 11,
+    "accuracy": 1.0,
+    "predictions": {
+      "right": 11
+    }
+  },
+  {
+    "label": "right",
+    "template": "{a} sits east of {b}.",
+    "names": "numbered",
+    "n": 7,
+    "accuracy": 1.0,
+    "predictions": {
+      "right": 7
+    }
+  },
+  {
+    "label": "right",
+    "template": "{a} sits east of {b}.",
+    "names": "renamed",
+    "n": 7,
+    "accuracy": 1.0,
+    "predictions": {
+      "right": 7
+    }
+  },
+  {
+    "label": "right",
+    "template": "{b} is to the left of {a}.",
+    "names": "numbered",
+    "n": 4,
+    "accuracy": 1.0,
+    "predictions": {
+      "right": 4
+    }
+  },
+  {
+    "label": "right",
+    "template": "{b} is to the left of {a}.",
+    "names": "renamed",
+    "n": 4,
+    "accuracy": 1.0,
+    "predictions": {
+      "right": 4
+    }
+  },
+  {
+    "label": "upper-left",
+    "template": "{a} is northwest of {b}.",
+    "names": "numbered",
+    "n": 15,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-left": 15
+    }
+  },
+  {
+    "label": "upper-left",
+    "template": "{a} is northwest of {b}.",
+    "names": "renamed",
+    "n": 15,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-left": 15
+    }
+  },
+  {
+    "label": "upper-left",
+    "template": "{a} is upper-left of {b}.",
+    "names": "numbered",
+    "n": 8,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-left": 8
+    }
+  },
+  {
+    "label": "upper-left",
+    "template": "{a} is upper-left of {b}.",
+    "names": "renamed",
+    "n": 8,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-left": 8
+    }
+  },
+  {
+    "label": "upper-right",
+    "template": "{a} is northeast of {b}.",
+    "names": "numbered",
+    "n": 8,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-right": 8
+    }
+  },
+  {
+    "label": "upper-right",
+    "template": "{a} is northeast of {b}.",
+    "names": "renamed",
+    "n": 8,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-right": 8
+    }
+  },
+  {
+    "label": "upper-right",
+    "template": "{a} is upper-right of {b}.",
+    "names": "numbered",
+    "n": 14,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-right": 14
+    }
+  },
+  {
+    "label": "upper-right",
+    "template": "{a} is upper-right of {b}.",
+    "names": "renamed",
+    "n": 14,
+    "accuracy": 1.0,
+    "predictions": {
+      "upper-right": 14
+    }
+  }
+]

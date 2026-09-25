@@ -1,0 +1,50 @@
+{
+  "checkpoint": "checkpoints/entity-binding-onehop-gate.pt",
+  "sha256": "72a275a8e15b05b2914982e193028b40a4c13a949c626acd7b07a4d348f6a155",
+  "init": "checkpoints/paired-paraphrase-onehop-gate.pt",
+  "config": "configs/s1_35m_entity_binding.yaml",
+  "training": {
+    "data": "reports/role_swap_onehop/train.jsonl",
+    "steps": 1200,
+    "batch": 16,
+    "balanced_sampling": true,
+    "trainable": "ptr_bind only (zero-initialized); backbone and pointer head frozen"
+  },
+  "candidate": {
+    "vertical_role_swap_both_correct": 0.9,
+    "heldout_role_swap_both_correct": 0.8980477223427332,
+    "old_name_pairs_both_correct": 0.985,
+    "vertical_name_pairs_both_correct": 0.96,
+    "counterfactual": {
+      "pairs": 100,
+      "both_correct": 1.0,
+      "correct_probability_shift": 1.0
+    },
+    "heldout": {
+      "n": 1844,
+      "accuracy": 0.9457700650759219,
+      "ece15": 0.06677694484559162,
+      "brier": 0.09031556351120573
+    }
+  },
+  "reference_paraphrase_onehop": {
+    "vertical_role_swap_both_correct": 0.078,
+    "old_name_pairs_both_correct": 0.885,
+    "vertical_name_pairs_both_correct": 0.457,
+    "counterfactual_both_correct": 0.86,
+    "heldout": {
+      "n": 1844,
+      "accuracy": 0.5233188720173536,
+      "ece15": 0.3757829066050802,
+      "brier": 0.8328208715353901
+    }
+  },
+  "role_adapter_only": {
+    "vertical_role_swap_both_correct": 0.187,
+    "heldout_role_swap_both_correct": 0.102,
+    "old_name_pairs_both_correct": 0.875,
+    "counterfactual_both_correct": 0.85,
+    "heldout_accuracy": 0.517
+  },
+  "leakage_check": "0 exact/swapped prompt overlaps with train for vertical probe, role-swap held-out, and counterfactual; 5/400 old name-pair prompts also appear in the shared role-swap training file (inherited by earlier runs)."
+}

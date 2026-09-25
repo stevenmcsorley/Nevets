@@ -1,0 +1,11 @@
+name: s1-70m
+vocab_size: 16000
+d_model: 640
+n_layers: 12
+n_heads: 10
+n_kv_heads: 5
+d_ff: 1728
+max_seq_len: 4096
+rope_theta: 10000.0
+dropout: 0.0
+pointer_dim: 320

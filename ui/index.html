@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SystemOne Lab</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--bar:#d9d8d2;--accent:#2f6fdb;--good:#1f8a4c;--warn:#b86e00}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b94;--line:#33322f;--bar:#3a3936;--accent:#6ea0ff;--good:#4fc27f;--warn:#e0a440}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:960px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:20px;margin:0 0 4px}
+p.sub{margin:0 0 18px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+textarea{width:100%;min-height:92px;resize:vertical;font:15px/1.5 ui-monospace,Consolas,monospace;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px}
+select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.presets button{font:inherit;font-size:13px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer}
+.presets button:hover{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:700px){.grid{grid-template-columns:1fr}}
+.q{font-weight:600;margin-bottom:10px}
+.answer{font-size:22px;font-weight:650;margin:2px 0 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;border:1px solid currentColor}
+.trust{color:var(--good)}.unsure{color:var(--warn)}
+.bars div{display:grid;grid-template-columns:92px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:3px 0}
+.track{background:var(--bar);border-radius:4px;height:10px;overflow:hidden}
+.fill{background:var(--muted);height:100%}
+.top .fill{background:var(--accent)}
+.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.meta{font-size:13px;color:var(--muted)}
+.err{color:var(--warn);white-space:pre-wrap}
+</style>
+</head>
+<body>
+<main>
+<h1>SystemOne Lab playground</h1>
+<p class="sub">Local model only. Edit the facts; both questions are re-scored as you type. Each question reads the shared state in its own isolated branch.</p>
+
+<div class="panel">
+  <label for="state">State (facts)</label>
+  <textarea id="state" spellcheck="false">A is left of B. B is above C.</textarea>
+  <div class="row presets" style="margin-top:10px" id="presets"></div>
+</div>
+
+<div class="panel row">
+  <span>Relation of</span><select id="a"></select><span>to</span><select id="b"></select>
+  <span class="meta" id="meta"></span>
+</div>
+
+<div class="grid">
+  <div class="panel" id="fwd"></div>
+  <div class="panel" id="rev"></div>
+</div>
+<p class="meta">Confidence ≥ 0.9 is marked trusted: locked accuracy at that level was 95–100% on the chain, stress and transform sets. Below it, treat the answer as uncertain. The model is reliable for one-hop facts and short chains; long chains are not solved.</p>
+</main>
+<script>
+const LABELS=["upper-left","above","upper-right","left","overlap","right","lower-left","below","lower-right"];
+const PRESETS=[
+ ["One fact","B is above A.","A","B"],
+ ["Inverse wording","B is above A.","B","A"],
+ ["Distractors","Q sits east of Z. M is left of K. Z is northwest of P. K sits south of T.","M","K"],
+ ["Name mentioned twice","A is below B. C is right of B. B is above D.","A","B"],
+ ["Two hops","A is left of B. B is above C.","A","C"],
+ ["Steps cancel","A is left of B. B is left of C. D is right of C.","A","D"],
+ ["Long chain (hard)","A is above B. C is left of B. D is below C. E is right of D. F is below E. G is left of F.","A","G"],
+];
+const $=id=>document.getElementById(id);
+const crit=Object.fromEntries(LABELS.map(l=>[l,l]));
+function names(state){
+  const seen=[];for(const s of state.split(/(?<=\.)\s*/)){const m=s.match(/^(\S+)\s.*?\s(\S+)\.$/);if(!m)continue;for(const n of[m[1],m[2]])if(!seen.includes(n))seen.push(n)}
+  return seen;
+}
+function fill(sel,opts,keep){sel.innerHTML=opts.map(o=>`<option>${o}</option>`).join("");if(opts.includes(keep))sel.value=keep}
+function syncNames(pa,pb){
+  const ns=names($("state").value);
+  fill($("a"),ns,pa??$("a").value);fill($("b"),ns,pb??$("b").value);
+  if($("a").value===$("b").value&&ns.length>1)$("b").value=ns.find(n=>n!==$("a").value);
+}
+function card(el,title,ans){
+  const probs=Object.entries(ans.probabilities).sort((x,y)=>y[1]-x[1]);
+  const top=probs[0][1],ok=top>=0.9;
+  el.innerHTML=`<div class="q">${title}</div>
+   <div class="answer">${ans.choice}<span class="badge ${ok?"trust":"unsure"}">${ok?"trusted":"uncertain"} · ${(top*100).toFixed(1)}%</span></div>
+   <div class="bars">${probs.map(([k,v],i)=>`<div class="${i?"":"top"}"><span>${k}</span><span class="track"><span class="fill" style="display:block;width:${(v*100).toFixed(1)}%"></span></span><span class="num">${(v*100).toFixed(1)}%</span></div>`).join("")}</div>`;
+}
+let timer,seq=0;
+async function run(){
+  const a=$("a").value,b=$("b").value,state=$("state").value.trim(),my=++seq;
+  if(!a||!b||a===b){$("fwd").innerHTML=$("rev").innerHTML='<span class="meta">Pick two different objects.</span>';return}
+  const q=(x,y)=>({type:"choice",instructions:`What is the spatial relation of ${x} to ${y}?`,criteria:crit});
+  const t0=performance.now();
+  try{
+    const r=await fetch("/v1/systemone",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({state,questions:{forward:q(a,b),reverse:q(b,a)}})});
+    const j=await r.json();if(my!==seq)return;
+    if(!r.ok)throw new Error(j.detail||r.statusText);
+    card($("fwd"),`${a} relative to ${b}`,j.answers.forward);card($("rev"),`${b} relative to ${a}`,j.answers.reverse);
+    $("meta").textContent=`${(performance.now()-t0).toFixed(0)} ms round trip · 2 questions, 1 forward pass`;
+  }catch(e){if(my===seq)$("fwd").innerHTML=`<div class="err">${e.message}</div>`}
+}
+const later=()=>{clearTimeout(timer);timer=setTimeout(run,150)};
+$("state").addEventListener("input",()=>{syncNames();later()});
+$("a").addEventListener("change",later);$("b").addEventListener("change",later);
+$("presets").innerHTML=PRESETS.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join("");
+$("presets").addEventListener("click",e=>{const p=PRESETS[e.target.dataset.i];if(!p)return;$("state").value=p[1];syncNames(p[2],p[3]);run()});
+syncNames("A","C");run();
+</script>
+</body>
+</html>

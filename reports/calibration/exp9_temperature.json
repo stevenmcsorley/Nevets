@@ -1,0 +1,20 @@
+{
+  "ckpt": "checkpoints/exp9-aux-loop.pt",
+  "dev": [
+    "reports/calibration/dev_chain.jsonl",
+    "reports/calibration/dev_stress.jsonl"
+  ],
+  "n": 2558,
+  "old_temperature": 10.0,
+  "new_temperature": 6.8729,
+  "before": {
+    "nll": 1.1084283590316772,
+    "ece15": 0.06173755497649089,
+    "accuracy": 0.6778733730316162
+  },
+  "after": {
+    "nll": 1.0544354915618896,
+    "ece15": 0.07623536651189479,
+    "accuracy": 0.6778733730316162
+  }
+}

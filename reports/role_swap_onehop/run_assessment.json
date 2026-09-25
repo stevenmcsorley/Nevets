@@ -1,0 +1,43 @@
+{
+  "logged": 121,
+  "steps": [
+    1,
+    1200
+  ],
+  "max": {
+    "loss": 3.4124083518981934,
+    "hidden_max_abs": 82.92411804199219,
+    "q_norm_max": 36.14665603637695,
+    "k_norm_max": 43.07847213745117,
+    "logit_max_abs": 9.463964462280273,
+    "grad_norm_pre_clip": 323.6741943359375,
+    "grad_norm_post_clip": 1.0000001192092896
+  },
+  "nonfinite": 0,
+  "sampled_loss_first100": 1.6162492091005498,
+  "sampled_loss_last100": 0.650822103023529,
+  "vertical_by_label": {
+    "above": {
+      "n": 300,
+      "original": 0.85,
+      "swapped": 0.15333333333333332,
+      "both": 0.016666666666666666,
+      "same_prediction": 0.97
+    },
+    "below": {
+      "n": 300,
+      "original": 0.2,
+      "swapped": 0.8,
+      "both": 0.006666666666666667,
+      "same_prediction": 0.9866666666666667
+    }
+  },
+  "vertical_predicted": {
+    "above": 495,
+    "below": 105
+  },
+  "vertical_swapped_predicted": {
+    "above": 494,
+    "below": 106
+  }
+}
