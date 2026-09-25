@@ -431,3 +431,11 @@ def test_hinted_loop_supervises_each_iteration_within_its_hop_radius(tok):
     m.eval()
     with torch.no_grad(): decision_batch_loss(m,tok,[r],torch.device('cpu'))
     assert m.iter_states is None
+
+
+def test_checkpoint_with_inherited_unused_binding_loads(model,tok,tmp_path):
+    model.enable_entity_binding({'scorer':'cosine','temperature':10.0,'query_mode':'entity_binding'})
+    model.cfg.decision_head={'scorer':'cosine','temperature':10.0,'query_mode':'decide'}  # child switches mode
+    save_checkpoint(tmp_path/'child.pt',model,model.cfg,'data/tokenizer.json',1)
+    loaded,_=load_checkpoint(tmp_path/'child.pt',SystemOneModel)
+    assert loaded.ptr_bind is not None and loaded.cfg.decision_head['query_mode']=='decide'

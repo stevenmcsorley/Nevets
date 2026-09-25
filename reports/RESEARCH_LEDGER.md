@@ -109,3 +109,19 @@ All one-hop gates stay at 100% for every K. **Conclusion:** a *trained* weight-t
 **INT-1 (interactive benchmark)** · `scripts/sim_treasure.py` plays the Treasure Hunt game headlessly: world text only, 60 episodes per mode, 2 distractor facts, seed 31, 30-step limit (`reports/interactive/treasure_*.json`). Every model wins 100% of episodes; the separating metric is two-fact (landmark) decision accuracy: `exp6a-noloop` (demo) 90.4%, **T-R2 looped K=4 94.4%**, ISO-B 91.4%. Direct-sight decisions: 98.0 / 98.8 / 98.2%. Correct-when-confidence ≥ 0.9: 99.5–100% for all three. The loop's multi-hop gain transfers to the interactive setting, where two-fact errors fall by about 40%. **Demo decision:** upgrade the Pages Treasure Hunt once T-R4 decides the best looped variant, so the release changes once.
 
 **DEMO-2 (infrastructure)** · export now supports `arch: looped` (recurrence unrolled at a chosen K; T-R2 K=4 fp32 parity 100% / 3e-6), and the JS pipeline supports isolated options (parity-tested alongside causal layouts).
+
+**TM-1 — FINAL (transfer matrix)** · worlds_v1 (5 domains; train prose/JSON/kv; table held out), 6,000 × 16, seed 11, identical for every init (`reports/worlds/v1/eval_*.json`):
+
+| init | in-format acc | held-out table acc | rules CF both-correct | dependency CF both-correct |
+|---|---|---|---|---|
+| scratch (random d512) | 41.7% | 41.3% | 0.3% | 5.0% |
+| BASE (LM pretrain) | 49.1% | 46.6% | 0.0% | 9.0% |
+| **SPATIAL (exp6a)** | **53.3%** | **50.1%** | **35.0%** | **17.7%** |
+
+**Conclusion:** the first positive cross-domain transfer in the programme. Spatial decision training beats LM-only and scratch initialization on unseen symbolic domains, on the held-out format, and above all on counterfactual interventions. LM pretraining beats scratch. Every arm is still undertrained (loss still falling). **Decision:** GENERAL-1 initializes from the spatial lineage.
+
+**T-R3 — FINAL** · the T-R2 recipe plus no-grad warm-up U[0,6] (R3a), plus a fixed-point loss 0.1 (R3b) (`reports/tournament/r3/`). **The loop now converges:** accuracy is flat from K=4 to 16 (R3a overall 0.481–0.490), but capability drops sharply, with best 3-hop 54.7% against T-R2's 72.5%. **Conclusion: rejected.** Truncated backprop plus the fixed-point pressure trade reasoning ability for stability.
+
+**T-R4 — FINAL** · the T-R2 recipe plus per-iteration BFS coordinate hints (iteration t supervises objects within t hops), weights 1 and 3, registry-clean data (`reports/tournament/r4/`). Best hint1 K=4: overall 0.525, 3-hop 65.0%, 4-hop 43.8%, *below* T-R2 K=4 (0.537 / 72.5 / 46.9); both weights still degrade past K=8. **Conclusion: rejected.** The hints are learnable but never reach the decision: the pointer head does not read coordinates. **Next idea (future session):** a coordinate-readout decision head (answer = f(coord(A) − coord(B))) so hinted propagation composes by construction.
+
+**Synthesis after T-R2/R3/R4:** the best spatial reasoner remains the trained loop at K=4 (REASONER). Neither extra depth, convergence, nor per-step hints produced length extrapolation. The bottleneck is how the answer is *read out*, not how much iteration is available.

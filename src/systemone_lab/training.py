@@ -55,7 +55,13 @@ def load_checkpoint(path, model_cls, device="cpu", tokenizer_path=None, allow_to
     cfg = ModelConfig(**ck["config"])
     if cfg.vocab_size != actual["vocab_size"]:
         raise ValueError("checkpoint vocabulary size mismatch")
-    m = model_cls(cfg); m.load_state_dict(ck["model"])
+    m = model_cls(cfg)
+    # A child can inherit modules its own decision head no longer uses (e.g. ptr_bind from a spatial
+    # parent fine-tuned in plain decide mode). Recreate them so the checkpoint loads strictly; unused
+    # modules never affect outputs.
+    if "ptr_bind.weight" in ck["model"] and getattr(m, "ptr_bind", None) is None:
+        m.ptr_bind = torch.nn.Linear(cfg.d_model, cfg.pointer_dim, bias=False)
+    m.load_state_dict(ck["model"])
     return m, ck
 
 

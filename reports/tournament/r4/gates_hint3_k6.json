@@ -1,0 +1,166 @@
+{
+  "ckpt": "checkpoints/tournament/r4/hint3.pt",
+  "iters": 6,
+  "vertical_role_swap": 1.0,
+  "heldout_role_swap": 1.0,
+  "name_pairs": 1.0,
+  "vertical_name_pairs": 1.0,
+  "counterfactual_both": 1.0,
+  "counterfactual_shift": 1.0,
+  "heldout": {
+    "n": 1844,
+    "accuracy": 1.0,
+    "coverage_at_0.9": 1.0,
+    "accuracy_at_0.9": 1.0,
+    "ece15": 0.028335959301077622,
+    "brier": 0.0014602997485357626
+  },
+  "stress": {
+    "overall": {
+      "n": 2400,
+      "accuracy": 0.9975,
+      "coverage_at_0.9": 0.5770833333333333,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.104247438001136,
+      "brier": 0.03296258044721731
+    },
+    "onehop_disconnected": {
+      "n": 600,
+      "accuracy": 1.0,
+      "coverage_at_0.9": 0.8833333333333333,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.0680686694383621,
+      "brier": 0.00935486980747825,
+      "pair_both_correct": 1.0
+    },
+    "onehop_mention": {
+      "n": 600,
+      "accuracy": 1.0,
+      "coverage_at_0.9": 0.86,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.06512504855791727,
+      "brier": 0.011514429961371095,
+      "pair_both_correct": 1.0
+    },
+    "twohop": {
+      "n": 600,
+      "accuracy": 0.995,
+      "coverage_at_0.9": 0.31833333333333336,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.13064637124538422,
+      "brier": 0.049289986145127515,
+      "pair_both_correct": 0.9933333333333333
+    },
+    "twohop_disconnected": {
+      "n": 600,
+      "accuracy": 0.995,
+      "coverage_at_0.9": 0.24666666666666667,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.15314966276288033,
+      "brier": 0.06169103587489238,
+      "pair_both_correct": 0.99
+    },
+    "option_shuffle_changed": 0.48
+  },
+  "hops": {
+    "overall": {
+      "n": 4000,
+      "accuracy": 0.516,
+      "coverage_at_0.9": 0.0965,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.059441213464364394,
+      "brier": 0.6096507562138057
+    },
+    "hops1": {
+      "n": 384,
+      "accuracy": 0.9921875,
+      "coverage_at_0.9": 0.6744791666666666,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.10262684500776231,
+      "brier": 0.03774292863525418,
+      "pair_both_correct": 0.984375
+    },
+    "hops10": {
+      "n": 384,
+      "accuracy": 0.3177083333333333,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "ece15": 0.11391860524114843,
+      "brier": 0.835488991711022,
+      "pair_both_correct": 0.2760416666666667
+    },
+    "hops2": {
+      "n": 436,
+      "accuracy": 0.926605504587156,
+      "coverage_at_0.9": 0.19495412844036697,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.15328116769637531,
+      "brier": 0.15744762249135402,
+      "pair_both_correct": 0.908256880733945
+    },
+    "hops3": {
+      "n": 400,
+      "accuracy": 0.625,
+      "coverage_at_0.9": 0.1,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.09221453342586758,
+      "brier": 0.4522254528880768,
+      "pair_both_correct": 0.585
+    },
+    "hops4": {
+      "n": 356,
+      "accuracy": 0.3904494382022472,
+      "coverage_at_0.9": 0.0056179775280898875,
+      "accuracy_at_0.9": 1.0,
+      "ece15": 0.10767789825462222,
+      "brier": 0.7297574866824375,
+      "pair_both_correct": 0.3539325842696629
+    },
+    "hops5": {
+      "n": 400,
+      "accuracy": 0.45,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "ece15": 0.09665860243141654,
+      "brier": 0.7152285302691453,
+      "pair_both_correct": 0.405
+    },
+    "hops6": {
+      "n": 404,
+      "accuracy": 0.38366336633663367,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "ece15": 0.06447869115094146,
+      "brier": 0.7723074427205164,
+      "pair_both_correct": 0.3465346534653465
+    },
+    "hops7": {
+      "n": 400,
+      "accuracy": 0.3575,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "ece15": 0.09598923724144698,
+      "brier": 0.7788066610411596,
+      "pair_both_correct": 0.32
+    },
+    "hops8": {
+      "n": 456,
+      "accuracy": 0.33771929824561403,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "ece15": 0.09265189840082536,
+      "brier": 0.8167046084132877,
+      "pair_both_correct": 0.3157894736842105
+    },
+    "hops9": {
+      "n": 380,
+      "accuracy": 0.35789473684210527,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "ece15": 0.11796170763279262,
+      "brier": 0.8208088757951956,
+      "pair_both_correct": 0.3157894736842105
+    },
+    "option_shuffle_changed": 0.4925
+  }
+}
