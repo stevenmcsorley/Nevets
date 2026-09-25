@@ -151,6 +151,8 @@ class SystemOneModel(nn.Module):
                 raise ValueError("looped arch needs prelude + core + coda == n_layers and core >= 1")
         self.cfg.arch = arch
         self.iters = int(arch.get("iters", 1))  # overridable per call for test-time depth sweeps
+        self.iters_nograd = 0   # training only: warm-up core iterations run without gradient
+        self.fixed_point_delta = None  # set when arch["converge_weight"] > 0 during training
 
     def enable_state_loop(self, decision_head):
         """Optionally re-apply the top `loop_blocks` blocks `loop_iters` extra times (weight-tied).
@@ -208,10 +210,26 @@ class SystemOneModel(nn.Module):
             for block in self.blocks[:p]:
                 x = block(x, position_ids, attention_mask)
             inject, h = x, torch.zeros_like(x)
-            for _ in range(self.iters):
+            core = self.blocks[p:p + c]
+
+            def step(h):
                 h = h + inject  # input injection keeps the problem visible at every iteration
-                for block in self.blocks[p:p + c]:
+                for block in core:
                     h = block(h, position_ids, attention_mask)
+                return h
+            if self.training and self.iters_nograd:
+                # Truncated backprop through the recurrence: warm up without gradient, so the core
+                # learns to improve states that have already been iterated many times.
+                with torch.no_grad():
+                    for _ in range(self.iters_nograd):
+                        h = step(h)
+                h = h.detach()
+            for _ in range(self.iters):
+                h = step(h)
+            self.fixed_point_delta = None
+            if self.training and float(arch.get("converge_weight", 0)) > 0:
+                nxt = step(h)  # one more iteration should change little at a fixed point
+                self.fixed_point_delta = (nxt - h).float().pow(2).mean() / h.float().pow(2).mean().clamp_min(1e-6)
             x = h
             for block in self.blocks[p + c:]:
                 x = block(x, position_ids, attention_mask)

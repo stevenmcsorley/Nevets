@@ -399,3 +399,19 @@ def test_isolated_options_make_probabilities_order_invariant(tok):
     assert any(abs(predict_record(m,tok,s,'cpu')['spatial'][k]-predict_record(m,tok,r,'cpu')['spatial'][k])>1e-4 for k in base)
     stats={}; loss=decision_batch_loss(m.__class__(m.cfg) if False else m,tok,[r],torch.device('cpu'),stats)
     assert torch.isfinite(loss)
+
+
+def test_nograd_warmup_and_convergence_loss(tok):
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=3,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional'},
+                    arch={'type':'looped','prelude':1,'core':1,'coda':1,'iters':2,'converge_weight':0.5})
+    m=SystemOneModel(cfg); m.train(); r=rec()
+    base=decision_batch_loss(m,tok,[r],torch.device('cpu'))
+    assert m.fixed_point_delta is not None and m.fixed_point_delta>0
+    stats={}; m.iters_nograd=3
+    loss=decision_batch_loss(m,tok,[r],torch.device('cpu'),stats); loss.backward()
+    assert 'fixed_point_delta' in stats and torch.isfinite(loss)
+    assert all(p.grad is not None for p in m.blocks[1].parameters())
+    m.eval(); m.iters_nograd=0
+    with torch.no_grad(): decision_batch_loss(m,tok,[r],torch.device('cpu'))
+    assert m.fixed_point_delta is None  # eval never pays for the extra iteration

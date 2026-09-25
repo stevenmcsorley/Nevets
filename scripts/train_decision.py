@@ -83,6 +83,7 @@ def main():
     ap.add_argument('--allow-tokenizer-mismatch',action='store_true')
     ap.add_argument('--balanced-sampling',action='store_true')
     ap.add_argument('--shuffle-options',action='store_true',help='augment: shuffle the option order of every sampled question')
+    ap.add_argument('--nograd-range',help='looped arch: warm-up iterations without gradient, sampled from "lo,hi" per update')
     ap.add_argument('--iters-range',help='looped arch: sample core iterations uniformly from "lo,hi" per update')
     a=ap.parse_args()
     if min(a.steps,a.batch,a.accum,a.save_every)<1: ap.error('counts must be positive')
@@ -121,6 +122,7 @@ def main():
         weights=[1/counts[label] for label in labels]
     params=[p for p in model.parameters() if p.requires_grad]
     iters_range=tuple(int(x) for x in a.iters_range.split(',')) if a.iters_range else None
+    nograd_range=tuple(int(x) for x in a.nograd_range.split(',')) if a.nograd_range else None
     if iters_range and (model.cfg.arch or {}).get('type')!='looped': ap.error('--iters-range needs a looped arch')
     log=Path(a.out).with_suffix('.diagnostics.jsonl'); log.parent.mkdir(parents=True,exist_ok=True)
     safety=config.get('safety',{})
@@ -129,6 +131,7 @@ def main():
         for step in range(1,a.steps+1):
             opt.zero_grad(set_to_none=True); batch_stats=[]; all_records=[]
             if iters_range: model.iters=random.randint(*iters_range)
+            if nograd_range: model.iters_nograd=random.randint(*nograd_range)
             for micro in range(a.accum):
                 recs=random.choices(records,weights=weights,k=a.batch); stats={'step':step,'microbatch':micro}
                 if a.shuffle_options: recs=[shuffled_options(r) for r in recs]
@@ -153,6 +156,7 @@ def main():
             if step%a.save_every==0:
                 save_checkpoint(a.out,model,model.cfg,a.tokenizer,step,stats)
     if iters_range: model.iters=int((model.cfg.arch or {}).get('iters',1))
+    model.iters_nograd=0
     save_checkpoint(a.out,model,model.cfg,a.tokenizer,a.steps,stats)
 
 if __name__=='__main__': main()

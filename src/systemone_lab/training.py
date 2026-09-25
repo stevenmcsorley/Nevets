@@ -152,6 +152,11 @@ def decision_batch_loss(model, tokenizer, records, device, diagnostics=None, for
             p = move(_target_distribution(layout, rec))
             losses.append(-(p * F.log_softmax(logits.float(), dim=-1)).sum())
         loss = torch.stack(losses).float().mean()
+    cw = float((model.cfg.arch or {}).get("converge_weight", 0))
+    if cw > 0 and getattr(model, "fixed_point_delta", None) is not None:
+        loss = loss + cw * model.fixed_point_delta
+        if diagnostics is not None:
+            diagnostics["fixed_point_delta"] = model.fixed_point_delta.detach().float().item()
     weight = float(model.cfg.decision_head.get("aux_coord_weight", 0))
     if weight > 0 and model.coord_head is not None:
         gb, gp, goal = [], [], []
