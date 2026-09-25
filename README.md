@@ -1,5 +1,7 @@
 # SystemOne Lab — clean-room decision model from random weights
 
+<p align="center"><img src="docs/nevets-banner.svg" alt="Nevets: a state, a question and candidate answers go into one forward pass with a shared state and isolated question branches, returning a calibrated probability for every candidate." width="100%"></p>
+
 This repository is a **from-scratch** research lab for a small, prefill-only, calibrated decision model inspired by the public System One contract: one shared `state`, isolated typed questions, direct probability distributions, and no autoregressive answer generation.
 
 It does **not** use Jev outputs as labels, does not query Jev for reverse-engineering, and does not contain Jev weights or proprietary data. The architecture is derived from public documentation, ordinary transformer techniques, and independently published open research.
