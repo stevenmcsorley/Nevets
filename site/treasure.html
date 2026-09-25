@@ -247,7 +247,7 @@ $("mode").onchange=()=>{world=null;newRound()};
 $("noise").oninput=()=>{$("noiseV").textContent=$("noise").value};
 syncPlay();
 $("banner").textContent="Loading the model (≈40 MB, runs entirely in your browser)…";
-loadModel("model/spatial.onnx",f=>{$("banner").textContent=`Loading the model… ${(f*100).toFixed(0)}%`})
+loadModel("model/spatial_reasoner.onnx",f=>{$("banner").textContent=`Loading the model… ${(f*100).toFixed(0)}%`})
   .then(m=>{M=m;newRound();loop()})
   .catch(e=>{$("banner").textContent="Could not load the model: "+e.message});
 </script>

@@ -36,10 +36,10 @@ a{color:var(--accent)}
 </div>
 <h2 style="font-size:18px">What to expect</h2>
 <ul>
-  <li><strong>Treasure Hunt</strong> uses <code>exp6a-noloop</code>. In direct-sight mode it made about 97% correct moves in our tests; combining two facts via a landmark, about 89%.</li>
+  <li><strong>Treasure Hunt</strong> uses the lab's <em>REASONER</em>: the spatial model with a weight-tied recurrent core run for 4 iterations. In our headless benchmark (<code>scripts/sim_treasure.py</code>, 60 games per mode) it won every game, with 98.8% correct moves in direct sight and 94.4% when it must combine two facts via a landmark (the previous non-recurrent model scored 90.4%).</li>
   <li><strong>Chess</strong> uses <code>chess-base-r1</code>, trained on 150k Stockfish-labelled Lichess positions. It is <em>beginner level</em>: it matches Stockfish's best move about 25% of the time and often cannot finish a won game.</li>
-  <li><strong>Faithfulness:</strong> the browser models store weights as int8 (≈40 MB each). Against the original PyTorch models they choose the same answer on 99.4% (Treasure Hunt) and 100% (chess) of our test requests; the tokenizer and request packing match Python exactly (checked by the repository's tests).</li>
-  <li>The first load downloads the model once (≈40 MB); after that each decision takes tens to hundreds of milliseconds on a typical laptop CPU.</li>
+  <li><strong>Faithfulness:</strong> the browser models store weights as int8 (≈40 MB each). Against the original PyTorch models they choose the same answer on 98.75% (Treasure Hunt, measured through this page's JavaScript pipeline) and 100% (chess) of our test requests; the tokenizer and request packing match Python exactly (checked by the repository's tests).</li>
+  <li>The first load downloads the model once (≈40 MB); after that a Treasure Hunt decision takes roughly 0.3 s and a chess move roughly 0.5 s on a typical laptop CPU.</li>
 </ul>
 <p class="muted">Source, research log and honest limitations: <a href="https://github.com/stevenmcsorley/Nevets">github.com/stevenmcsorley/Nevets</a>.</p>
 </main>

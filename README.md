@@ -18,7 +18,7 @@ The code, configs, tests, evaluation suites and research records (`reports/FRONT
 - **Checkpoints** (`checkpoints/`, about 130 MB each). The registry records each checkpoint's lineage and the exact training command.
 - **Datasets** (`data/`) and **generated training splits** under `reports/**/train*.jsonl`. Every generator is seeded, and the seeds are recorded in the ledger and the reproduce commands.
 - **Lichess dumps.** Download `lichess_db_standard_rated_2013-01/02.pgn.zst` from https://database.lichess.org/ (CC0). Their SHA-256 values are in `reports/FRONTIER_STATE.md`.
-- **Demo models** for the in-browser demos (`site/`) are int8 ONNX exports published as the [`demo-models-v1`](https://github.com/stevenmcsorley/Nevets/releases/tag/demo-models-v1) release. The Pages workflow downloads them and checks them against `site/model/SHA256SUMS`.
+- **Demo models** for the in-browser demos (`site/`) are int8 ONNX exports published as the [`demo-models-v2`](https://github.com/stevenmcsorley/Nevets/releases/tag/demo-models-v2) release. The Pages workflow downloads them and checks them against `site/model/SHA256SUMS`.
 - **Stockfish** (GPL-3). Download the official build from https://github.com/official-stockfish/Stockfish/releases and unpack it under `tools/stockfish/`.
 
 ## Current status: usable one-hop decision model, not promotable (25 September 2026)
