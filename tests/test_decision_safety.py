@@ -516,3 +516,18 @@ def test_hybrid_with_zero_gate_starts_identical_to_parent(tok):
     with torch.no_grad(): m.coord_head.weight.normal_()
     hyb=predict_record(m,tok,r,'cpu')
     assert all(abs(plain['spatial'][k]-hyb['spatial'][k])<1e-6 for k in plain['spatial'])
+
+
+def test_loop_probe_iterates_match_model_hidden(tok):
+    import sys; sys.path.insert(0,'scripts')
+    from probe_loop_states import iterate_states
+    torch.manual_seed(9)
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=4,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional'},
+                    arch={'type':'looped','prelude':1,'core':2,'coda':1,'iters':3})
+    m=SystemOneModel(cfg).eval(); r=rec(); p=pack_request(tok,r['state'],r['questions']); mask=branch_attention_mask(p.branch_ids,True)[None]
+    ids,pos=p.input_ids[None],p.position_ids[None]
+    with torch.no_grad():
+        states={t:out for t,out,_ in iterate_states(m,ids,pos,mask,5)}
+        for K in (1,3,5):
+            m.iters=K; assert torch.allclose(states[K],m.hidden(ids,pos,mask),atol=1e-5)
