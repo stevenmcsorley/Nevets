@@ -1,0 +1,7 @@
+S30_s7 {'overall': 0.7642, 'h1_6': 0.9235, 'h7_10': 0.5285, 'rot': 0.9867, 'ece': 0.0394}
+S30_s8 {'overall': 0.7762, 'h1_6': 0.9244, 'h7_10': 0.5558, 'rot': 0.9887, 'ece': 0.0363}
+general-v1 (dev BEST_SPATIAL) {'overall': 0.5735, 'h1_6': 0.7222, 'h7_10': 0.3487, 'rot': 0.9433, 'ece': 0.0452}
+seed spread {'overall': 0.012, 'h1_6': 0.0009, 'h7_10': 0.0273, 'rot': 0.002, 'ece': 0.0031}
+S6 reference (P0 ledger): 0.587 +/- 0.002 overall, below the floor above
+PROMOTE S30
+checkpoints/p0/S30_s8.pt

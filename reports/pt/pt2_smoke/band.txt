@@ -1,0 +1,7 @@
+NOISE BAND (fine-tune seeds; cells 35m@6M(n=3), 35m@12M(n=3))
+  chains    sigma 0.0177   slope-difference band (per 250M) 2.9538
+  stress    sigma 0.0154   slope-difference band (per 250M) 2.5635
+  in_format sigma 0.0109   slope-difference band (per 250M) 1.811
+  table     sigma 0.0254   slope-difference band (per 250M) 4.2255
+  cf_both   sigma 0.0065   slope-difference band (per 250M) 1.0773
+  ece_in    sigma 0.0065   slope-difference band (per 250M) 1.0832

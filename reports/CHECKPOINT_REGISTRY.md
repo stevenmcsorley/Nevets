@@ -6,7 +6,7 @@ An entry changes only with measured evidence (link the report). Read-only (prote
 |---|---|---|---|---|---|
 | BASE | `s1-35m-pretrain.pt` 🔒 | 32.2M | 50k LM steps (FineWeb-Edu slice) | — | Root of every LM-initialized lineage. |
 | REFERENCE | `paired-paraphrase-onehop-gate.pt` 🔒 | 32.2M | P-04 | — | Frozen comparison point for the historical gates. |
-| BEST_SPATIAL (dev) | `general/general-v1.pt` 🔒 | 32.2M | dev chains 100 / 95.0 / 78.5 / 59.6% (1–4 hops), rotation consistency 94.3%, option-order invariant; not yet run on the locked sets | ~2.5× flat | Supersedes exp9 on every dev gate. |
+| BEST_SPATIAL (dev) | `p0/S30_s8.pt` 🔒 (seed 7: `p0/S30_s7.pt` 🔒) | 32.2M | S30, spatial-only 30k updates, two seeds: dev chains overall 0.776 / 0.764 (K=4), 1–6 hops 0.924, 7–10 hops 0.556 / 0.529, rotation 0.989 / 0.987, ECE 0.036 / 0.039; seed spread 0.012 overall; not yet run on the locked sets | ~2.5× flat (K=4) | Promoted 26 Sep (P0 + two-seed check). Supersedes general-v1 as the spatial model; general-v1 stays BEST_GENERAL. |
 | BEST_SPATIAL (locked) | `exp9-aux-loop.pt` 🔒 | 32.2M | L-1: stress 100%, chains 96.6 / 81.4 / 57.1% (1–3 hops) | 75 ms | The last model evaluated on the locked sets. |
 | BEST_FAST (spatial) | `exp6a-noloop.pt` | 32.2M | dev chains 92.7 / 86.9 / 54.7%; one-hop gates 100% | 28 ms | About 5 points below BEST_SPATIAL on 1–3 hops, at 2.7× lower latency. |
 | BEST_CALIBRATED | `exp6a-noloop.pt` | 32.2M | dev chain ECE 0.049; one-hop held-out ECE 0.004 | 28 ms | exp9 chain ECE is 0.071. |

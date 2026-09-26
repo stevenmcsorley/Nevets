@@ -1,2 +1,17 @@
 pt_35m lm done
 probe pt_35m_tok_0M done
+probe pt_35m_tok_12M done
+probe pt_35m_tok_6M done
+probe pt_35m_tok_6M_s8 done
+probe pt_35m_tok_6M_s9 done
+probe pt_35m_tok_12M_s8 done
+probe pt_35m_tok_12M_s9 done
+probe legacy_s1_35m done
+pt2 (35m) done (band computed; comparison pending ledger entry)
+pt_150m lm done
+probe pt_150m_tok_0M done
+probe pt_150m_tok_3M done
+probe pt_150m_tok_6M done
+probe pt_150m_tok_3M_s8 done
+probe pt_150m_tok_3M_s9 done
+probe pt_150m_tok_6M_s8 done
