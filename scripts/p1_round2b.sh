@@ -9,7 +9,7 @@ until grep -q "S30_s8 done" reports/p0/status.txt 2>/dev/null; do sleep 60; done
 INIT=checkpoints/p0/S30_s7.pt; DATA=data/processed/spatial_only_v1/train.jsonl; OUT=checkpoints/p1; REP=reports/p1
 $PY scripts/check_contamination.py $DATA > $REP/contamination_r2b.json || { echo contaminated; exit 1; }
 for a in r2b1_depthK r2b2_edge r2b3_incoff r2b4_combo; do
-  [ -f reports/pt/PT2_RUNNING ] && while [ -f reports/pt/PT2_RUNNING ]; do sleep 120; done  # PT-2 has priority on the GPU
+  while [ -f reports/pt/PT2_RUNNING ] || [ -f reports/general/GPU_BUSY ]; do sleep 120; done  # PT-2 and GENERAL-2 have GPU priority; 2b fills gaps
   $PY scripts/train_decision.py --config configs/p1/$a.yaml --init $INIT --tokenizer data/tokenizer.json --data $DATA \
     --batch 16 --steps 6000 --balanced-sampling --diagnostics --save-every 3000 --seed 7 --hop-bucketed 0,4 --eval-every 500 \
     --out $OUT/${a}_s7.pt > $REP/train_${a}_s7.log 2>&1 || echo "${a}_s7 exited $?" >> $REP/status.txt

@@ -577,3 +577,15 @@ def test_edge_restricted_core_mask_follows_facts_and_entity_links(tok):
     got=predict_batch(m,tok,[r],'cpu')[0]; want=predict_record(m,tok,r,'cpu')
     assert all(abs(got['spatial'][k]-want['spatial'][k])<1e-5 for k in want['spatial'])
     decision_batch_loss(m,tok,[r],torch.device('cpu')).backward()
+
+
+
+def test_domain_balanced_weights_give_domain_shares_then_label_balance():
+    from systemone_lab.training import domain_balanced_weights
+    recs=([{'labels':{'a':True},'meta':{'domain':'rules'}}]*9+[{'labels':{'a':False},'meta':{'domain':'rules'}}]
+          +[{'labels':{'s':'left'},'meta':{'domain':'spatial'}}]*5+[{'labels':{'k':'x'},'meta':{'domain':'kin'}}]*2)
+    w=domain_balanced_weights(recs,'spatial=0.5')
+    tot=lambda f:sum(x for r,x in zip(recs,w) if f(r))
+    assert abs(sum(w)-1)<1e-9 and abs(tot(lambda r:r['meta']['domain']=='spatial')-0.5)<1e-9
+    assert abs(tot(lambda r:r['meta']['domain']=='rules')-0.25)<1e-9 and abs(tot(lambda r:r['meta']['domain']=='kin')-0.25)<1e-9
+    assert abs(tot(lambda r:r['labels']=={'a':True})-tot(lambda r:r['labels']=={'a':False}))<1e-9

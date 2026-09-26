@@ -83,6 +83,8 @@ def main():
                     help='Freeze all pretrained weights and train only the entity-binding projection')
     ap.add_argument('--allow-tokenizer-mismatch',action='store_true')
     ap.add_argument('--balanced-sampling',action='store_true')
+    ap.add_argument('--domain-shares',default=None,help='domain-first then label-balanced sampling, e.g. "spatial=0.5" '
+                    '(unnamed domains split the rest equally; overrides --balanced-sampling)')
     ap.add_argument('--eval-every',type=int,default=500,help='dev gates every N updates (Rule 4); 0 disables')
     ap.add_argument('--no-kill',action='store_true',help='log gate regressions without stopping the run')
     ap.add_argument('--shuffle-options',action='store_true',help='augment: shuffle the option order of every sampled question')
@@ -132,6 +134,13 @@ def main():
         from collections import Counter
         labels=[tuple(sorted(r['labels'].items())) for r in records]; counts=Counter(labels)
         weights=[1/counts[label] for label in labels]
+    if a.domain_shares is not None:
+        from systemone_lab.training import domain_balanced_weights
+        weights=domain_balanced_weights(records,a.domain_shares)
+        from collections import defaultdict as _dd
+        mass=_dd(float)
+        for r,w in zip(records,weights): mass[(r.get('meta') or {}).get('domain','none')]+=w
+        print(json.dumps({'domain_shares':{k:round(v,4) for k,v in sorted(mass.items())}}),flush=True)
     params=[p for p in model.parameters() if p.requires_grad]
     iters_range=tuple(int(x) for x in a.iters_range.split(',')) if a.iters_range else None
     hop_buckets=None

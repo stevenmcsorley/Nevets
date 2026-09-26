@@ -316,3 +316,25 @@ def check_safety(stats, safety, failure_path, records):
         path.write_text(json.dumps({"reason": reason, "diagnostics": stats, "records": records}, indent=2))
         raise FloatingPointError(f"{reason}; evidence saved to {path}")
 
+
+
+
+def domain_balanced_weights(records, spec):
+    """Sampling weights: domain shares first, then label balance within each domain (SAMPLING-1 fix).
+
+    spec: "spatial=0.5" style overrides, comma-separated; domains not named split the remaining share
+    equally. Domain = meta.domain ("none" if absent). Within a domain every label tuple gets equal mass.
+    """
+    from collections import Counter, defaultdict
+    fixed = {}
+    for part in filter(None, (spec or "").split(",")):
+        k, v = part.split("="); fixed[k.strip()] = float(v)
+    dom = [(r.get("meta") or {}).get("domain", "none") for r in records]
+    lab = [tuple(sorted(r["labels"].items())) for r in records]
+    doms = sorted(set(dom)); rest = [d for d in doms if d not in fixed]
+    left = 1.0 - sum(fixed[d] for d in doms if d in fixed)
+    if left < -1e-9 or (not rest and abs(left) > 1e-9): raise ValueError(f"domain shares do not sum to 1: {fixed}")
+    share = {d: fixed.get(d, left / len(rest) if rest else 0.0) for d in doms}
+    per = defaultdict(Counter)
+    for d, l in zip(dom, lab): per[d][l] += 1
+    return [share[d] / len(per[d]) / per[d][l] for d, l in zip(dom, lab)]
