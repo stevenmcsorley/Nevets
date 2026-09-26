@@ -15,3 +15,5 @@ probe pt_150m_tok_6M done
 probe pt_150m_tok_3M_s8 done
 probe pt_150m_tok_3M_s9 done
 probe pt_150m_tok_6M_s8 done
+probe pt_150m_tok_6M_s9 done
+pt2 (150m) done (band computed; comparison pending ledger entry)

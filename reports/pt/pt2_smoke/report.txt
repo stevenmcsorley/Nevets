@@ -1,0 +1,22 @@
+NOISE BAND (fine-tune seeds; cells 35m@6M(n=3), 35m@12M(n=3), 150m@3M(n=3), 150m@6M(n=3))
+  chains    sigma 0.0214   slope-difference band (per 250M) 5.6486
+  stress    sigma 0.0207   slope-difference band (per 250M) 5.4531
+  in_format sigma 0.0114   slope-difference band (per 250M) 3.0152
+  table     sigma 0.0254   slope-difference band (per 250M) 6.6835
+  cf_both   sigma 0.0066   slope-difference band (per 250M) 1.7396
+  ece_in    sigma 0.0098   slope-difference band (per 250M) 2.5798
+== pt_35m
+      0M  val 10.468  chains 0.085  stress 0.055  in_format 0.380  table 0.346  cf_both 0.000  ece_in 0.035
+      6M  val 7.113  chains 0.137  stress 0.107  in_format 0.389  table 0.398  cf_both 0.000  ece_in 0.017
+     12M  val 6.685  chains 0.109  stress 0.111  in_format 0.375  table 0.340  cf_both 0.000  ece_in 0.035
+  slope/250M chains -1.1563  stress +0.1910  in_format -0.5556  table -2.4206  cf_both +0.0000  ece_in +0.7469
+== pt_150m
+      0M  val 10.586  chains 0.119  stress 0.130  in_format 0.373  table 0.412  cf_both 0.000  ece_in 0.031
+      3M  val 7.46  chains 0.089  stress 0.122  in_format 0.382  table 0.352  cf_both 0.005  ece_in 0.019
+      6M  val 7.094  chains 0.104  stress 0.111  in_format 0.379  table 0.342  cf_both 0.020  ece_in 0.035
+  slope/250M chains +1.2500  stress -0.8681  in_format -0.2381  table -0.8730  cf_both +1.2500  ece_in +1.3318
+  decision in_format slope150-slope35 +0.3175 vs band 3.0152 -> within noise
+  decision table     slope150-slope35 +1.5476 vs band 6.6835 -> within noise
+  decision cf_both   slope150-slope35 +1.2500 vs band 1.7396 -> within noise
+  decision ece_in    slope150-slope35 +0.5849 vs band 2.5798 -> within noise
+legacy s1-35m-pretrain (same probe): chains 0.156  stress 0.109  in_format 0.387  table 0.355  cf_both 0.000  ece_in 0.024

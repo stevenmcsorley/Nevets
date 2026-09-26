@@ -1,31 +1,36 @@
 {
   "cells": [
     "35m@6M(n=3)",
-    "35m@12M(n=3)"
+    "35m@12M(n=3)",
+    "150m@3M(n=3)",
+    "150m@6M(n=3)"
   ],
-  "sxx": 0.000288,
+  "sxx": {
+    "35m": 0.000288,
+    "150m": 7.2e-05
+  },
   "chains": {
-    "sigma_finetune": 0.017722690258535807,
-    "slope_diff_band": 2.9537817097559675
+    "sigma_finetune": 0.021434979200674147,
+    "slope_diff_band": 5.648612989372143
   },
   "stress": {
-    "sigma_finetune": 0.015380964666563478,
-    "slope_diff_band": 2.563494111093913
+    "sigma_finetune": 0.020692929661190147,
+    "slope_diff_band": 5.453065765918102
   },
   "in_format": {
-    "sigma_finetune": 0.010865772120714177,
-    "slope_diff_band": 1.8109620201190295
+    "sigma_finetune": 0.011441791295834986,
+    "slope_diff_band": 3.015176750593999
   },
   "table": {
-    "sigma_finetune": 0.025353137026160523,
-    "slope_diff_band": 4.22552283769342
+    "sigma_finetune": 0.025362079406202102,
+    "slope_diff_band": 6.683494760137451
   },
   "cf_both": {
-    "sigma_finetune": 0.0064639312656778304,
-    "slope_diff_band": 1.0773218776129716
+    "sigma_finetune": 0.006601241465731191,
+    "slope_diff_band": 1.7395798680382428
   },
   "ece_in": {
-    "sigma_finetune": 0.0064989752746874825,
-    "slope_diff_band": 1.083162545781247
+    "sigma_finetune": 0.00978966909843598,
+    "slope_diff_band": 2.579804324202068
   }
 }

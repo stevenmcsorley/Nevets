@@ -7,8 +7,8 @@ Owner rules: judge 35M vs 150M on the slope across checkpoints (not the 1B endpo
 Slope = least squares over the >0-token checkpoints (fine-tune seed 7 at every point), x in units of 250M tokens.
 Noise: for each metric, sigma = pooled standard deviation across fine-tune seeds (seeds 7/8/9; probes named
 `<ckpt>` and `<ckpt>_s8`, `<ckpt>_s9`) over the (size, checkpoint) cells that have >= 2 seeds.
-One slope's standard error = sigma / sqrt(sum (x - mean x)^2); the difference of two sizes' slopes has
-SE = sigma * sqrt(2 / Sxx). Band = 2 x that SE: |slope_150M - slope_35M| inside the band = "within noise".
+One slope's standard error = sigma / sqrt(Sxx), Sxx = sum (x - mean x)^2 over that size's slope points; the difference
+of two sizes' slopes has SE = sigma * sqrt(1/Sxx_35M + 1/Sxx_150M) (= sigma*sqrt(2/5) on the 250M..1B grid). Band = 2 x SE: |slope_150M - slope_35M| inside the band = "within noise".
 """
 import argparse
 import glob
@@ -50,8 +50,9 @@ def collect(rep, root, size):
     return pts, seeds
 
 
-def band(all_seeds, xs):
-    sxx = sum((x - sum(xs) / len(xs)) ** 2 for x in xs) if len(xs) >= 2 else None
+def band(all_seeds, grids):
+    sxx = {k: sum((x - sum(v) / len(v)) ** 2 for x in v) for k, v in grids.items() if len(v) >= 2}
+    inv = sum(1 / v for v in sxx.values()) if len(sxx) == 2 and all(sxx.values()) else None
     out = {"cells": [f"{s}@{m}M(n={len(v)})" for s, cells in all_seeds.items() for m, v in sorted(cells.items())], "sxx": sxx}
     for k in METRICS:
         var, dof = 0.0, 0
@@ -59,7 +60,7 @@ def band(all_seeds, xs):
             for runs in cells.values():
                 ys = [r[k] for r in runs]; mu = sum(ys) / len(ys); var += sum((y - mu) ** 2 for y in ys); dof += len(ys) - 1
         sigma = math.sqrt(var / dof) if dof else None
-        out[k] = {"sigma_finetune": sigma, "slope_diff_band": 2 * sigma * math.sqrt(2 / sxx) if sigma is not None and sxx else None}
+        out[k] = {"sigma_finetune": sigma, "slope_diff_band": 2 * sigma * math.sqrt(inv) if sigma is not None and inv else None}
     return out
 
 
@@ -69,8 +70,8 @@ def main():
     ap.add_argument("--band-only", action="store_true", help="print and save only the noise band (record it before comparing)")
     a = ap.parse_args(); rep = Path(a.rep)
     data = {size: collect(rep, a.ckpt_root, size) for size in ("35m", "150m")}
-    xs = sorted({m / 250 for size in data for m in data[size][0] if m > 0})
-    b = band({size: data[size][1] for size in data}, xs)
+    grids = {size: sorted(m / 250 for m in data[size][0] if m > 0) for size in data}
+    b = band({size: data[size][1] for size in data}, grids)
     (rep / "band.json").write_text(json.dumps(b, indent=2))
     print("NOISE BAND (fine-tune seeds; cells " + ", ".join(b["cells"]) + ")")
     for k in METRICS:
