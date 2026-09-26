@@ -3,7 +3,7 @@ import json, math, os, time
 from pathlib import Path
 import torch
 import torch.nn.functional as F
-from .formatting import pack_request, branch_attention_mask, entity_state_positions, _text
+from .formatting import pack_request, branch_attention_mask, edge_restrict, entity_state_positions, _text
 
 
 def pick_device():
@@ -88,10 +88,12 @@ def _pad_batch(model, tokenizer, packed, device):
     pos = torch.zeros((bsz, tmax), dtype=torch.long)
     branch = torch.full((bsz, tmax), -1, dtype=torch.long)  # -1 marks padding
     opts = torch.zeros((bsz, tmax), dtype=torch.long)
+    sent = torch.zeros((bsz, tmax), dtype=torch.long); ent = torch.zeros((bsz, tmax), dtype=torch.long)
     for i, x in enumerate(packed):
         t = x.input_ids.numel()
         ids[i, :t] = x.input_ids; pos[i, :t] = x.position_ids; branch[i, :t] = x.branch_ids
         if x.option_ids is not None: opts[i, :t] = x.option_ids
+        if x.sent_ids is not None: sent[i, :t] = x.sent_ids; ent[i, :t] = x.ent_ids
     nb = device.type == "cuda"
     branch = branch.to(device, non_blocking=nb)  # build the [B,T,T] mask on the device from [B,T] ids
     opts = opts.to(device, non_blocking=nb) if model.isolated_options else None
@@ -99,6 +101,10 @@ def _pad_batch(model, tokenizer, packed, device):
     masks = branch_attention_mask(branch.clamp(min=0), model.bidirectional_state, opts) & valid[:, None, :] & valid[:, :, None]
     # Keep padding query rows numerically well-defined. They never contribute to loss.
     masks |= torch.diag_embed(~valid)
+    if getattr(model, "edge_restricted", False):
+        core = edge_restrict(masks, branch.clamp(min=0), sent.to(device, non_blocking=nb), ent.to(device, non_blocking=nb))
+        core |= torch.diag_embed(~valid)
+        return ids.to(device, non_blocking=nb), pos.to(device, non_blocking=nb), (masks, core)
     return ids.to(device, non_blocking=nb), pos.to(device, non_blocking=nb), masks
 
 
@@ -181,6 +187,15 @@ def decision_batch_loss(model, tokenizer, records, device, diagnostics=None, for
                                                    move(signs), move(spatial))
         target, opt_mask = move(target), move(opt_mask)
         loss = -(target * F.log_softmax(logits, dim=-1)).sum(-1).mean()
+        deep = getattr(model, "deep_outputs", None)
+        if deep:  # deep supervision: every pass at or past the required depth must already answer correctly
+            saved = model.last_coord; terms = [loss]
+            for hd in deep:
+                lg, _, _ = model.decision_logits_batch(hd, move(b_idx), move(decide), move(opt_pos), move(opt_mask), bind,
+                                                       move(signs), move(spatial))
+                terms.append(-(target * F.log_softmax(lg, dim=-1)).sum(-1).mean())
+            model.last_coord = saved; loss = torch.stack(terms).mean()
+            if diagnostics is not None: diagnostics["deep_passes"] = len(terms)
         cw = float(model.cfg.decision_head.get("coord_consistency", 0))
         lc = getattr(model, "last_coord", None)
         if lc is not None and lc["valid"].any():
@@ -217,12 +232,19 @@ def decision_batch_loss(model, tokenizer, records, device, diagnostics=None, for
             gb_t, gp_t = move(torch.tensor(gb)), move(torch.tensor(gp))
             goal_t = move(torch.tensor(goal, dtype=torch.float32)) / 4; dist_t = move(torch.tensor(gd, dtype=torch.float32))
             terms = []
+            frontier = (model.cfg.arch or {}).get("hint_mode", "cumulative") == "frontier"
+            retain = float((model.cfg.arch or {}).get("hint_retain_weight", 0.3))
             for t_idx, hs in enumerate(model.iter_states, start=1):
                 sel = dist_t <= t_idx * hops_per_iter  # iteration t is responsible for objects within t hops
                 if sel.any():
                     with torch.autocast(device_type=h.device.type, enabled=False):
                         pred = model.coord_head(model.norm(hs[gb_t[sel], gp_t[sel]]).float())
-                    terms.append(F.smooth_l1_loss(pred, goal_t[sel]))
+                    err = F.smooth_l1_loss(pred, goal_t[sel], reduction="none").mean(-1)
+                    if frontier:  # incremental offsets: the new frontier (exactly t hops) weighs most
+                        w = torch.where(dist_t[sel] > (t_idx - 1) * hops_per_iter, 1.0, retain)
+                        terms.append((err * w).sum() / w.sum())
+                    else:
+                        terms.append(err.mean())
             if terms:
                 hint = torch.stack(terms).mean(); loss = loss + hint_w * hint
                 if diagnostics is not None: diagnostics["hint_loss"] = hint.detach().float().item()

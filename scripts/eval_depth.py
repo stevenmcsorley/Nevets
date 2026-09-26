@@ -37,6 +37,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", required=True); ap.add_argument("--out", required=True)
     ap.add_argument("--iters", default="1,2,4,6,8,12")
+    ap.add_argument("--hop-offset", type=int, default=None,
+                    help="also evaluate each hop group at K = hops + offset (ORACLE diagnostic: uses the true hop count)")
     ap.add_argument("--chains", default="reports/chain/eval_hops.jsonl"); ap.add_argument("--transforms", default="reports/chain/transforms.jsonl")
     a = ap.parse_args(); device = pick_device()
     model, ck = load_checkpoint(a.ckpt, SystemOneModel, device); model.to(device).eval(); tok = LabTokenizer(ck["tokenizer"])
@@ -65,6 +67,16 @@ def main():
         print(f"K={K}: overall {s['overall']['accuracy']:.3f} | hops " + " ".join(f"{h}:{v:.2f}" for h, v in s["by_hops"].items())
               + f" | cancel {s['cancellation_labels']['accuracy']:.3f} diag {s['diagonal_labels']['accuracy']:.3f}"
               + f" | ECE {s['overall']['ece15']:.3f} NLL {s['overall']['nll']:.3f} | rot {s['transform_consistency']:.3f}", flush=True)
+    if looped and a.hop_offset is not None:
+        by, rows = defaultdict(list), []
+        for r in chains: by[r["meta"]["hops"]].append(r)
+        for h, rs in sorted(by.items()):
+            model.iters = h + a.hop_offset
+            for r, p in zip(rs, predict_batch(model, tok, rs, device)):
+                p = p["spatial"]; pred = max(p, key=p.get); rows.append({"hops": h, "ok": pred == r["labels"]["spatial"]})
+        acc = {h: sum(x["ok"] for x in rows if x["hops"] == h) / sum(1 for x in rows if x["hops"] == h) for h in sorted(by)}
+        out["oracle_k_equals_hops_plus"] = {"offset": a.hop_offset, "by_hops": acc}
+        print(f"ORACLE K=hops+{a.hop_offset}: " + " ".join(f"{h}:{v:.2f}" for h, v in acc.items()), flush=True)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True); Path(a.out).write_text(json.dumps(out, indent=2))
 
 

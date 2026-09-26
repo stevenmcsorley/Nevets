@@ -26,14 +26,15 @@ from systemone_lab.training import _pad_batch, _packed, load_checkpoint, option_
 def iterate_states(model, ids, pos, masks, k_max):
     """Yield (t, full-depth output for K=t, raw core state h_t) for t = 1..k_max."""
     arch = model.cfg.arch; p, c = arch["prelude"], arch["core"]
+    full, core = masks if isinstance(masks, tuple) else (masks, masks)
     x = model.embed(ids)
-    for block in model.blocks[:p]: x = block(x, pos, masks)
+    for block in model.blocks[:p]: x = block(x, pos, full)
     inject, h = x, torch.zeros_like(x)
     for t in range(1, k_max + 1):
         h = h + inject
-        for block in model.blocks[p:p + c]: h = block(h, pos, masks)
+        for block in model.blocks[p:p + c]: h = block(h, pos, core)
         y = h
-        for block in model.blocks[p + c:]: y = block(y, pos, masks)
+        for block in model.blocks[p + c:]: y = block(y, pos, full)
         yield t, model.norm(y), h
 
 
@@ -66,7 +67,7 @@ def main():
         bind = (mv(torch.tensor(rows, dtype=torch.long)), mv(torch.tensor(bb, dtype=torch.long)),
                 mv(torch.tensor(bp, dtype=torch.long)), mv(torch.tensor(bw, dtype=torch.float32)))
         signs, spatial = option_signs([l for _, l in items], K)
-        state_mask = torch.zeros(ids.shape, dtype=torch.bool, device=device)
+        state_mask = torch.zeros(ids.shape, dtype=torch.bool, device=device)  # (masks may be a (full, core) pair)
         for i, x in enumerate(packed): state_mask[i, :int((x.branch_ids == 0).sum())] = True
         prev = None
         for t, hidden, h in iterate_states(model, ids, pos, masks, a.k_max):

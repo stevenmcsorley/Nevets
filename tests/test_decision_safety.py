@@ -531,3 +531,49 @@ def test_loop_probe_iterates_match_model_hidden(tok):
         states={t:out for t,out,_ in iterate_states(m,ids,pos,mask,5)}
         for K in (1,3,5):
             m.iters=K; assert torch.allclose(states[K],m.hidden(ids,pos,mask),atol=1e-5)
+
+
+
+def test_deep_supervision_averages_loss_over_passes_from_required_depth(tok):
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=3,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional'},
+                    arch={'type':'looped','prelude':1,'core':1,'coda':1,'iters':5,'deep_supervision':True})
+    m=SystemOneModel(cfg); m.train(); m.deep_from=3; r=rec()
+    stats={}; loss=decision_batch_loss(m,tok,[r],torch.device('cpu'),stats); loss.backward()
+    assert stats['deep_passes']==3 and len(m.deep_outputs)==2  # passes 3,4 kept + final pass 5
+    m.eval()
+    with torch.no_grad(): decision_batch_loss(m,tok,[r],torch.device('cpu'))
+    assert m.deep_outputs is None
+
+
+def test_frontier_hints_run(tok):
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=3,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional'},
+                    arch={'type':'looped','prelude':1,'core':1,'coda':1,'iters':3,'hint_weight':1.0,'hint_mode':'frontier'})
+    m=SystemOneModel(cfg); m.train(); r=rec(); r['state']='A is left of B. B is left of C.'
+    r['meta']={'aux_coords':{'A':[0,0],'B':[1,0],'C':[2,0]},'aux_dist':{'A':0,'B':1,'C':2}}
+    stats={}; decision_batch_loss(m,tok,[r],torch.device('cpu'),stats).backward()
+    assert 'hint_loss' in stats and m.coord_head.weight.grad is not None
+
+
+
+def test_edge_restricted_core_mask_follows_facts_and_entity_links(tok):
+    from systemone_lab.formatting import edge_restrict
+    p=pack_request(tok,'A is left of B. B is above C. D is right of E.',
+                   {'s':{'type':'choice','instructions':'What is the spatial relation of A to C?','criteria':{'left':'left','right':'right'}}})
+    full=branch_attention_mask(p.branch_ids,True); core=edge_restrict(full,p.branch_ids,p.sent_ids,p.ent_ids)
+    toks=[tok.decode([int(t)]).strip() for t in p.input_ids]
+    idx=lambda w,k=0:[i for i,t in enumerate(toks) if t==w and p.branch_ids[i]==0][k]
+    a,b1,b2,c,d=idx('A'),idx('B',0),idx('B',1),idx('C'),idx('D')
+    assert core[a,b1] and core[b1,b2] and core[b2,c]  # same fact, then entity link B-B, then same fact
+    assert not core[a,c] and not core[a,d] and full[a,c]  # no shortcut across facts in the core
+    q=[i for i in range(len(toks)) if p.branch_ids[i]==1][0]
+    assert torch.equal(core[q],full[q])  # question rows unchanged
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=3,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional'},
+                    arch={'type':'looped','prelude':1,'core':1,'coda':1,'iters':2,'edge_restricted':True})
+    m=SystemOneModel(cfg); r=rec(); r['state']='A is left of B. B is above C.'
+    from systemone_lab.gates import predict_batch
+    got=predict_batch(m,tok,[r],'cpu')[0]; want=predict_record(m,tok,r,'cpu')
+    assert all(abs(got['spatial'][k]-want['spatial'][k])<1e-5 for k in want['spatial'])
+    decision_batch_loss(m,tok,[r],torch.device('cpu')).backward()

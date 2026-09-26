@@ -21,6 +21,28 @@ class PackedRequest:
     branch_ids: torch.Tensor
     layouts: list[QuestionLayout]
     option_ids: torch.Tensor | None = None  # 0 = not an option token; k = k-th option of its branch
+    sent_ids: torch.Tensor | None = None    # state tokens: 1-based fact (sentence) index; 0 elsewhere
+    ent_ids: torch.Tensor | None = None     # state tokens inside an entity mention: 1-based entity group; 0 elsewhere
+
+# Entity-name pattern for edge-restricted passes (P1 round 2b). It matches the spatial chain worlds'
+# names (obj_N, single capital letters with an optional digit); a general mechanism needs a learned or
+# structured entity detector.
+ENTITY_NAME = re.compile(r"(?<![\w-])(obj_\d+|[A-Z]\d?)(?![\w-])")
+
+
+def state_graph_ids(state_text, offsets):
+    """Per state token: fact (sentence) id and entity-mention group id, from character offsets."""
+    sent = [0] * len(offsets); ent = [0] * len(offsets); groups = {}
+    spans = [(m.start(), m.end()) for m in re.finditer(r"[^.]+\.?", state_text)]
+    for i, (lo, hi) in enumerate(offsets):
+        mid = (lo + hi) / 2
+        for si, (a, b) in enumerate(spans, start=1):
+            if a <= mid < b: sent[i] = si; break
+    for m in ENTITY_NAME.finditer(state_text):
+        g = groups.setdefault(m.group(1), len(groups) + 1)
+        for i, (lo, hi) in enumerate(offsets):
+            if lo < m.end() and hi > m.start(): ent[i] = g
+    return sent, ent
 
 
 def _text(x: Any) -> str:
@@ -60,6 +82,8 @@ def pack_request(tokenizer, state: Any, questions: dict[str, dict], device=None,
     ids.append(tokenizer.id("</state>"))
     branch_ids.append(0)
     positions.append(2 + len(state_tokens))
+    s_ids, e_ids = state_graph_ids(state_text, state_offsets)
+    sent_ids = [0, 0] + s_ids + [0]; ent_ids = [0, 0] + e_ids + [0]
     option_ids.extend([0] * (len(ids) - len(option_ids)))
     state_len = len(ids)
 
@@ -142,7 +166,20 @@ def pack_request(tokenizer, state: Any, questions: dict[str, dict], device=None,
         torch.tensor(branch_ids, dtype=torch.long, device=device),
         layouts,
         torch.tensor(option_ids, dtype=torch.long, device=device),
+        torch.tensor(sent_ids + [0] * (len(ids) - len(sent_ids)), dtype=torch.long, device=device),
+        torch.tensor(ent_ids + [0] * (len(ids) - len(ent_ids)), dtype=torch.long, device=device),
     )
+
+
+def edge_restrict(mask: torch.Tensor, branch_ids: torch.Tensor, sent_ids: torch.Tensor, ent_ids: torch.Tensor) -> torch.Tensor:
+    """Core-pass mask for edge-restricted message passing: a state token attends only to tokens of its own
+    fact and to other mentions of the same entity. Question-branch rows are unchanged. Works on [T] or [B,T]."""
+    state_q = (branch_ids == 0)[..., :, None]; state_k = (branch_ids == 0)[..., None, :]
+    same_fact = (sent_ids[..., :, None] == sent_ids[..., None, :]) & (sent_ids[..., :, None] > 0)
+    same_ent = (ent_ids[..., :, None] == ent_ids[..., None, :]) & (ent_ids[..., :, None] > 0)
+    special = (sent_ids[..., None, :] == 0) & state_k  # <bos>/<state>/</state> stay visible
+    allowed_state = same_fact | same_ent | special
+    return torch.where(state_q & state_k, mask & allowed_state, mask)
 
 
 def branch_attention_mask(branch_ids: torch.Tensor, bidirectional_state: bool = False,

@@ -86,6 +86,8 @@ def main():
     ap.add_argument('--eval-every',type=int,default=500,help='dev gates every N updates (Rule 4); 0 disables')
     ap.add_argument('--no-kill',action='store_true',help='log gate regressions without stopping the run')
     ap.add_argument('--shuffle-options',action='store_true',help='augment: shuffle the option order of every sampled question')
+    ap.add_argument('--hop-bucketed',help='looped arch: sample each batch from one hop bucket h and set K ~ U(h+lo, h+hi), '
+                    'with deep supervision from pass h (arch.deep_supervision); value "lo,hi", e.g. "0,4"')
     ap.add_argument('--nograd-range',help='looped arch: warm-up iterations without gradient, sampled from "lo,hi" per update')
     ap.add_argument('--iters-range',help='looped arch: sample core iterations uniformly from "lo,hi" per update')
     a=ap.parse_args()
@@ -132,6 +134,15 @@ def main():
         weights=[1/counts[label] for label in labels]
     params=[p for p in model.parameters() if p.requires_grad]
     iters_range=tuple(int(x) for x in a.iters_range.split(',')) if a.iters_range else None
+    hop_buckets=None
+    if a.hop_bucketed:
+        if (model.cfg.arch or {}).get('type')!='looped': ap.error('--hop-bucketed needs a looped arch')
+        hop_range=tuple(int(x) for x in a.hop_bucketed.split(','))
+        from collections import defaultdict
+        hop_buckets=defaultdict(list)
+        for i,r in enumerate(records): hop_buckets[int(r.get('meta',{}).get('hops',1))].append(i)
+        hop_keys=sorted(hop_buckets); hop_sizes=[len(hop_buckets[k]) for k in hop_keys]
+        print(json.dumps({'hop_buckets':{k:len(v) for k,v in hop_buckets.items()}}),flush=True)
     nograd_range=tuple(int(x) for x in a.nograd_range.split(',')) if a.nograd_range else None
     if iters_range and (model.cfg.arch or {}).get('type')!='looped': ap.error('--iters-range needs a looped arch')
     log=Path(a.out).with_suffix('.diagnostics.jsonl'); log.parent.mkdir(parents=True,exist_ok=True)
@@ -145,7 +156,13 @@ def main():
             if iters_range: model.iters=random.randint(*iters_range)
             if nograd_range: model.iters_nograd=random.randint(*nograd_range)
             for micro in range(a.accum):
-                recs=random.choices(records,weights=weights,k=a.batch); stats={'step':step,'microbatch':micro}
+                if hop_buckets:
+                    h=random.choices(hop_keys,weights=hop_sizes,k=1)[0]; idx=hop_buckets[h]
+                    recs=random.choices([records[i] for i in idx],weights=[weights[i] for i in idx] if weights else None,k=a.batch)
+                    model.iters=random.randint(h+hop_range[0],h+hop_range[1]); model.deep_from=h
+                else:
+                    recs=random.choices(records,weights=weights,k=a.batch)
+                stats={'step':step,'microbatch':micro}
                 if a.shuffle_options: recs=[shuffled_options(r) for r in recs]
                 with torch.autocast(device_type=device.type,dtype=dtype,enabled=device.type=='cuda' and dtype==torch.bfloat16):
                     loss=decision_batch_loss(model,tok,recs,device,stats)
@@ -184,8 +201,8 @@ def main():
                             {'step':step,'reason':'Rule 4: gate regression > 2 points vs parent','regressions':bad,
                              'parent':gate_baseline,'current':result},indent=2))
                         print(json.dumps({'KILLED':bad}),flush=True); sys.exit(3)
-    if iters_range: model.iters=int((model.cfg.arch or {}).get('iters',1))
-    model.iters_nograd=0
+    if iters_range or hop_buckets: model.iters=int((model.cfg.arch or {}).get('iters',1))
+    model.iters_nograd=0; model.deep_from=1
     save_checkpoint(a.out,model,model.cfg,a.tokenizer,a.steps,stats)
 
 if __name__=='__main__': main()

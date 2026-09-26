@@ -159,6 +159,8 @@ class SystemOneModel(nn.Module):
         self.iters = int(arch.get("iters", 1))  # overridable per call for test-time depth sweeps
         self.iters_nograd = 0   # training only: warm-up core iterations run without gradient
         self.iter_states = None  # training only: per-iteration core states for hint supervision
+        self.deep_from = 1       # training only: first pass whose output gets the decision loss (deep supervision)
+        self.deep_outputs = None
         if float(arch.get("hint_weight", 0)) > 0 and getattr(self, "coord_head", None) is None:
             self.coord_head = nn.Linear(self.cfg.d_model, 2, device=self.ptr_q.weight.device)
         self.fixed_point_delta = None  # set when arch["converge_weight"] > 0 during training
@@ -197,11 +199,18 @@ class SystemOneModel(nn.Module):
             raise ValueError("option_attention must be causal or isolated")
         return mode == "isolated"
 
+    @property
+    def edge_restricted(self) -> bool:
+        return bool((self.cfg.arch or {}).get("edge_restricted", False))
+
     def attention_mask(self, packed):
-        """The attention mask this model expects for a packed request."""
-        from .formatting import branch_attention_mask
-        return branch_attention_mask(packed.branch_ids, self.bidirectional_state,
+        """The attention mask this model expects for a packed request (a (full, core) pair if edge-restricted)."""
+        from .formatting import branch_attention_mask, edge_restrict
+        full = branch_attention_mask(packed.branch_ids, self.bidirectional_state,
                                      packed.option_ids if self.isolated_options else None)
+        if self.edge_restricted:
+            return full, edge_restrict(full, packed.branch_ids, packed.sent_ids, packed.ent_ids)
+        return full
 
     @property
     def bidirectional_state(self) -> bool:
@@ -222,6 +231,9 @@ class SystemOneModel(nn.Module):
             position_ids = torch.arange(T, device=input_ids.device).expand(B,T)
         x = self.embed(input_ids)
         arch = self.cfg.arch or {}
+        core_mask = attention_mask
+        if isinstance(attention_mask, tuple):  # edge-restricted: (full mask, core-pass mask)
+            attention_mask, core_mask = attention_mask
         if arch.get("type") == "looped":
             p, c = arch["prelude"], arch["core"]
             for block in self.blocks[:p]:
@@ -232,7 +244,7 @@ class SystemOneModel(nn.Module):
             def step(h):
                 h = h + inject  # input injection keeps the problem visible at every iteration
                 for block in core:
-                    h = block(h, position_ids, attention_mask)
+                    h = block(h, position_ids, core_mask)
                 return h
             if self.training and self.iters_nograd:
                 # Truncated backprop through the recurrence: warm up without gradient, so the core
@@ -242,10 +254,17 @@ class SystemOneModel(nn.Module):
                         h = step(h)
                 h = h.detach()
             keep = self.training and float(arch.get("hint_weight", 0)) > 0
+            deep = self.training and bool(arch.get("deep_supervision", False))
             self.iter_states = [] if keep else None
-            for _ in range(self.iters):
+            self.deep_outputs = [] if deep else None
+            for t in range(1, self.iters + 1):
                 h = step(h)
                 if keep: self.iter_states.append(h)
+                if deep and self.deep_from <= t < self.iters:  # the final pass is returned below
+                    y = h
+                    for block in self.blocks[p + c:]:
+                        y = block(y, position_ids, attention_mask)
+                    self.deep_outputs.append(self.norm(y))
             self.fixed_point_delta = None
             if self.training and float(arch.get("converge_weight", 0)) > 0:
                 nxt = step(h)  # one more iteration should change little at a fixed point
