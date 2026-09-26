@@ -1,0 +1,115 @@
+{
+  "configs/pt/pt_35m.yaml": {
+    "rows": [
+      {
+        "params_M": 40.2,
+        "tokens_per_s": 67109.88106358047,
+        "peak_mem_GB": 4.295483392,
+        "step_s": 0.24413692500032388,
+        "batch": 16,
+        "ok": true
+      },
+      {
+        "params_M": 40.2,
+        "tokens_per_s": 68120.34825852368,
+        "peak_mem_GB": 6.066561024,
+        "step_s": 0.3607732583329077,
+        "batch": 24,
+        "ok": true
+      },
+      {
+        "params_M": 40.2,
+        "tokens_per_s": 68223.876319875,
+        "peak_mem_GB": 7.832526848,
+        "step_s": 0.4803010583327705,
+        "batch": 32,
+        "ok": true
+      },
+      {
+        "params_M": 40.2,
+        "tokens_per_s": 68375.32550517088,
+        "peak_mem_GB": 9.605439488,
+        "step_s": 0.5990465083329278,
+        "batch": 40,
+        "ok": true
+      },
+      {
+        "batch": 48,
+        "ok": false,
+        "error": "OOM (raised, as intended)"
+      }
+    ],
+    "best": {
+      "params_M": 40.2,
+      "tokens_per_s": 68375.32550517088,
+      "peak_mem_GB": 9.605439488,
+      "step_s": 0.5990465083329278,
+      "batch": 40,
+      "ok": true
+    },
+    "oom_raised": true,
+    "crawl_detected": false
+  },
+  "configs/pt/pt_70m.yaml": {
+    "rows": [
+      {
+        "params_M": 75.5,
+        "tokens_per_s": 36066.27662621499,
+        "peak_mem_GB": 7.040908288,
+        "step_s": 0.4542747833329486,
+        "batch": 16,
+        "ok": true
+      },
+      {
+        "params_M": 75.5,
+        "tokens_per_s": 36097.88555049688,
+        "peak_mem_GB": 9.911745536,
+        "step_s": 0.6808154999998806,
+        "batch": 24,
+        "ok": true
+      },
+      {
+        "batch": 32,
+        "ok": false,
+        "error": "OOM (raised, as intended)"
+      }
+    ],
+    "best": {
+      "params_M": 75.5,
+      "tokens_per_s": 36097.88555049688,
+      "peak_mem_GB": 9.911745536,
+      "step_s": 0.6808154999998806,
+      "batch": 24,
+      "ok": true
+    },
+    "oom_raised": true,
+    "crawl_detected": false
+  },
+  "configs/pt/pt_150m.yaml": {
+    "rows": [
+      {
+        "params_M": 157.6,
+        "tokens_per_s": 19858.483792317933,
+        "peak_mem_GB": 8.806138368,
+        "step_s": 0.6187783583333536,
+        "batch": 12,
+        "ok": true
+      },
+      {
+        "batch": 16,
+        "ok": false,
+        "error": "OOM (raised, as intended)"
+      }
+    ],
+    "best": {
+      "params_M": 157.6,
+      "tokens_per_s": 19858.483792317933,
+      "peak_mem_GB": 8.806138368,
+      "step_s": 0.6187783583333536,
+      "batch": 12,
+      "ok": true
+    },
+    "oom_raised": true,
+    "crawl_detected": false
+  }
+}

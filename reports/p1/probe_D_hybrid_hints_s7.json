@@ -1,0 +1,93 @@
+{
+  "ckpt": "checkpoints/p1/D_hybrid_hints_s7.pt",
+  "k_max": 12,
+  "n": 800,
+  "trained_iters_max": 6,
+  "by_iter": {
+    "1": {
+      "acc_trained_hops": 0.905811623246493,
+      "acc_unseen_hops": 0.45182724252491696,
+      "drift_state": null,
+      "entity_cosine": 0.9987167755514383,
+      "coord_err_grid": 0.858455645814538
+    },
+    "2": {
+      "acc_trained_hops": 0.9418837675350702,
+      "acc_unseen_hops": 0.5083056478405316,
+      "drift_state": 0.8569613552093506,
+      "entity_cosine": 0.9980818486213684,
+      "coord_err_grid": 0.7120679356739856
+    },
+    "3": {
+      "acc_trained_hops": 0.9519038076152304,
+      "acc_unseen_hops": 0.5083056478405316,
+      "drift_state": 0.45769842267036437,
+      "entity_cosine": 0.9976591494679451,
+      "coord_err_grid": 0.6690863959142007
+    },
+    "4": {
+      "acc_trained_hops": 0.9579158316633266,
+      "acc_unseen_hops": 0.53156146179402,
+      "drift_state": 0.310568060874939,
+      "entity_cosine": 0.9972311502695084,
+      "coord_err_grid": 0.6540253431536257
+    },
+    "5": {
+      "acc_trained_hops": 0.9639278557114228,
+      "acc_unseen_hops": 0.5415282392026578,
+      "drift_state": 0.2350648069381714,
+      "entity_cosine": 0.9967287991195917,
+      "coord_err_grid": 0.6516527039580978
+    },
+    "6": {
+      "acc_trained_hops": 0.9619238476953907,
+      "acc_unseen_hops": 0.5481727574750831,
+      "drift_state": 0.18926214456558227,
+      "entity_cosine": 0.9961222656071186,
+      "coord_err_grid": 0.6552969865687192
+    },
+    "7": {
+      "acc_trained_hops": 0.9639278557114228,
+      "acc_unseen_hops": 0.5481727574750831,
+      "drift_state": 0.15852948307991027,
+      "entity_cosine": 0.9953933152556419,
+      "coord_err_grid": 0.6612389558460563
+    },
+    "8": {
+      "acc_trained_hops": 0.9599198396793587,
+      "acc_unseen_hops": 0.5514950166112956,
+      "drift_state": 0.13647318601608277,
+      "entity_cosine": 0.994528257921338,
+      "coord_err_grid": 0.6685037204483524
+    },
+    "9": {
+      "acc_trained_hops": 0.9599198396793587,
+      "acc_unseen_hops": 0.5514950166112956,
+      "drift_state": 0.11986501544713973,
+      "entity_cosine": 0.9935158820450306,
+      "coord_err_grid": 0.6766242392128333
+    },
+    "10": {
+      "acc_trained_hops": 0.9559118236472945,
+      "acc_unseen_hops": 0.5514950166112956,
+      "drift_state": 0.10690146893262863,
+      "entity_cosine": 0.9923469032347202,
+      "coord_err_grid": 0.685335928699933
+    },
+    "11": {
+      "acc_trained_hops": 0.9438877755511023,
+      "acc_unseen_hops": 0.5481727574750831,
+      "drift_state": 0.09649650335311889,
+      "entity_cosine": 0.9910138710588217,
+      "coord_err_grid": 0.6945756628550589
+    },
+    "12": {
+      "acc_trained_hops": 0.935871743486974,
+      "acc_unseen_hops": 0.5448504983388704,
+      "drift_state": 0.08795715302228928,
+      "entity_cosine": 0.989511262178421,
+      "coord_err_grid": 0.7035403065383434
+    }
+  },
+  "verdict": "converging"
+}

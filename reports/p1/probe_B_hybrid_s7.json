@@ -1,0 +1,93 @@
+{
+  "ckpt": "checkpoints/p1/B_hybrid_s7.pt",
+  "k_max": 12,
+  "n": 800,
+  "trained_iters_max": 6,
+  "by_iter": {
+    "1": {
+      "acc_trained_hops": 0.905811623246493,
+      "acc_unseen_hops": 0.4717607973421927,
+      "drift_state": null,
+      "entity_cosine": 0.998800902441144,
+      "coord_err_grid": 0.8485254813125357
+    },
+    "2": {
+      "acc_trained_hops": 0.9398797595190381,
+      "acc_unseen_hops": 0.5182724252491694,
+      "drift_state": 0.8556601166725158,
+      "entity_cosine": 0.998216246291995,
+      "coord_err_grid": 0.6956702209007927
+    },
+    "3": {
+      "acc_trained_hops": 0.9498997995991983,
+      "acc_unseen_hops": 0.5614617940199336,
+      "drift_state": 0.4617809271812439,
+      "entity_cosine": 0.9978671260178089,
+      "coord_err_grid": 0.6627771880594082
+    },
+    "4": {
+      "acc_trained_hops": 0.9539078156312625,
+      "acc_unseen_hops": 0.5681063122923588,
+      "drift_state": 0.31436480045318604,
+      "entity_cosine": 0.9975294107943773,
+      "coord_err_grid": 0.6717799384333193
+    },
+    "5": {
+      "acc_trained_hops": 0.9498997995991983,
+      "acc_unseen_hops": 0.5581395348837209,
+      "drift_state": 0.23821650803089142,
+      "entity_cosine": 0.997136914730072,
+      "coord_err_grid": 0.6979014786239713
+    },
+    "6": {
+      "acc_trained_hops": 0.9519038076152304,
+      "acc_unseen_hops": 0.5681063122923588,
+      "drift_state": 0.19187045931816102,
+      "entity_cosine": 0.9966642931848765,
+      "coord_err_grid": 0.7320708974148147
+    },
+    "7": {
+      "acc_trained_hops": 0.9458917835671342,
+      "acc_unseen_hops": 0.5780730897009967,
+      "drift_state": 0.16071658849716186,
+      "entity_cosine": 0.9960978773236274,
+      "coord_err_grid": 0.7707227179757319
+    },
+    "8": {
+      "acc_trained_hops": 0.9478957915831663,
+      "acc_unseen_hops": 0.5614617940199336,
+      "drift_state": 0.13833407819271087,
+      "entity_cosine": 0.9954274909943343,
+      "coord_err_grid": 0.8137058097217232
+    },
+    "9": {
+      "acc_trained_hops": 0.9438877755511023,
+      "acc_unseen_hops": 0.5681063122923588,
+      "drift_state": 0.1214695167541504,
+      "entity_cosine": 0.9946441534906626,
+      "coord_err_grid": 0.8603844338422642
+    },
+    "10": {
+      "acc_trained_hops": 0.9438877755511023,
+      "acc_unseen_hops": 0.5415282392026578,
+      "drift_state": 0.10830098360776902,
+      "entity_cosine": 0.993739680275321,
+      "coord_err_grid": 0.9109857001202181
+    },
+    "11": {
+      "acc_trained_hops": 0.9378757515030061,
+      "acc_unseen_hops": 0.5382059800664452,
+      "drift_state": 0.0977293810248375,
+      "entity_cosine": 0.9927065838873387,
+      "coord_err_grid": 0.9646689508622512
+    },
+    "12": {
+      "acc_trained_hops": 0.9318637274549099,
+      "acc_unseen_hops": 0.5348837209302325,
+      "drift_state": 0.08905235558748245,
+      "entity_cosine": 0.9915382988750935,
+      "coord_err_grid": 1.021357883028686
+    }
+  },
+  "verdict": "converging"
+}
