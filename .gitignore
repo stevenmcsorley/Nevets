@@ -36,3 +36,4 @@ site/model/*.onnx
 data/pt/
 reports/general/GPU_BUSY
 reports/pt/PT2_RUNNING
+reports/p1/ARM_RUNNING

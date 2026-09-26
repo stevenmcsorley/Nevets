@@ -64,3 +64,31 @@ def test_stream_pipeline_dedups_decontaminates_and_writes_shards(tmp_path):
     again = subprocess.run([sys.executable, "scripts/pt/stream_corpus.py", "--local-parquet", str(src), "--pt-dir", str(pt)],
                            capture_output=True, text=True, env={**__import__("os").environ, "PYTHONPATH": "src"})
     assert json.loads(again.stdout.strip().splitlines()[-1])["docs_in"] == 5  # resumable: processed inputs are skipped
+
+
+def test_train_pt_smoke_same_windows_checkpoints_and_resume(tmp_path):
+    import subprocess, sys, json, os
+    import numpy as np
+    sys.path.insert(0, "scripts/pt")
+    import train_pt
+    rng = np.random.default_rng(0)
+    for i in range(2): rng.integers(14, 300, 5000, dtype=np.uint16).tofile(tmp_path / f"train_{i:04d}.bin")
+    rng.integers(14, 300, 3000, dtype=np.uint16).tofile(tmp_path / "val_0000.bin")
+    maps, idx = train_pt.windows(sorted(str(p) for p in tmp_path.glob("train_*.bin")), 63, 6000)
+    assert len(maps) == 2 and all(o + 64 <= len(maps[s]) for s, o in idx)  # windows never cross a shard
+    cfg = tmp_path / "tiny.yaml"
+    cfg.write_text("name: tiny\nvocab_size: 32000\nd_model: 32\nn_layers: 2\nn_heads: 4\nn_kv_heads: 2\nd_ff: 64\npointer_dim: 16\n"
+                   "max_seq_len: 128\nrope_theta: 10000.0\ndropout: 0.0\ndecision_head:\n  scorer: cosine\n  temperature: 10.0\n")
+    cmd = [sys.executable, "scripts/pt/train_pt.py", "--config", str(cfg), "--shards", str(tmp_path / "train_*.bin"),
+           "--val", str(tmp_path / "val_0000.bin"), "--tokens", "4096", "--seq", "63", "--global-batch", "4", "--micro", "2",
+           "--lr", "1e-3", "--ckpt-every", "2048", "--val-tokens", "512", "--no-compile", "--out", str(tmp_path / "run")]
+    env = {**os.environ, "PYTHONPATH": "src", "CUDA_VISIBLE_DEVICES": ""}
+    subprocess.run(cmd + ["--max-steps", "10"], check=True, env=env, capture_output=True)
+    assert (tmp_path / "run/tok_0M.pt").exists() and (tmp_path / "run/resume.pt").exists()
+    r = subprocess.run(cmd, check=True, env=env, capture_output=True, text=True)
+    assert '"resumed_at_step": 8' in r.stdout  # resumed from the 2048-token checkpoint (8 steps x 256 tokens)
+    from systemone_lab.model import SystemOneModel
+    from systemone_lab.training import load_checkpoint
+    m, ck = load_checkpoint(str(tmp_path / "run/tok_0M.pt"), SystemOneModel)  # 4096 tokens -> named tok_0M too
+    vals = [json.loads(l) for l in open(tmp_path / "run/train_log.jsonl") if '"val_loss"' in l]
+    assert [v["step"] for v in vals][-1] == 16 and all(np.isfinite(v["val_loss"]) for v in vals)
