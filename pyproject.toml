@@ -18,6 +18,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.8"]
+# PT pretraining. torch.compile needs Triton; Windows has no official build, so the community
+# triton-windows wheel is pinned (see docs/ENVIRONMENT.md for the verified combination).
+pt = ["pyarrow>=20", "pyahocorasick>=2.1", "triton-windows==3.5.1.post24; platform_system == 'Windows'"]
+export = ["onnx>=1.17", "onnxruntime>=1.20", "chess>=1.11", "zstandard>=0.23"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
