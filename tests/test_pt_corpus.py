@@ -43,3 +43,24 @@ def test_reverse_decontam_flags_question_and_passage_copies(tmp_path):
     rep = json.loads(out.read_text())
     assert rep["contaminated_items"] == 1 and "copied" in rep["items"] and "clean" not in rep["items"]
     assert rep["items"]["copied"]["question"] >= 1 and rep["items"]["copied"]["ngram13"] >= 1
+
+
+def test_stream_pipeline_dedups_decontaminates_and_writes_shards(tmp_path):
+    import numpy as np, pyarrow as pa, pyarrow.parquet as pq, subprocess, sys
+    from pathlib import Path
+    long_state = next(json.loads(l)["state"] for l in open("reports/chain/eval_hops.jsonl", encoding="utf-8")
+                      if len(re.findall(r"[a-z0-9_]+", json.loads(l)["state"].lower())) >= 20)
+    texts = ["Photosynthesis converts light into chemical energy in plants."] * 3 +             ["Forum puzzle: " + long_state, "Rivers carve valleys over millions of years through erosion."]
+    src = tmp_path / "in.parquet"; pq.write_table(pa.table({"text": texts}), src)
+    pt = tmp_path / "pt"
+    res = subprocess.run([sys.executable, "scripts/pt/stream_corpus.py", "--local-parquet", str(src), "--pt-dir", str(pt),
+                          "--shard-tokens", "1000000"], capture_output=True, text=True, env={**__import__("os").environ, "PYTHONPATH": "src"})
+    assert res.returncode == 0, res.stderr[-800:]
+    stats = json.loads(res.stdout.strip().splitlines()[-1])
+    assert stats["docs_in"] == 5 and stats["dup_removed"] == 2 and stats["contam_removed"] == 1 and stats["docs_out"] == 2
+    shards = list((pt / "shards").glob("*.bin")); tokens = sum(np.fromfile(f, dtype=np.uint16).size for f in shards)
+    assert tokens == stats["tokens_train"] + stats["tokens_val"] > 0
+    man = json.loads((pt / "stream_manifest.json").read_text()); assert man["inputs_done"] == [str(src)]
+    again = subprocess.run([sys.executable, "scripts/pt/stream_corpus.py", "--local-parquet", str(src), "--pt-dir", str(pt)],
+                           capture_output=True, text=True, env={**__import__("os").environ, "PYTHONPATH": "src"})
+    assert json.loads(again.stdout.strip().splitlines()[-1])["docs_in"] == 5  # resumable: processed inputs are skipped
