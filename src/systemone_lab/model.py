@@ -180,8 +180,8 @@ class SystemOneModel(nn.Module):
         """Coordinate head: auxiliary regression target, and optionally a decision readout (P1)."""
         dev = self.ptr_q.weight.device
         readout = decision_head.get("coord_readout", "none")
-        if readout not in ("none", "only", "hybrid"):
-            raise ValueError("coord_readout must be none, only or hybrid")
+        if readout not in ("none", "only", "hybrid", "shadow"):
+            raise ValueError("coord_readout must be none, only, hybrid or shadow")
         if (float(decision_head.get("aux_coord_weight", 0)) > 0 or readout != "none") and self.coord_head is None:
             self.coord_head = nn.Linear(self.cfg.d_model, 2, device=dev)
         if readout != "none" and getattr(self, "coord_readout_params", None) is None:
@@ -380,6 +380,8 @@ class SystemOneModel(nn.Module):
                 base = logits
                 if readout == "only":
                     logits = torch.where(valid[:, None], coord, logits)
+                elif readout == "shadow":  # P1-C: coordinate logits only feed the consistency loss
+                    pass
                 else:  # hybrid: pointer logits plus a learned gate times the coordinate logits
                     logits = logits + self.coord_readout_params[2].float() * coord * valid[:, None]
                 self.last_coord = {"base": base.masked_fill(~opt_mask, -1e9), "coord": coord.masked_fill(~opt_mask, -1e9),

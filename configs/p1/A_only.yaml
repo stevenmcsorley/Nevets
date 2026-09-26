@@ -1,0 +1,43 @@
+arch:
+  coda: 2
+  core: 4
+  iters: 4
+  prelude: 2
+  type: looped
+d_ff: 1408
+d_model: 512
+decision_head:
+  option_attention: isolated
+  query_mode: entity_binding
+  scorer: cosine
+  state_attention: bidirectional
+  temperature: 10.0
+  coord_readout: only
+  aux_coord_weight: 1.0
+dropout: 0.0
+max_seq_len: 2048
+n_heads: 8
+n_kv_heads: 4
+n_layers: 8
+name: p1-A_only
+optimizer:
+  backbone_lr: 3.0e-05
+  betas:
+  - 0.9
+  - 0.95
+  decision_head_lr: 0.0001
+  eps: 1.0e-08
+  lr: 1.0e-05
+  weight_decay: 0.01
+pointer_dim: 256
+rope_theta: 10000.0
+safety:
+  abort_on_nonfinite: true
+  max_abs_logit: 100.0
+  max_loss: 25.0
+scheduler:
+  type: cosine
+  warmup_steps: 100
+training:
+  max_grad_norm: 1.0
+vocab_size: 16000

@@ -464,7 +464,7 @@ def test_predict_batch_matches_predict_record(tok,mode,iso,looped):
 
 
 
-@pytest.mark.parametrize('readout',['only','hybrid'])
+@pytest.mark.parametrize('readout',['only','hybrid','shadow'])
 def test_coord_readout_scores_relations_from_predicted_displacement(tok,readout):
     from systemone_lab.gates import predict_batch
     torch.manual_seed(5)
@@ -488,3 +488,17 @@ def test_coord_readout_scores_relations_from_predicted_displacement(tok,readout)
     assert all(abs(p['spatial'][k]-q['spatial'][k])<1e-6 for k in p['spatial'])
     c={'state':'X is near Y.','questions':{'ok':{'type':'noul','instructions':'Is X near Y?'}},'labels':{'ok':True}}
     assert abs(sum(predict_batch(m,tok,[c],'cpu')[0]['ok'].values())-1)<1e-5  # non-spatial rows fall back cleanly
+
+
+def test_shadow_readout_leaves_answers_unchanged(tok):
+    torch.manual_seed(6)
+    base={'scorer':'cosine','temperature':10.0,'query_mode':'entity_binding','state_attention':'bidirectional','option_attention':'isolated'}
+    m=SystemOneModel(ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=2,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,decision_head=base))
+    m.enable_entity_binding(base)
+    with torch.no_grad(): m.ptr_bind.weight.normal_(0,0.2)
+    r=rec('right'); r['questions']['spatial']['instructions']='What is the spatial relation of B to A?'
+    plain=predict_record(m,tok,r,'cpu')
+    m.enable_coord_head({**base,'coord_readout':'shadow','coord_consistency':1.0})
+    with torch.no_grad(): m.coord_head.weight.normal_()
+    shadow=predict_record(m,tok,r,'cpu')
+    assert all(abs(plain['spatial'][k]-shadow['spatial'][k])<1e-6 for k in plain['spatial'])
