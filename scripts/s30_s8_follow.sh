@@ -5,7 +5,7 @@
 # attempts; then runs the same evals as queue2 and marks "S30_s8 done" (which GENERAL-2 waits for).
 export PYTHONPATH=src; PY=./.venv/Scripts/python.exe
 CK=checkpoints/p0/S30_s8.pt; DATA=data/processed/spatial_only_v1/train.jsonl
-alive() { [ "$(powershell.exe -NoProfile -Command "@(Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { \$_.CommandLine -like '*p0/S30_s8.pt*' }).Count" | tr -d '\r')" != "0" ]; }
+alive() { [ "$(powershell.exe -NoProfile -Command "@(Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { \$_.CommandLine -like '*--out checkpoints/p0/S30_s8.pt*' }).Count" | tr -d '\r')" != "0" ]; }
 step() { $PY -c "import torch;print(torch.load('$CK',map_location='cpu',weights_only=False)['training_step'])" 2>/dev/null || echo 0; }
 tries=0
 while :; do
