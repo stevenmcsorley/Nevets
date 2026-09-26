@@ -12,7 +12,7 @@ for a in r2b1_depthK r2b2_edge r2b3_incoff r2b4_combo; do
   while [ -f reports/pt/PT2_RUNNING ] || [ -f reports/general/GPU_BUSY ]; do sleep 120; done  # PT-2 and GENERAL-2 have GPU priority; 2b fills gaps
   touch reports/p1/ARM_RUNNING  # PT-2 waits for an arm in flight
   $PY scripts/train_decision.py --config configs/p1/$a.yaml --init $INIT --tokenizer data/tokenizer.json --data $DATA \
-    --batch 16 --steps 6000 --balanced-sampling --diagnostics --save-every 3000 --seed 7 --hop-bucketed 0,4 --eval-every 500 \
+    --batch 16 --steps 6000 --balanced-sampling --diagnostics --save-every 3000 --seed 7 --hop-bucketed 0,4 --eval-every 500 --resume \
     --out $OUT/${a}_s7.pt > $REP/train_${a}_s7.log 2>&1 || echo "${a}_s7 exited $?" >> $REP/status.txt
   [ -f $OUT/${a}_s7.killed.json ] && { echo "${a}_s7 KILLED" >> $REP/status.txt; rm -f reports/p1/ARM_RUNNING; continue; }
   $PY scripts/eval_depth.py --ckpt $OUT/${a}_s7.pt --out $REP/depth_${a}_s7.json --iters 1,2,4,6,8,12,16 --hop-offset 2 > $REP/depth_${a}_s7.txt 2>&1

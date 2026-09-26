@@ -589,3 +589,49 @@ def test_domain_balanced_weights_give_domain_shares_then_label_balance():
     assert abs(sum(w)-1)<1e-9 and abs(tot(lambda r:r['meta']['domain']=='spatial')-0.5)<1e-9
     assert abs(tot(lambda r:r['meta']['domain']=='rules')-0.25)<1e-9 and abs(tot(lambda r:r['meta']['domain']=='kin')-0.25)<1e-9
     assert abs(tot(lambda r:r['labels']=={'a':True})-tot(lambda r:r['labels']=={'a':False}))<1e-9
+
+
+
+def test_train_decision_resume_is_exact(tmp_path):
+    import subprocess, sys, json, os
+    recs=[]
+    for i in range(40):
+        r=rec('right' if i%2 else 'left'); r['id']=f'r{i}'; r['state']=f'A is {"right" if i%2 else "left"} of B{i%7}.'
+        r['questions']['spatial']['instructions']=f'What is the spatial relation of A to B{i%7}?'; recs.append(r)
+    data=tmp_path/'d.jsonl'; data.write_text(''.join(json.dumps(r)+chr(10) for r in recs))
+    cfg=tmp_path/'c.yaml'
+    cfg.write_text(chr(10).join(["name: t","vocab_size: 16000","d_model: 32","n_layers: 2","n_heads: 4","n_kv_heads: 2","d_ff: 64",
+        "pointer_dim: 16","max_seq_len: 256","rope_theta: 10000.0","dropout: 0.0","decision_head:","  scorer: cosine",
+        "  temperature: 10.0","optimizer:","  lr: 1.0e-3","scheduler:","  type: cosine","  warmup_steps: 2",""]))
+    env={**os.environ,'PYTHONPATH':'src','CUDA_VISIBLE_DEVICES':''}
+    base=[sys.executable,'scripts/train_decision.py','--config',str(cfg),'--tokenizer','data/tokenizer.json','--data',str(data),
+          '--batch','4','--steps','8','--save-every','8','--seed','3','--eval-every','0','--resume-every','2','--balanced-sampling']
+    subprocess.run(base+['--out',str(tmp_path/'full.pt')],check=True,env=env,capture_output=True)
+    subprocess.run(base+['--out',str(tmp_path/'cut.pt'),'--resume','--stop-after','5'],check=True,env=env,capture_output=True)
+    assert (tmp_path/'cut.resume.pt').exists()
+    r=subprocess.run(base+['--out',str(tmp_path/'cut.pt'),'--resume'],check=True,env=env,capture_output=True,text=True)
+    assert '"resumed_from_step": 4' in r.stdout and not (tmp_path/'cut.resume.pt').exists()
+    a=torch.load(tmp_path/'full.pt',weights_only=False)['model']; b=torch.load(tmp_path/'cut.pt',weights_only=False)['model']
+    assert all(torch.equal(a[k],b[k]) for k in a)  # interrupted + resumed == uninterrupted, bit for bit
+
+
+def test_train_decision_resume_falls_back_to_periodic_weights(tmp_path):
+    import subprocess, sys, json, os
+    recs=[]
+    for i in range(20):
+        r=rec('right' if i%2 else 'left'); r['id']=f'r{i}'; recs.append(r)
+    data=tmp_path/'d.jsonl'; data.write_text(''.join(json.dumps(r)+chr(10) for r in recs))
+    cfg=tmp_path/'c.yaml'
+    cfg.write_text(chr(10).join(["name: t","vocab_size: 16000","d_model: 32","n_layers: 2","n_heads: 4","n_kv_heads: 2","d_ff: 64",
+        "pointer_dim: 16","max_seq_len: 256","rope_theta: 10000.0","dropout: 0.0","decision_head:","  scorer: cosine",
+        "  temperature: 10.0","optimizer:","  lr: 1.0e-3",""]))
+    env={**os.environ,'PYTHONPATH':'src','CUDA_VISIBLE_DEVICES':''}
+    base=[sys.executable,'scripts/train_decision.py','--config',str(cfg),'--tokenizer','data/tokenizer.json','--data',str(data),
+          '--batch','2','--steps','8','--save-every','4','--seed','3','--eval-every','0','--resume-every','0','--out',str(tmp_path/'m.pt')]
+    subprocess.run(base+['--stop-after','5'],check=True,env=env,capture_output=True)  # no resume file: only step-4 weights
+    assert not (tmp_path/'m.resume.pt').exists()
+    r=subprocess.run(base+['--resume'],check=True,env=env,capture_output=True,text=True)
+    assert '"resumed_from_weights_step": 4' in r.stdout
+    assert torch.load(tmp_path/'m.pt',weights_only=False)['training_step']==8
+    r=subprocess.run(base+['--resume'],check=True,env=env,capture_output=True,text=True)
+    assert '"already_complete": 8' in r.stdout

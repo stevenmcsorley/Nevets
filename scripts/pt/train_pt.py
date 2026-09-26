@@ -21,7 +21,7 @@ import torch
 
 from systemone_lab.config import ModelConfig
 from systemone_lab.model import SystemOneModel
-from systemone_lab.training import save_checkpoint
+from systemone_lab.training import cap_gpu_memory, save_checkpoint
 
 
 def windows(shards, seq, budget):
@@ -65,9 +65,11 @@ def main():
     ap.add_argument("--val-tokens", type=float, default=2e6); ap.add_argument("--seed", type=int, default=2027)
     ap.add_argument("--no-compile", action="store_true"); ap.add_argument("--out", required=True)
     ap.add_argument("--max-steps", type=int, default=0, help="stop after this many updates (smoke tests)")
+    ap.add_argument("--mem-margin-gb", type=float, default=1.5, help="cap own VRAM at free-at-start minus this")
     a = ap.parse_args(); assert a.global_batch % a.micro == 0, "global batch must be a multiple of the micro batch"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu"); out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(a.seed)
+    print(json.dumps({"vram_cap_gb": cap_gpu_memory(a.mem_margin_gb)}), flush=True)
     cfg = ModelConfig.load(a.config); model = SystemOneModel(cfg).to(device).train()
     maps, index = windows(sorted(glob.glob(a.shards)), a.seq, a.tokens)
     order = np.random.default_rng(a.seed).permutation(len(index))

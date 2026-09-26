@@ -13,7 +13,7 @@ DATA=data/processed/general_v2/train.jsonl
 $PY scripts/check_contamination.py $DATA > $REP/contamination.json || { echo contaminated >> $REP/status.txt; rm -f reports/general/GPU_BUSY; exit 1; }
 for s in 7 8; do
   $PY scripts/train_decision.py --config configs/general_v1.yaml --init $INIT --tokenizer data/tokenizer.json --data $DATA \
-    --batch 16 --steps 30000 --domain-shares spatial=0.5 --diagnostics --save-every 5000 --seed $s --iters-range 1,6 --eval-every 500 \
+    --batch 16 --steps 30000 --domain-shares spatial=0.5 --diagnostics --save-every 5000 --seed $s --iters-range 1,6 --eval-every 500 --resume \
     --out $OUT/general-v2_s$s.pt > $REP/train_s$s.log 2>&1 || echo "s$s exited $?" >> $REP/status.txt
   [ -f $OUT/general-v2_s$s.killed.json ] && { echo "s$s KILLED" >> $REP/status.txt; continue; }
   $PY scripts/eval_worlds.py --ckpt $OUT/general-v2_s$s.pt --dir data/processed/worlds_v2 --out $REP/worlds_v2_s$s.json --limit 400 > $REP/worlds_v2_s$s.txt 2>&1

@@ -9,7 +9,7 @@
 export PYTHONPATH=src; PY=./.venv/Scripts/python.exe
 export PT2_REP=${PT2_REP:-reports/pt/pt2}
 REP=$PT2_REP; ROOT=${PT2_ROOT:-checkpoints/pt2}; TOKENS=${PT2_TOKENS:-1e9}; EVERY=${PT2_CKPT_EVERY:-250e6}
-M35=${PT2_MICRO35:-40}; M150=${PT2_MICRO150:-12}; ONLY=${PT2_ONLY:-all}; mkdir -p $REP $ROOT
+M35=${PT2_MICRO35:-30}; M150=${PT2_MICRO150:-12}; ONLY=${PT2_ONLY:-all}; mkdir -p $REP $ROOT
 if [ -z "$PT2_SMOKE" ]; then
   until grep -q "general_v2 done" reports/general/v2/status.txt 2>/dev/null; do sleep 120; done
   touch reports/pt/PT2_RUNNING

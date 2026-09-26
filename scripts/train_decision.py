@@ -13,7 +13,7 @@ from systemone_lab.tokenizer import LabTokenizer
 from systemone_lab.model import SystemOneModel
 from systemone_lab.data.io import read_jsonl
 from systemone_lab.training import (pick_device, choose_dtype, decision_batch_loss,
-    save_checkpoint, load_checkpoint, parameter_norm, check_safety)
+    save_checkpoint, load_checkpoint, parameter_norm, check_safety, cap_gpu_memory)
 
 
 def shuffled_options(rec):
@@ -83,6 +83,11 @@ def main():
                     help='Freeze all pretrained weights and train only the entity-binding projection')
     ap.add_argument('--allow-tokenizer-mismatch',action='store_true')
     ap.add_argument('--balanced-sampling',action='store_true')
+    ap.add_argument('--resume',action='store_true',help='continue from <out>.resume.pt if present (model, optimiser, '
+                    'scheduler, step, RNG states, parent gate baseline); logs are appended')
+    ap.add_argument('--resume-every',type=int,default=500,help='write <out>.resume.pt every N updates (atomic)')
+    ap.add_argument('--mem-margin-gb',type=float,default=1.5,help='cap own VRAM at free-at-start minus this (protects co-running jobs)')
+    ap.add_argument('--stop-after',type=int,default=0,help=argparse.SUPPRESS)  # tests: simulate an interruption
     ap.add_argument('--domain-shares',default=None,help='domain-first then label-balanced sampling, e.g. "spatial=0.5" '
                     '(unnamed domains split the rest equally; overrides --balanced-sampling)')
     ap.add_argument('--eval-every',type=int,default=500,help='dev gates every N updates (Rule 4); 0 disables')
@@ -99,6 +104,7 @@ def main():
     random.seed(a.seed); torch.manual_seed(a.seed)
     config=yaml.safe_load(Path(a.config).read_text())
     device=pick_device(); dtype=choose_dtype(device); tok=LabTokenizer(a.tokenizer)
+    if device.type=='cuda': print(json.dumps({'vram_cap_gb':cap_gpu_memory(a.mem_margin_gb)}),flush=True)
     gate_baseline=None; gates=None
     if a.init:
         model,ck=load_checkpoint(a.init,SystemOneModel,tokenizer_path=a.tokenizer,allow_tokenizer_mismatch=a.allow_tokenizer_mismatch)
@@ -157,10 +163,36 @@ def main():
     log=Path(a.out).with_suffix('.diagnostics.jsonl'); log.parent.mkdir(parents=True,exist_ok=True)
     safety=config.get('safety',{})
     print(json.dumps({'device':str(device),'dtype':str(dtype),'config':config,'args':vars(a)},default=str),flush=True)
-    glog=Path(a.out).with_suffix('.gates.jsonl').open('w')
-    if gate_baseline is not None: glog.write(json.dumps({'step':0,'parent':True,**gate_baseline})+chr(10)); glog.flush()
-    with log.open('w') as f:
-        for step in range(1,a.steps+1):
+    resume_path=Path(a.out).with_suffix('.resume.pt'); start=1
+    if a.resume and resume_path.exists():
+        st=torch.load(resume_path,map_location=device,weights_only=False)
+        model.load_state_dict(st['model']); opt.load_state_dict(st['opt']); scheduler.load_state_dict(st['scheduler'])
+        random.setstate(st['py_rng']); torch.set_rng_state(st['torch_rng'].cpu())
+        if st.get('cuda_rng') is not None and torch.cuda.is_available(): torch.cuda.set_rng_state_all([s.cpu() for s in st['cuda_rng']])
+        gate_baseline=st['gate_baseline']; start=st['step']+1
+        print(json.dumps({'resumed_from_step':st['step']}),flush=True)
+    elif a.resume and Path(a.out).exists():
+        # Fallback for runs started before exact resume existed: continue from the last periodic weights checkpoint.
+        # APPROXIMATE: fresh AdamW moments and a new sampling stream (reseeded by step); the LR schedule is exact.
+        ck=torch.load(a.out,map_location=device,weights_only=False); k=int(ck.get('training_step',0))
+        if k>=a.steps: print(json.dumps({'already_complete':k}),flush=True); return
+        if k>0:
+            model.load_state_dict(ck['model'])
+            for _ in range(k): scheduler.step()
+            random.seed(a.seed*1000003+k); torch.manual_seed(a.seed*1000003+k); start=k+1
+            print(json.dumps({'resumed_from_weights_step':k,'approximate':'fresh optimiser moments, new sampling stream'}),flush=True)
+    def save_resume(step):
+        tmp=resume_path.with_suffix('.tmp')
+        torch.save({'model':model.state_dict(),'opt':opt.state_dict(),'scheduler':scheduler.state_dict(),'step':step,
+                    'py_rng':random.getstate(),'torch_rng':torch.get_rng_state(),
+                    'cuda_rng':torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+                    'gate_baseline':gate_baseline},tmp)
+        tmp.replace(resume_path)
+    mode='a' if start>1 else 'w'
+    glog=Path(a.out).with_suffix('.gates.jsonl').open(mode)
+    if gate_baseline is not None and start==1: glog.write(json.dumps({'step':0,'parent':True,**gate_baseline})+chr(10)); glog.flush()
+    with log.open(mode) as f:
+        for step in range(start,a.steps+1):
             opt.zero_grad(set_to_none=True); batch_stats=[]; all_records=[]
             if iters_range: model.iters=random.randint(*iters_range)
             if nograd_range: model.iters_nograd=random.randint(*nograd_range)
@@ -210,8 +242,11 @@ def main():
                             {'step':step,'reason':'Rule 4: gate regression > 2 points vs parent','regressions':bad,
                              'parent':gate_baseline,'current':result},indent=2))
                         print(json.dumps({'KILLED':bad}),flush=True); sys.exit(3)
+            if a.resume_every and step%a.resume_every==0 and step<a.steps: save_resume(step)
+            if a.stop_after and step>=a.stop_after: print(json.dumps({'stopped_after':step}),flush=True); return
     if iters_range or hop_buckets: model.iters=int((model.cfg.arch or {}).get('iters',1))
     model.iters_nograd=0; model.deep_from=1
     save_checkpoint(a.out,model,model.cfg,a.tokenizer,a.steps,stats)
+    resume_path.unlink(missing_ok=True)  # finished: the resume state is scratch
 
 if __name__=='__main__': main()

@@ -1,0 +1,13 @@
+t= 1 acc 1-6: 0.926  7-10: 0.392  drift None  ent-cos 0.999  coord-err 1.24
+t= 2 acc 1-6: 0.968  7-10: 0.512  drift 0.848  ent-cos 0.999  coord-err 1.261
+t= 3 acc 1-6: 0.974  7-10: 0.528  drift 0.4617  ent-cos 0.999  coord-err 1.251
+t= 4 acc 1-6: 0.974  7-10: 0.535  drift 0.3146  ent-cos 0.998  coord-err 1.242
+t= 5 acc 1-6: 0.972  7-10: 0.532  drift 0.2383  ent-cos 0.998  coord-err 1.241
+t= 6 acc 1-6: 0.976  7-10: 0.542  drift 0.1919  ent-cos 0.998  coord-err 1.247
+t= 7 acc 1-6: 0.978  7-10: 0.545  drift 0.1607  ent-cos 0.998  coord-err 1.26
+t= 8 acc 1-6: 0.966  7-10: 0.535  drift 0.1383  ent-cos 0.997  coord-err 1.278
+t= 9 acc 1-6: 0.960  7-10: 0.522  drift 0.1214  ent-cos 0.997  coord-err 1.301
+t=10 acc 1-6: 0.958  7-10: 0.532  drift 0.1082  ent-cos 0.996  coord-err 1.329
+t=11 acc 1-6: 0.954  7-10: 0.518  drift 0.0977  ent-cos 0.996  coord-err 1.359
+t=12 acc 1-6: 0.952  7-10: 0.508  drift 0.089  ent-cos 0.995  coord-err 1.393
+verdict: converging

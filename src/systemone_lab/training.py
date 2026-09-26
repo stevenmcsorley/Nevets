@@ -338,3 +338,17 @@ def domain_balanced_weights(records, spec):
     per = defaultdict(Counter)
     for d, l in zip(dom, lab): per[d][l] += 1
     return [share[d] / len(per[d]) / per[d][l] for d, l in zip(dom, lab)]
+
+
+
+def cap_gpu_memory(margin_gb=1.5):
+    """Cap this process's CUDA caching allocator at (free device memory at start - margin), so a job launched
+    next to another one can only run out of memory itself, never push the other job over the limit.
+    Returns the cap in GB (None on CPU). The CUDA context and cuBLAS workspace sit outside the cap: the margin
+    covers them."""
+    import torch
+    if not torch.cuda.is_available(): return None
+    free, total = torch.cuda.mem_get_info()
+    cap = max(0.05, (free - margin_gb * 1e9) / total)
+    torch.cuda.set_per_process_memory_fraction(min(cap, 0.95))
+    return round(min(cap, 0.95) * total / 1e9, 2)
