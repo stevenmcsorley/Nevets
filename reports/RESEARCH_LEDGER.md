@@ -155,3 +155,18 @@ All one-hop gates stay at 100% for every K. **Conclusion:** a *trained* weight-t
 - S6 = spatial-only, 6k updates, seeds 7 and 8: **matched spatial exposure** (M30 drew ≈ 105k spatial samples ≈ 6.6k spatial-only updates).
 - M6 = multi-domain, 6k updates, seeds 7 and 8: length × curriculum interaction, plus a seed-noise estimate.
 Readout: dev chains 1–10 hops, stress, rotation consistency, one-hop gates, calibration; worlds_v2 for the M arms.
+
+**P1-PREP (infrastructure only; no P1 experiment runs until P0 concludes, per Rule 1)** · Coordinate-readout decision head in the batched path: `coord_readout: only | hybrid`, `coord_consistency: w`. Displacement d = W_c · (mean h_A − mean h_B) reuses the binding difference; the linear head's bias cancels, so d is frame-invariant. Per-axis sign logits β·[−d, t − |d|, d] score each candidate relation. Dynamic candidates are kept; non-spatial rows fall back to the pointer head. Tested (relation ranking from a known displacement; batched = single; gradients reach the coordinate head). `predict_record` delegates to the batched path for readout models. **Equivalence note:** P0 arms launched after this change import the new code; models without a readout are unaffected (batched-vs-legacy equivalence tests still pass; the readout only activates when configured).
+
+**P1-BASELINE (GENERAL-1 depth profile)** · `scripts/eval_depth.py`, dev chains 1–10 hops and dev transforms (`reports/p1/depth_general-v1.json`):
+
+| K | overall | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | cancel | diag | ECE | rot |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | .543 | .99 | .92 | .71 | .54 | .52 | .42 | .33 | .34 | .478 | .578 | .048 | .911 |
+| 2 | .566 | 1.00 | .94 | .77 | .62 | .55 | .43 | .34 | .32 | .516 | .593 | .052 | .931 |
+| **4** | **.574** | 1.00 | .95 | .79 | .60 | .56 | .44 | .37 | .32 | .538 | .592 | .045 | .943 |
+| 6 | .566 | 1.00 | .95 | .79 | .58 | .53 | .42 | .38 | .30 | .531 | .585 | .043 | .919 |
+| 8 | .551 | 1.00 | .94 | .77 | .55 | .51 | .41 | .38 | .28 | .520 | .569 | .047 | .909 |
+| 12 | .528 | 1.00 | .92 | .73 | .46 | .48 | .41 | .36 | .27 | .494 | .546 | .053 | .885 |
+
+The profile peaks at the trained K and degrades beyond it; cancellation labels trail diagonal ones by 5–10 points at every K.

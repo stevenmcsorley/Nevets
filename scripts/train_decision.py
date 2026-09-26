@@ -34,7 +34,7 @@ def make_optimizer(model, config, freeze=False, lr=None, role_adapter_only=False
     base = float(lr if lr is not None else options.get('lr', 1e-5))
     groups = {'backbone': [], 'decision_head': [], 'loop_gate': []}
     for name, p in model.named_parameters():
-        head = name.startswith(('ptr_q.', 'ptr_k.', 'ptr_role.', 'ptr_bind.', 'loop_gate', 'coord_head.'))
+        head = name.startswith(('ptr_q.', 'ptr_k.', 'ptr_role.', 'ptr_bind.', 'loop_gate', 'coord_head.', 'coord_readout_params'))
         if role_adapter_only: trainable = name.startswith('ptr_role.')
         elif binding_only: trainable = name.startswith('ptr_bind.')
         else: trainable = head or not freeze

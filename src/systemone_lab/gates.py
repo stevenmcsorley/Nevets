@@ -18,7 +18,7 @@ import torch
 import torch.nn.functional as F
 
 from .data.spatial_worlds import INVERSE_REL
-from .training import _pad_batch, _packed
+from .training import _pad_batch, _packed, option_signs
 
 QUESTION = r"What is the spatial relation of (.+) to (.+)\?"
 KILL_GATES = ("vertical_role_swap", "heldout_role_swap", "name_pairs", "vertical_name_pairs", "option_order_stable")
@@ -50,9 +50,10 @@ def predict_batch(model, tokenizer, records, device, batch_size=64):
         mv = lambda x: x.to(device)
         bind = (mv(torch.tensor(rows, dtype=torch.long)), mv(torch.tensor(bb, dtype=torch.long)),
                 mv(torch.tensor(bp, dtype=torch.long)), mv(torch.tensor(bw, dtype=torch.float32)))
+        signs, spatial = option_signs([l for _, l in items], K)
         logits, _, _ = model.decision_logits_batch(h, mv(torch.tensor([i for i, _ in items])),
                                                    mv(torch.tensor([l.decide_position for _, l in items])),
-                                                   mv(opt_pos), mv(opt_mask), bind)
+                                                   mv(opt_pos), mv(opt_mask), bind, mv(signs), mv(spatial))
         probs = F.softmax(logits.float(), -1).cpu()
         res = [dict() for _ in chunk]
         for n, (i, l) in enumerate(items):

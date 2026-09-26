@@ -106,9 +106,14 @@ class SystemOneModel(nn.Module):
                          if cfg.decision_head.get("query_mode") == "entity_binding" else None)
         self.loop_gate = None
         self.coord_head = None
+        self.coord_readout_params = None
+        self.last_coord = None
         self.set_arch(cfg.arch or {})
-        if self.coord_head is None and float(cfg.decision_head.get("aux_coord_weight", 0)) > 0:
+        if self.coord_head is None and (float(cfg.decision_head.get("aux_coord_weight", 0)) > 0
+                                        or cfg.decision_head.get("coord_readout", "none") != "none"):
             self.coord_head = nn.Linear(cfg.d_model, 2)
+        if cfg.decision_head.get("coord_readout", "none") != "none":
+            self.coord_readout_params = nn.Parameter(torch.tensor([8.0, 0.125, 1.0]))
         self.apply(self._init)
         if self.ptr_bind is not None:
             nn.init.zeros_(self.ptr_bind.weight)
@@ -172,9 +177,16 @@ class SystemOneModel(nn.Module):
         self.cfg.decision_head = dict(decision_head)
 
     def enable_coord_head(self, decision_head):
-        """Training-only auxiliary head: regress each state object's coordinates from its mentions."""
-        if float(decision_head.get("aux_coord_weight", 0)) > 0 and self.coord_head is None:
-            self.coord_head = nn.Linear(self.cfg.d_model, 2, device=self.ptr_q.weight.device)
+        """Coordinate head: auxiliary regression target, and optionally a decision readout (P1)."""
+        dev = self.ptr_q.weight.device
+        readout = decision_head.get("coord_readout", "none")
+        if readout not in ("none", "only", "hybrid"):
+            raise ValueError("coord_readout must be none, only or hybrid")
+        if (float(decision_head.get("aux_coord_weight", 0)) > 0 or readout != "none") and self.coord_head is None:
+            self.coord_head = nn.Linear(self.cfg.d_model, 2, device=dev)
+        if readout != "none" and getattr(self, "coord_readout_params", None) is None:
+            # [sharpness beta, zero-band half-width t (coords are scaled /4: one grid step = 0.25), hybrid gate]
+            self.coord_readout_params = nn.Parameter(torch.tensor([8.0, 0.125, 1.0], device=dev))
         self.cfg.decision_head = dict(decision_head)
 
     @property
@@ -310,7 +322,21 @@ class SystemOneModel(nn.Module):
     def supports_batched_decisions(self) -> bool:
         return self.cfg.decision_head.get("query_mode", "decide") in ("decide", "entity_binding")
 
-    def decision_logits_batch(self, hidden, b_idx, decide, opt_pos, opt_mask, bind=None):
+    def coord_relation_logits(self, bound, opt_signs):
+        """Relation logits implied by the predicted displacement d = W_c (mean h_A - mean h_B).
+
+        The coordinate head is linear, so its bias cancels and d is frame-invariant. Per axis, a
+        3-way sign distribution z = beta * [-d, t - |d|, d]; a candidate relation (sx, sy) scores
+        z_x[sx] + z_y[sy]. opt_signs [N,K,2] holds each candidate's signs in {-1, 0, 1}.
+        """
+        beta, t = self.coord_readout_params[0].float(), self.coord_readout_params[1].float()
+        d = bound.float() @ self.coord_head.weight.float().t()            # [N,2]
+        z = beta * torch.stack((-d, t - d.abs(), d), dim=-1)                # [N,2,3]
+        idx = (opt_signs + 1).clamp(0, 2)                                    # [N,K,2]
+        zx = torch.gather(z[:, 0, :], 1, idx[..., 0]); zy = torch.gather(z[:, 1, :], 1, idx[..., 1])
+        return zx + zy, d
+
+    def decision_logits_batch(self, hidden, b_idx, decide, opt_pos, opt_mask, bind=None, opt_signs=None, opt_spatial=None):
         """Score every question of a padded batch at once; matches decision_logits per question.
 
         hidden [B,T,D]; b_idx, decide [N]; opt_pos, opt_mask [N,K]; bind is an optional
@@ -322,14 +348,16 @@ class SystemOneModel(nn.Module):
         with torch.autocast(device_type=hidden.device.type, enabled=False):
             q, k = q.float(), k.float()
             mode = self.cfg.decision_head.get("query_mode", "decide")
+            bound = has = None
+            if bind is not None and bind[0].numel():
+                rows, bb, pos, w = bind
+                bound = torch.zeros(q.size(0), hidden.size(-1), device=q.device)
+                bound.index_add_(0, rows, hidden[bb, pos].float() * w[:, None])
+                has = torch.zeros(q.size(0), dtype=torch.bool, device=q.device); has[rows] = True
             if mode == "entity_binding":
                 if self.cfg.decision_head.get("scorer", "scaled_dot") != "cosine":
                     raise ValueError("entity_binding requires the cosine scorer")
-                if bind is not None and bind[0].numel():
-                    rows, bb, pos, w = bind
-                    bound = torch.zeros(q.size(0), hidden.size(-1), device=q.device)
-                    bound.index_add_(0, rows, hidden[bb, pos].float() * w[:, None])
-                    has = torch.zeros(q.size(0), dtype=torch.bool, device=q.device); has[rows] = True
+                if bound is not None:
                     # Same as decision_logits: only bound questions use normalize(q) + binding.
                     q = torch.where(has[:, None], F.normalize(q, dim=-1) + bound @ self.ptr_bind.weight.float().t(), q)
             elif mode != "decide":
@@ -344,6 +372,18 @@ class SystemOneModel(nn.Module):
                 logits = torch.einsum("nkp,np->nk", k, q) / math.sqrt(q.size(-1))
             else:
                 raise ValueError("unknown decision scorer")
+            self.last_coord = None
+            readout = self.cfg.decision_head.get("coord_readout", "none")
+            if readout != "none" and opt_signs is not None and bound is not None:
+                coord, d = self.coord_relation_logits(bound, opt_signs)
+                valid = has & opt_spatial                                        # bound spatial questions only
+                base = logits
+                if readout == "only":
+                    logits = torch.where(valid[:, None], coord, logits)
+                else:  # hybrid: pointer logits plus a learned gate times the coordinate logits
+                    logits = logits + self.coord_readout_params[2].float() * coord * valid[:, None]
+                self.last_coord = {"base": base.masked_fill(~opt_mask, -1e9), "coord": coord.masked_fill(~opt_mask, -1e9),
+                                   "valid": valid, "d": d}
             logits = logits.masked_fill(~opt_mask, -1e9)
         return logits, q, k
 

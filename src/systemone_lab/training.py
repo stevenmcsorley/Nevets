@@ -127,6 +127,22 @@ def _aux_targets(tokenizer, rec):
     return cached
 
 
+_REL_SIGNS = {"upper-left": (-1, 1), "above": (0, 1), "upper-right": (1, 1), "left": (-1, 0), "overlap": (0, 0),
+              "right": (1, 0), "lower-left": (-1, -1), "below": (0, -1), "lower-right": (1, -1)}
+
+
+def option_signs(items, K):
+    """[N,K,2] axis signs for candidates named by a spatial relation, plus a mask of rows whose
+    candidates are all spatial relations (only those rows can use the coordinate readout)."""
+    signs = torch.zeros((len(items), K, 2), dtype=torch.long); spatial = torch.zeros(len(items), dtype=torch.bool)
+    for n, l in enumerate(items):
+        keys = l.option_keys
+        if keys and all(k in _REL_SIGNS for k in keys):
+            spatial[n] = True
+            for j, k in enumerate(keys): signs[n, j] = torch.tensor(_REL_SIGNS[k])
+    return signs, spatial
+
+
 def _target_distribution(layout, rec):
     dist = rec.get("distributions", {}).get(layout.key)
     if dist:
@@ -160,9 +176,21 @@ def decision_batch_loss(model, tokenizer, records, device, diagnostics=None, for
                     rows += [n] * len(group); bb += [i] * len(group); bp += list(group); bw += [sign / len(group)] * len(group)
         bind = (move(torch.tensor(rows, dtype=torch.long)), move(torch.tensor(bb, dtype=torch.long)),
                 move(torch.tensor(bp, dtype=torch.long)), move(torch.tensor(bw, dtype=torch.float32)))
-        logits, q, k = model.decision_logits_batch(h, move(b_idx), move(decide), move(opt_pos), move(opt_mask), bind)
+        signs, spatial = option_signs([l for _, l, _ in items], K)
+        logits, q, k = model.decision_logits_batch(h, move(b_idx), move(decide), move(opt_pos), move(opt_mask), bind,
+                                                   move(signs), move(spatial))
         target, opt_mask = move(target), move(opt_mask)
         loss = -(target * F.log_softmax(logits, dim=-1)).sum(-1).mean()
+        cw = float(model.cfg.decision_head.get("coord_consistency", 0))
+        lc = getattr(model, "last_coord", None)
+        if lc is not None and lc["valid"].any():
+            if diagnostics is not None:
+                diagnostics["coord_readout_acc"] = (lc["coord"][lc["valid"]].argmax(-1) == target[lc["valid"]].argmax(-1)).float().mean().item()
+            if cw > 0:  # symmetric KL between the pointer head and the coordinate-implied relation (P1-C)
+                pb, pc = F.log_softmax(lc["base"][lc["valid"]], -1), F.log_softmax(lc["coord"][lc["valid"]], -1)
+                cons = 0.5 * (F.kl_div(pc, pb, log_target=True, reduction="batchmean") + F.kl_div(pb, pc, log_target=True, reduction="batchmean"))
+                loss = loss + cw * cons
+                if diagnostics is not None: diagnostics["coord_consistency"] = cons.detach().float().item()
         scores = {"q": q.detach(), "k": k.detach(), "logits": logits.detach(), "mask": opt_mask}
     else:
         scores, losses = [], []

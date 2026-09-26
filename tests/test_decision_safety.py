@@ -461,3 +461,30 @@ def test_predict_batch_matches_predict_record(tok,mode,iso,looped):
         want=predict_record(m,tok,r,'cpu')
         for key in want:
             assert all(abs(got[key][k]-want[key][k])<1e-5 for k in want[key])
+
+
+
+@pytest.mark.parametrize('readout',['only','hybrid'])
+def test_coord_readout_scores_relations_from_predicted_displacement(tok,readout):
+    from systemone_lab.gates import predict_batch
+    torch.manual_seed(5)
+    dh={'scorer':'cosine','temperature':10.0,'query_mode':'entity_binding','state_attention':'bidirectional',
+        'option_attention':'isolated','coord_readout':readout,'coord_consistency':0.5}
+    m=SystemOneModel(ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=2,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,decision_head=dh))
+    m.enable_entity_binding(dh); m.enable_coord_head(dh)
+    assert m.coord_head is not None and m.coord_readout_params is not None
+    # A relation-consistent displacement must rank candidates exactly by their axis signs.
+    bound=torch.zeros(1,32); bound[0,0]=1.0
+    with torch.no_grad(): m.coord_head.weight.zero_(); m.coord_head.weight[0,0]=1.0; m.coord_head.weight[1,0]=-1.0  # d = (+1, -1)
+    from systemone_lab.training import _REL_SIGNS
+    keys=list(_REL_SIGNS); signs=torch.tensor([[_REL_SIGNS[k] for k in keys]])
+    logits,_=m.coord_relation_logits(bound,signs)
+    assert keys[int(logits.argmax())]=='lower-right'
+    r=rec('right'); r['questions']['spatial']['instructions']='What is the spatial relation of B to A?'
+    r['meta']={'aux_coords':{'A':[0,0],'B':[1,0]}}
+    stats={}; m.train(); loss=decision_batch_loss(m,tok,[r],torch.device('cpu'),stats); loss.backward()
+    assert 'coord_readout_acc' in stats and 'coord_consistency' in stats and m.coord_head.weight.grad is not None
+    p=predict_batch(m,tok,[r],'cpu')[0]; q=predict_record(m,tok,r,'cpu')
+    assert all(abs(p['spatial'][k]-q['spatial'][k])<1e-6 for k in p['spatial'])
+    c={'state':'X is near Y.','questions':{'ok':{'type':'noul','instructions':'Is X near Y?'}},'labels':{'ok':True}}
+    assert abs(sum(predict_batch(m,tok,[c],'cpu')[0]['ok'].values())-1)<1e-5  # non-spatial rows fall back cleanly

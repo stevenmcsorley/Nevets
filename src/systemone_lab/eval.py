@@ -6,6 +6,9 @@ from .formatting import pack_request, branch_attention_mask
 
 @torch.inference_mode()
 def predict_record(model, tokenizer, rec, device):
+    if model.cfg.decision_head.get("coord_readout", "none") != "none":
+        from .gates import predict_batch  # the coordinate readout lives in the batched decision path
+        return predict_batch(model, tokenizer, [rec], device)[0]
     model.eval()
     packed=pack_request(tokenizer,rec["state"],rec["questions"],device=device,isolate_options=model.isolated_options)
     mask=model.attention_mask(packed)
