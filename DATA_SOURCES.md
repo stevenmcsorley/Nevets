@@ -76,3 +76,11 @@ For every source, record:
 - whether the source is train, dev, transfer, or locked-test.
 
 A benchmark that appears anywhere in LM pretraining cannot be treated as a pristine contamination-free capability test. Our own freshly generated latent-world suites are the primary causal/generalisation tests.
+
+## PT corpus (from-scratch pretraining lineage, started 26 September 2026)
+
+### FineWeb-Edu
+- Source: Hugging Face dataset `HuggingFaceFW/fineweb-edu`, subset `sample/10BT`, **pinned revision `87f09149ef4734204d70ed1d046ddc9ca3f2b8f9`** (verified via the Hub API; last modified 2025-07-11).
+- Licence: **ODC-By v1.0** (Open Data Commons Attribution License; dataset card tag `license:odc-by`). Attribution: "FineWeb-Edu, Hugging Face (HuggingFaceFW)". The underlying data is derived from Common Crawl; its terms of use also apply.
+- Use: raw text for from-scratch LM pretraining of the Nevets PT backbone. No model weights are inherited.
+- Pipeline: `scripts/pt/download_fineweb.py` (SHA-256 verified against the LFS oid) → `scripts/pt/build_corpus.py clean` (exact dedup + 13-gram decontamination against every registered eval/locked set) → `tokenizer` (new 32k byte-level BPE, `data/pt/tokenizer_32k.json`, its own lineage) → `shards` (uint16). Manifests and reports live in `data/pt/*.json`; summaries go in `reports/pt/`.
