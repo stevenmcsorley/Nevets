@@ -1,0 +1,16 @@
+{
+  "path": "data\\pt\\tokenizer_32k.json",
+  "sha256": "229a91f7d1befea96cd93af911c79cd62765101610470f4866a7d2477c9e1126",
+  "vocab": 32000,
+  "corpus_docs": 90000,
+  "corpus_chars": 428278013,
+  "structured_samples": 15000,
+  "digits": "individual",
+  "byte_alphabet": "full (no <unk> for any byte)",
+  "probe": {
+    "{\"facts\":[{\"subject\":\"a\"}]}": 7,
+    "id,status,amount\n17,open,3.50": 15,
+    "With rain, heat happens with probability 3/20.": 13
+  },
+  "unk_in_probe": false
+}

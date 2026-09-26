@@ -1,0 +1,9 @@
+{
+  "docs_in": 1455000,
+  "dup_removed": 7799,
+  "contam_candidates": 34,
+  "contam_removed": 0,
+  "docs_out": 1447201,
+  "eval_texts": 59469,
+  "removed_examples": []
+}

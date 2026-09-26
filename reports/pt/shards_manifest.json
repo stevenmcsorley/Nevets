@@ -1,0 +1,92 @@
+{
+  "tokenizer": "data\\pt\\tokenizer_32k.json",
+  "shards": [
+    {
+      "file": "train_0000.bin",
+      "tokens": 100000000,
+      "sha256": "017185d6ff851266ff754bff5fc763f1957a5350a162a1945750460568c7909f"
+    },
+    {
+      "file": "train_0001.bin",
+      "tokens": 100000000,
+      "sha256": "1bee7431096cc2777fb4f9e3efff74de0fba4e05c548b5ea36739006e81ce852"
+    },
+    {
+      "file": "train_0002.bin",
+      "tokens": 100000000,
+      "sha256": "f5f0b56927ba1e02fc31df4fbd6aab8b3775f77a0ef0da5b3efe7a2e81f46bf8"
+    },
+    {
+      "file": "train_0003.bin",
+      "tokens": 100000000,
+      "sha256": "0e5f714acee510b151072cbc43f505b859e35f260bb32717f34613c5480d0576"
+    },
+    {
+      "file": "train_0004.bin",
+      "tokens": 100000000,
+      "sha256": "9ec9019ea6029e2c028dc76b8ff343692ad89aec099f308488840ba32d766521"
+    },
+    {
+      "file": "train_0005.bin",
+      "tokens": 100000000,
+      "sha256": "9cdd30ab2d42b43bac1bf1f58c4ffb4576f1ad4418db15f73ba2e458683a4e78"
+    },
+    {
+      "file": "train_0006.bin",
+      "tokens": 100000000,
+      "sha256": "0431797e5bbff17afc588c133db85882a61a5012ed5477994a705980ba3ba710"
+    },
+    {
+      "file": "train_0007.bin",
+      "tokens": 100000000,
+      "sha256": "6adcd91a38e87730e7d30228cee56ced957079dbac465291a5891b37161253ed"
+    },
+    {
+      "file": "train_0008.bin",
+      "tokens": 100000000,
+      "sha256": "f5c628c20005bf529c6d0bd4e953a511a7054e366d8e548ee06a56803ad8cb51"
+    },
+    {
+      "file": "train_0009.bin",
+      "tokens": 100000000,
+      "sha256": "db858dd4730699ce7369a22c0ae8ccef00d3cc0c50a885af92e7793333a43e65"
+    },
+    {
+      "file": "train_0010.bin",
+      "tokens": 100000000,
+      "sha256": "f24c9c534860a6b3e0c39c304e75e4ab3592f94ce4dad1dca8aea843e2c63014"
+    },
+    {
+      "file": "train_0011.bin",
+      "tokens": 100000000,
+      "sha256": "badbc147085e37177438431a9912c481a18852e7ce4d466e87c5ad2c8201f3da"
+    },
+    {
+      "file": "train_0012.bin",
+      "tokens": 100000000,
+      "sha256": "930ca8b02ba931b7c32b82c0bfeac73d0b11d0ddc676d77d812b2b92dcbefc67"
+    },
+    {
+      "file": "train_0013.bin",
+      "tokens": 100000000,
+      "sha256": "aae60f0bc49fe13d0cd94c4d189340a4d830e5e20b88e205dcb897e9661d7644"
+    },
+    {
+      "file": "train_0014.bin",
+      "tokens": 100000000,
+      "sha256": "f332cedb18c83998ff25c82f6b8dcd0f843983097f8d7a6736e15dd1e85962e3"
+    },
+    {
+      "file": "train_0015.bin",
+      "tokens": 47579810,
+      "sha256": "f9d3fb98b3ed5d05e633fe2eb8590e27d0be7b5ca3c04c2304ed590fffb1ffcc"
+    },
+    {
+      "file": "val_0000.bin",
+      "tokens": 7847636,
+      "sha256": "e90d65d07cf5e081c9fc144d4d19925c36780e4e6d23afde5d3a8a95c737ec8d"
+    }
+  ],
+  "train_tokens": 1547579810,
+  "val_tokens": 7847636
+}
