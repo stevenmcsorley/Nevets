@@ -439,3 +439,25 @@ def test_checkpoint_with_inherited_unused_binding_loads(model,tok,tmp_path):
     save_checkpoint(tmp_path/'child.pt',model,model.cfg,'data/tokenizer.json',1)
     loaded,_=load_checkpoint(tmp_path/'child.pt',SystemOneModel)
     assert loaded.ptr_bind is not None and loaded.cfg.decision_head['query_mode']=='decide'
+
+
+@pytest.mark.parametrize('mode,iso,looped',[('entity_binding',True,True),('decide',False,False)])
+def test_predict_batch_matches_predict_record(tok,mode,iso,looped):
+    from systemone_lab.gates import predict_batch
+    torch.manual_seed(3)
+    dh={'scorer':'cosine','temperature':10.0,'query_mode':mode,'state_attention':'bidirectional'}
+    if iso: dh['option_attention']='isolated'
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=3 if looped else 2,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head=dh,arch={'type':'looped','prelude':1,'core':1,'coda':1,'iters':2} if looped else {})
+    m=SystemOneModel(cfg)
+    if mode=='entity_binding':
+        m.enable_entity_binding(dh)
+        with torch.no_grad(): m.ptr_bind.weight.normal_(0,0.2)
+    a=rec('right'); a['questions']['spatial']['instructions']='What is the spatial relation of B to A?'
+    b=rec('left'); b['state']='C is left of D. A is above B.'; b['questions']['spatial']['instructions']='What is the spatial relation of C to D?'
+    c={'state':'X is near Y.','questions':{'ok':{'type':'noul','instructions':'Is X near Y?'}},'labels':{'ok':True}}
+    batch=predict_batch(m,tok,[a,b,c],'cpu',batch_size=2)
+    for r,got in zip([a,b,c],batch):
+        want=predict_record(m,tok,r,'cpu')
+        for key in want:
+            assert all(abs(got[key][k]-want[key][k])<1e-5 for k in want[key])

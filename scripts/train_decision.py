@@ -1,6 +1,7 @@
 """Decision training. Steps are optimizer updates; each contains --accum microbatches."""
 import argparse
 import json
+import sys
 import math
 import random
 from pathlib import Path
@@ -82,6 +83,8 @@ def main():
                     help='Freeze all pretrained weights and train only the entity-binding projection')
     ap.add_argument('--allow-tokenizer-mismatch',action='store_true')
     ap.add_argument('--balanced-sampling',action='store_true')
+    ap.add_argument('--eval-every',type=int,default=500,help='dev gates every N updates (Rule 4); 0 disables')
+    ap.add_argument('--no-kill',action='store_true',help='log gate regressions without stopping the run')
     ap.add_argument('--shuffle-options',action='store_true',help='augment: shuffle the option order of every sampled question')
     ap.add_argument('--nograd-range',help='looped arch: warm-up iterations without gradient, sampled from "lo,hi" per update')
     ap.add_argument('--iters-range',help='looped arch: sample core iterations uniformly from "lo,hi" per update')
@@ -92,8 +95,15 @@ def main():
     random.seed(a.seed); torch.manual_seed(a.seed)
     config=yaml.safe_load(Path(a.config).read_text())
     device=pick_device(); dtype=choose_dtype(device); tok=LabTokenizer(a.tokenizer)
+    gate_baseline=None; gates=None
     if a.init:
         model,ck=load_checkpoint(a.init,SystemOneModel,tokenizer_path=a.tokenizer,allow_tokenizer_mismatch=a.allow_tokenizer_mismatch)
+        gate_baseline=None
+        if a.eval_every:
+            # Rule 4 parent baseline: the init checkpoint in its own native configuration.
+            from systemone_lab.gates import FastGates
+            gates=FastGates(); model.to(device); gate_baseline=gates.evaluate(model,tok,device)
+            print(json.dumps({'parent_gates':gate_baseline}),flush=True)
         decision_head=config.get('decision_head',model.cfg.decision_head)
         if decision_head.get('query_mode')=='role_adapter':
             model.enable_role_adapter(decision_head)
@@ -127,6 +137,8 @@ def main():
     log=Path(a.out).with_suffix('.diagnostics.jsonl'); log.parent.mkdir(parents=True,exist_ok=True)
     safety=config.get('safety',{})
     print(json.dumps({'device':str(device),'dtype':str(dtype),'config':config,'args':vars(a)},default=str),flush=True)
+    glog=Path(a.out).with_suffix('.gates.jsonl').open('w')
+    if gate_baseline is not None: glog.write(json.dumps({'step':0,'parent':True,**gate_baseline})+chr(10)); glog.flush()
     with log.open('w') as f:
         for step in range(1,a.steps+1):
             opt.zero_grad(set_to_none=True); batch_stats=[]; all_records=[]
@@ -155,6 +167,23 @@ def main():
                 f.write(json.dumps(stats)+'\n'); f.flush(); print(json.dumps(stats),flush=True)
             if step%a.save_every==0:
                 save_checkpoint(a.out,model,model.cfg,a.tokenizer,step,stats)
+            if a.eval_every and step%a.eval_every==0:
+                if gates is None:
+                    from systemone_lab.gates import FastGates
+                    gates=FastGates()
+                saved_iters=model.iters; model.iters=int((model.cfg.arch or {}).get('iters',1))
+                result=gates.evaluate(model,tok,device); model.iters=saved_iters
+                glog.write(json.dumps({'step':step,**result})+chr(10)); glog.flush()
+                print(json.dumps({'gates_step':step,**{k:v for k,v in result.items() if k!='chain_by_hops'}}),flush=True)
+                if gate_baseline is not None:
+                    from systemone_lab.gates import regressions
+                    bad=regressions(gate_baseline,result)
+                    if bad and not a.no_kill:
+                        save_checkpoint(a.out,model,model.cfg,a.tokenizer,step,stats)
+                        Path(a.out).with_suffix('.killed.json').write_text(json.dumps(
+                            {'step':step,'reason':'Rule 4: gate regression > 2 points vs parent','regressions':bad,
+                             'parent':gate_baseline,'current':result},indent=2))
+                        print(json.dumps({'KILLED':bad}),flush=True); sys.exit(3)
     if iters_range: model.iters=int((model.cfg.arch or {}).get('iters',1))
     model.iters_nograd=0
     save_checkpoint(a.out,model,model.cfg,a.tokenizer,a.steps,stats)
