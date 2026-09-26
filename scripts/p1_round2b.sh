@@ -5,7 +5,8 @@
 # accuracy rise with passes past 6? eval_depth K in 1..16 (+ oracle K = hops+2) and probes to K=16.
 export PYTHONPATH=src; PY=./.venv/Scripts/python.exe
 until grep -q "S30_s8 done" reports/p0/status.txt 2>/dev/null; do sleep 60; done
-INIT=checkpoints/p0/S30_s7.pt; DATA=data/processed/spatial_only_v1/train.jsonl  # same data as ctl; OUT=checkpoints/p1; REP=reports/p1
+# Same data as ctl (spatial_only_v1).
+INIT=checkpoints/p0/S30_s7.pt; DATA=data/processed/spatial_only_v1/train.jsonl; OUT=checkpoints/p1; REP=reports/p1
 $PY scripts/check_contamination.py $DATA > $REP/contamination_r2b.json || { echo contaminated; exit 1; }
 for a in r2b1_depthK r2b2_edge r2b3_incoff r2b4_combo; do
   [ -f reports/pt/PT2_RUNNING ] && while [ -f reports/pt/PT2_RUNNING ]; do sleep 120; done  # PT-2 has priority on the GPU
