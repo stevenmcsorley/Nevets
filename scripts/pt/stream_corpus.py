@@ -83,7 +83,7 @@ def main():
             with open(local, "rb") as f:
                 for chunk in iter(lambda: f.read(1 << 24), b""): h.update(chunk)
             assert info[name].lfs is None or h.hexdigest() == info[name].lfs.sha256, f"checksum mismatch {name}"
-        pf = pq.ParquetFile(local); new_seen = []; batch = []
+        fh = open(local, "rb"); pf = pq.ParquetFile(fh); new_seen = []; batch = []
         def drain():
             for enc in tok.encode_batch(batch):
                 (val if rng.random() < 0.005 else buf).extend(enc.ids + [eos])
@@ -101,7 +101,10 @@ def main():
                 if len(batch) >= 2000: drain()
             while len(buf) >= a.shard_tokens:
                 flush(buf[:a.shard_tokens], "train"); st["tokens_train"] += a.shard_tokens; buf = buf[a.shard_tokens:]
-        drain()
+        drain(); pf = None; fh.close()  # release the file handle (Windows cannot delete an open file)
+        # Crash-safe: commit every token of this input (partial shards allowed) BEFORE marking it done.
+        if buf: flush(buf, "train"); st["tokens_train"] += len(buf); buf = []
+        if val: flush(val, "val"); st["tokens_val"] += len(val); val = []
         with open(SEEN, "ab") as f: f.write(b"".join(new_seen))
         man["inputs_done"].append(name); MAN.write_text(json.dumps(man, indent=2))
         if a.delete_raw and not a.local_parquet: Path(local).unlink()
