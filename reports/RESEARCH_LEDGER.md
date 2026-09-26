@@ -220,3 +220,15 @@ The profile peaks at the trained K and degrades beyond it; cancellation labels t
 **P1-CRITERION (owner, pre-registered 26 September before any readout-arm result)** · An arm is a **WIN** only if, across **two seeds**, it (a) beats the control on **7–10-hop accuracy by more than the seed spread** (control spread measured from ctl seeds 7 and 8), (b) shows **no regression on 1–6 hops**, (c) no regression in **rotation/reflection consistency**, and (d) **ECE no worse** than the control. Every arm also gets a **per-iteration loop-state probe** (`scripts/probe_loop_states.py`): state drift ‖h_{t+1} − h_t‖/‖h_t‖, early-exit accuracy per iteration (trained 1–6 vs unseen 7–10 hops), entity-state similarity (oversmoothing), and per-iteration coordinate error where a coordinate head exists, reporting whether the state drifts or converges past the training depth (K ≤ 6). Owner confirmed the NVIDIA "CUDA Sysmem Fallback Policy" is set to "Prefer No Sysmem Fallback" (global); the VRAM ceiling re-test runs between jobs, not mid-run.
 
 **PT-STREAM-FIX** · The first streaming run processed input 002 (700M tokens → `train_0016`–`0022`) and then crashed deleting the parquet (Windows file lock: `ParquetFile` still held the handle). The crash came after 002 was marked done but before its buffered tail tokens (< 100M) and val tokens were written, so a resume would have silently lost them. **Fix:** release the file handle before deleting, and flush all buffered train/val tokens (partial shards allowed) *before* marking an input done, so an interruption cannot lose data. State restored exactly to pre-002 (dedup set truncated to its seeded 28,944,020 bytes = 1,447,201 PT-1 docs × 20; shards 0016–0022 and the stream manifest removed), then restarted. Tests pass. Note: PT-1 shards are `train_0000`–`0015` (15 × 100M + a 47.6M remainder) plus `val_0000`.
+
+**P1 round 1 (seed 7; provisional, the verdict needs ctl seed 8 for the spread)** · All arms continue from S30 for +6k updates, same data and seed; no Rule-4 kills (`reports/p1/depth_*_s7.txt`). At K=4 (7–10 = mean of hop accuracies 7..10):
+
+| arm | 1–6 hops | **7–10 hops** | rot. | ECE15 | NLL |
+|---|---|---|---|---|---|
+| ctl | .935 | **.565** | .992 | .055 | .921 |
+| A only (cold) | **.963** | .528 | 1.000 | .070 | **.804** |
+| B hybrid (gate 0 init) | .950 | .578 | .993 | .051 | .844 |
+| C consistency (shadow) | .953 | .558 | .997 | .048 | .845 |
+| D hybrid + per-iteration hints | .955 | .575 | 1.000 | .044 | .835 |
+
+**Reading so far:** the coordinate readout helps *within* the trained depth (4–6 hops +3–6 points, rotation ≈ 1.0, NLL −8–13%), but the unseen-depth gain is ≤ 1.3 points, and K=12 < K=4/6 for every arm. A (readout only) extrapolates *worse* and is less well calibrated (ECE .070). Pending: ctl seed 8 (spread), per-iteration loop probes, then the WIN/LOSS decision against the pre-registered criterion.

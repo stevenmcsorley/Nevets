@@ -1,1 +1,5 @@
 ctl_s7 done
+A_only_s7 done
+B_hybrid_s7 done
+C_consistency_s7 done
+D_hybrid_hints_s7 done
