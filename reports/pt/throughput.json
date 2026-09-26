@@ -1,0 +1,284 @@
+[
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 4,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 40.2,
+    "tokens_per_s": 39002.060796066144,
+    "peak_mem_GB": 2.90832896,
+    "step_s": 0.1050200916668776,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 8,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 40.2,
+    "tokens_per_s": 41875.868872958235,
+    "peak_mem_GB": 5.152494592,
+    "step_s": 0.1956257916666194,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 16,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 40.2,
+    "tokens_per_s": 30910.267669672132,
+    "peak_mem_GB": 9.712653312,
+    "step_s": 0.5300504083332575,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 24,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 40.2,
+    "tokens_per_s": 12465.072483285423,
+    "peak_mem_GB": 14.279365632,
+    "step_s": 1.9715890166667123,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 32,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 40.2,
+    "tokens_per_s": 7791.754594700473,
+    "peak_mem_GB": 18.837165056,
+    "step_s": 4.205471258333394,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 48,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 40.2,
+    "tokens_per_s": 2157.0318933075896,
+    "peak_mem_GB": 27.96233216,
+    "step_s": 22.78686752500001,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 4,
+    "seq": 1024,
+    "compile": true,
+    "ok": false,
+    "error": "TritonMissing: Cannot find a working triton installation. Either the package is not installed or it is too old. More information on installing Triton can be found at: https://"
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 4,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 75.5,
+    "tokens_per_s": 22362.942013484724,
+    "peak_mem_GB": 4.268063744,
+    "step_s": 0.18316015833382457,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 8,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 75.5,
+    "tokens_per_s": 23579.16995823966,
+    "peak_mem_GB": 7.32196096,
+    "step_s": 0.34742529166669556,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 16,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 75.5,
+    "tokens_per_s": 12781.574229044585,
+    "peak_mem_GB": 13.482033664,
+    "step_s": 1.28184523333357,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 24,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 75.5,
+    "tokens_per_s": 4708.697429510352,
+    "peak_mem_GB": 19.740901888,
+    "step_s": 5.219277808333421,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 32,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 75.5,
+    "tokens_per_s": 2011.3509357517512,
+    "peak_mem_GB": 25.90108928,
+    "step_s": 16.29153789999994,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 48,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 75.5,
+    "tokens_per_s": 1381.0775703202985,
+    "peak_mem_GB": 38.293389824,
+    "step_s": 35.58960123333312,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 4,
+    "seq": 1024,
+    "compile": true,
+    "ok": false,
+    "error": "TritonMissing: Cannot find a working triton installation. Either the package is not installed or it is too old. More information on installing Triton can be found at: https://"
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 4,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 157.6,
+    "tokens_per_s": 13623.823752664473,
+    "peak_mem_GB": 6.683459072,
+    "step_s": 0.3006498083329158,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 8,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 157.6,
+    "tokens_per_s": 14377.224805107036,
+    "peak_mem_GB": 10.355752448,
+    "step_s": 0.5697900750004313,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 16,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 157.6,
+    "tokens_per_s": 1788.269565603302,
+    "peak_mem_GB": 18.055187968,
+    "step_s": 9.16192967499986,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 24,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 157.6,
+    "tokens_per_s": 946.1290031823676,
+    "peak_mem_GB": 25.965481472,
+    "step_s": 25.975316175000444,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 32,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 157.6,
+    "tokens_per_s": 773.6791883040179,
+    "peak_mem_GB": 33.885736448,
+    "step_s": 42.35347220833319,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 48,
+    "seq": 1024,
+    "compile": false,
+    "params_M": 157.6,
+    "tokens_per_s": 670.2294171066108,
+    "peak_mem_GB": 49.667001856,
+    "step_s": 73.33608275833346,
+    "ok": true
+  },
+  {
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 4,
+    "seq": 1024,
+    "compile": true,
+    "ok": false,
+    "error": "TritonMissing: Cannot find a working triton installation. Either the package is not installed or it is too old. More information on installing Triton can be found at: https://"
+  },
+  {
+    "params_M": 40.2,
+    "tokens_per_s": 66367.83228735937,
+    "peak_mem_GB": 4.294434816,
+    "step_s": 0.24686658333303058,
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 16,
+    "compile": true,
+    "ok": true
+  },
+  {
+    "params_M": 40.2,
+    "tokens_per_s": 68274.61939544152,
+    "peak_mem_GB": 6.069313536,
+    "step_s": 0.35995806666687713,
+    "config": "configs/pt/pt_35m.yaml",
+    "batch": 24,
+    "compile": true,
+    "ok": true
+  },
+  {
+    "params_M": 75.5,
+    "tokens_per_s": 34449.30764608526,
+    "peak_mem_GB": 4.23478784,
+    "step_s": 0.23779868333379758,
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 8,
+    "compile": true,
+    "ok": true
+  },
+  {
+    "params_M": 75.5,
+    "tokens_per_s": 36244.13179120873,
+    "peak_mem_GB": 7.047035904,
+    "step_s": 0.45204559166662267,
+    "config": "configs/pt/pt_70m.yaml",
+    "batch": 16,
+    "compile": true,
+    "ok": true
+  },
+  {
+    "params_M": 157.6,
+    "tokens_per_s": 19845.20668799771,
+    "peak_mem_GB": 8.809677312,
+    "step_s": 0.6191923416666517,
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 12,
+    "compile": true,
+    "ok": true
+  },
+  {
+    "params_M": 157.6,
+    "tokens_per_s": 20015.803900838564,
+    "peak_mem_GB": 10.792190464,
+    "step_s": 0.8185531833329757,
+    "config": "configs/pt/pt_150m.yaml",
+    "batch": 16,
+    "compile": true,
+    "ok": true
+  }
+]

@@ -1,0 +1,14 @@
+name: pt_150m
+vocab_size: 32000
+max_seq_len: 2048
+rope_theta: 10000.0
+dropout: 0.0
+decision_head:
+  scorer: cosine
+  temperature: 10.0
+d_model: 1024
+n_layers: 11
+n_heads: 16
+n_kv_heads: 4
+d_ff: 2816
+pointer_dim: 384
