@@ -14,6 +14,7 @@ decision_head:
   temperature: 10.0
   coord_readout: hybrid
   aux_coord_weight: 1.0
+  coord_gate_init: 0.0
 dropout: 0.0
 max_seq_len: 2048
 n_heads: 8

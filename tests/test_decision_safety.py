@@ -502,3 +502,17 @@ def test_shadow_readout_leaves_answers_unchanged(tok):
     with torch.no_grad(): m.coord_head.weight.normal_()
     shadow=predict_record(m,tok,r,'cpu')
     assert all(abs(plain['spatial'][k]-shadow['spatial'][k])<1e-6 for k in plain['spatial'])
+
+
+def test_hybrid_with_zero_gate_starts_identical_to_parent(tok):
+    torch.manual_seed(8)
+    base={'scorer':'cosine','temperature':10.0,'query_mode':'entity_binding','state_attention':'bidirectional','option_attention':'isolated'}
+    m=SystemOneModel(ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=2,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,decision_head=base))
+    m.enable_entity_binding(base)
+    with torch.no_grad(): m.ptr_bind.weight.normal_(0,0.2)
+    r=rec('right'); r['questions']['spatial']['instructions']='What is the spatial relation of B to A?'
+    plain=predict_record(m,tok,r,'cpu')
+    m.enable_coord_head({**base,'coord_readout':'hybrid','coord_gate_init':0.0})
+    with torch.no_grad(): m.coord_head.weight.normal_()
+    hyb=predict_record(m,tok,r,'cpu')
+    assert all(abs(plain['spatial'][k]-hyb['spatial'][k])<1e-6 for k in plain['spatial'])

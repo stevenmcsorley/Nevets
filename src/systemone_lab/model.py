@@ -113,7 +113,7 @@ class SystemOneModel(nn.Module):
                                         or cfg.decision_head.get("coord_readout", "none") != "none"):
             self.coord_head = nn.Linear(cfg.d_model, 2)
         if cfg.decision_head.get("coord_readout", "none") != "none":
-            self.coord_readout_params = nn.Parameter(torch.tensor([8.0, 0.125, 1.0]))
+            self.coord_readout_params = nn.Parameter(torch.tensor([8.0, 0.125, float(cfg.decision_head.get("coord_gate_init", 1.0))]))
         self.apply(self._init)
         if self.ptr_bind is not None:
             nn.init.zeros_(self.ptr_bind.weight)
@@ -186,7 +186,8 @@ class SystemOneModel(nn.Module):
             self.coord_head = nn.Linear(self.cfg.d_model, 2, device=dev)
         if readout != "none" and getattr(self, "coord_readout_params", None) is None:
             # [sharpness beta, zero-band half-width t (coords are scaled /4: one grid step = 0.25), hybrid gate]
-            self.coord_readout_params = nn.Parameter(torch.tensor([8.0, 0.125, 1.0], device=dev))
+            gate = float(decision_head.get("coord_gate_init", 1.0))  # 0.0: hybrid starts identical to the parent
+            self.coord_readout_params = nn.Parameter(torch.tensor([8.0, 0.125, gate], device=dev))
         self.cfg.decision_head = dict(decision_head)
 
     @property
