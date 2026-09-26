@@ -1,0 +1,10 @@
+#!/bin/sh
+# Reject staged files over 50 MB (weights, parquet, shards never belong in git; GitHub rejects > 100 MB).
+limit=52428800
+status=0
+for f in $(git diff --cached --name-only --diff-filter=AM); do
+  [ -f "$f" ] || continue
+  size=$(wc -c < "$f")
+  if [ "$size" -gt "$limit" ]; then echo "pre-commit: refusing $f ($size bytes > 50 MB). Add it to .gitignore." >&2; status=1; fi
+done
+exit $status
