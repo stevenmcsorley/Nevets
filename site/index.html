@@ -44,6 +44,7 @@ a{color:var(--accent)}
   <li><strong>Faithfulness:</strong> the browser models store weights as int8 (≈40 MB each). Against the original PyTorch models they choose the same answer on 99.5% (GENERAL-1, measured through this site's JavaScript pipeline on 192 requests across all domains) and 100% (chess) of our test requests; the tokenizer and request packing match Python exactly (checked by the repository's tests).</li>
   <li>The first load downloads the model once (≈40 MB); after that a Treasure Hunt decision takes roughly 0.3 s and a chess move roughly 0.5 s on a typical laptop CPU.</li>
 </ul>
+<p class="muted">Data attribution: language pretraining uses <a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu">FineWeb-Edu</a> (Hugging Face), licensed <a href="https://opendatacommons.org/licenses/by/1-0/">ODC-By v1.0</a> (derived from Common Crawl); chess positions from the Lichess open database (CC0).</p>
 <p class="muted">Source, research log and honest limitations: <a href="https://github.com/stevenmcsorley/Nevets">github.com/stevenmcsorley/Nevets</a>.</p>
 </main>
 </body>

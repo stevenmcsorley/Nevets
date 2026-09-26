@@ -27,6 +27,9 @@ PT = Path("data/pt"); SPECIAL = ["<pad>", "<bos>", "<eos>", "<unk>", "<state>", 
 MARKERS = ("obj_", "spatial relation of", "happens with probability", "occupies the same position",
            "is upper-left of", "is lower-right of", "sits north of", "diagnostic reads positive", "which box was")
 N = 13
+# P3 held-out representation formats (decided 26 Sep, before any P3 run). They may appear in TOKENIZER
+# training text, but must never appear in a structured slice of the PRETRAINING corpus.
+P3_HELDOUT_FORMATS = ("table", "symbolic")
 norm = lambda s: re.sub(r"\s+", " ", s.lower()).strip()
 words = lambda s: re.findall(r"[a-z0-9_]+", s.lower())
 
@@ -75,12 +78,17 @@ def stage_clean(a):
     (PT / "clean_report.json").write_text(json.dumps(stats, indent=2))
 
 
-def structured_samples(n, seed):
-    """Rendered structured text so JSON/table/kv/CSV delimiters get sensible merges (fresh seeds only)."""
+def structured_samples(n, seed, for_pretraining=False):
+    """Rendered structured text so JSON/table/kv/CSV delimiters get sensible merges (fresh seeds only).
+
+    for_pretraining=True excludes the P3 held-out formats (a pretraining structured slice must not
+    contain them); tokenizer training may include every format.
+    """
     from systemone_lab.worlds import DOMAINS, FORMATS
+    formats = [f for f in FORMATS if not (for_pretraining and f in P3_HELDOUT_FORMATS)]
     rng = random.Random(seed); out = []
     for i in range(n):
-        dom = rng.choice(list(DOMAINS)); fmt = rng.choice(FORMATS)
+        dom = rng.choice(list(DOMAINS)); fmt = rng.choice(formats)
         rec, _ = DOMAINS[dom](rng, fmt, f"tok-{i}"); out.append(rec["state"])
         if i % 4 == 0:  # CSV rows and nested JSON records of generic business-like data
             rows = [{"id": rng.randint(1, 99999), "status": rng.choice(["open", "closed", "pending"]),

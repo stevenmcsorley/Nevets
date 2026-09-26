@@ -12,6 +12,8 @@ This repository is a **from-scratch** research lab for a small, prefill-only, ca
 
 It does **not** use Jev outputs as labels, does not query Jev for reverse-engineering, and does not contain Jev weights or proprietary data. The architecture is derived from public documentation, ordinary transformer techniques, and independently published open research.
 
+**Data attribution.** Nevets language pretraining uses **FineWeb-Edu** (Hugging Face, `HuggingFaceFW/fineweb-edu`), licensed under the **Open Data Commons Attribution License (ODC-By) v1.0**; FineWeb-Edu is derived from Common Crawl, whose terms of use also apply. This covers the legacy LM (`s1-35m-pretrain.pt`, from which every released decision model descends) and the new PT lineage (revision `87f09149ef4734204d70ed1d046ddc9ca3f2b8f9`). Chess positions come from the Lichess open database (CC0). Source-by-source details are in `DATA_SOURCES.md`.
+
 ## What is and isn't in this repository (Nevets)
 
 The code, configs, tests, evaluation suites and research records (`reports/FRONTIER_STATE.md`, `reports/RESEARCH_LEDGER.md`, `reports/CHECKPOINT_REGISTRY.md`) are in git. The following are deliberately excluded (see `.gitignore`):

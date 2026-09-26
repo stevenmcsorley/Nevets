@@ -31,3 +31,6 @@ reports/**/*_raw.jsonl
 
 # Demo model files are published as GitHub Release assets and fetched by the Pages workflow
 site/model/*.onnx
+
+# PT corpus: raw parquet, cleaned text, tokenizer training outputs and uint16 shards (regenerate with scripts/pt/)
+data/pt/
