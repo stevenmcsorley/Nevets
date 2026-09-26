@@ -90,7 +90,7 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
 **What moved the frontier (controlled evidence):**
 1. *Isolated options* (ISO-B): exact option-order invariance and higher accuracy. Adopted everywhere.
 2. *Trained weight-tied loop* (T-R2): +13 points at 3 hops against a matched control. The first mechanism to lift 3–4-hop composition.
-3. *Spatial training transfers* to unseen symbolic domains (TM-1), above all on counterfactual interventions. LM pretraining beats scratch, and spatial beats both.
+3. *A decision-trained init transfers* to unseen symbolic domains (TM-1), above all on counterfactual interventions; LM pretraining beats scratch. **Caveat (TM-1-FLAG, 26 Sep):** the spatial init had 28,400 prior decision updates and BASE had 0, so the effect is not attributable to *spatial* content until a matched non-spatial decision-trained init is tested.
 4. *Multi-domain training* (GENERAL-1) gave the best model on every spatial dev gate and the first broad multi-domain model (confounded with 5× more steps).
 
 **What failed (and why it matters):** from-scratch small models never left chance (T-R1); convergence training stabilized the loop but cost 18 points at 3 hops (T-R3); per-iteration BFS hints did not reach the answer head (T-R4); spatial training did not transfer to chess (CH-2).
