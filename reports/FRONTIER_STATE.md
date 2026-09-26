@@ -103,3 +103,8 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
 5. *Inference latency* is overhead-bound (`reports/frontier/latency_*.json`).
 
 **Public artefacts:** https://stevenmcsorley.github.io/Nevets/ (General playground, Treasure Hunt, Chess), release `demo-models-v3`.
+
+
+## 12. P0 revision — 26 September
+
+*Supersedes §11 item 4 and bottleneck 1.* Matched comparisons (`RESEARCH_LEDGER.md`, ★ P0) show that GENERAL-1's spatial gains came from **spatial exposure and training length**, not from multi-domain transfer. At matched spatial exposure, spatial-only ≥ multi-domain. With 480k spatial examples (S30), spatial reasoning within the trained range is far stronger than any earlier model: 4-hop 91.6%, rotation consistency 98.7% (dev), cancellation labels no longer behind. **The remaining architectural bottleneck is length extrapolation beyond the trained depth** (7–10 hops: 69 → 43%), which neither more training nor more test-time loop passes fixes. Revised bottleneck ranking: (1) length extrapolation (P1 target), (2) causal see/do, (3) held-out format robustness, (4) real-language coverage (PT programme), (5) chess data/targets, (6) latency. The TM-1 transfer claim is downgraded (TM-1-FLAG).

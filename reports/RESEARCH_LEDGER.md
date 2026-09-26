@@ -186,3 +186,25 @@ The profile peaks at the trained K and degrades beyond it; cancellation labels t
 **INCIDENT-1 (repo hygiene, 26 September)** · `git add -A` staged a 2.15 GB FineWeb parquet (`data/pt/` was missing from `.gitignore`); GitHub rejects files over 100 MB, so the push hung. It was caught before anything reached GitHub: the unpushed commit was amended to drop the file, `data/pt/` was added to `.gitignore`, and the stray blob was pruned (`.git` back to 2.2 MB). **Prevention:** `scripts/hooks/pre-commit` (installed in `.git/hooks`) rejects any staged file over 50 MB; verified by staging a 60 MB test file, which the hook refused.
 
 **PT-1 — DONE (corpus + tokenizer, CPU/disk)** · FineWeb-Edu `sample/10BT` shards 000–001 at revision `87f09149…` (ODC-By v1.0; SHA-256 verified against the LFS oids). 1,455,000 docs → 7,799 exact duplicates removed → decontamination: 34 marker candidates, **0 confirmed** 13-gram or short-string hits against 59,469 eval/locked texts → 1,447,201 docs. New tokenizer `tokenizers/pt_32k.json` (SHA-256 `229a91f7…`, 32k byte-level BPE, individual digits, full byte alphabet, no `<unk>` on JSON/CSV/fraction probes), trained on 90k corpus docs (428M chars) plus 15k rendered structured samples. **1,547,579,810 train tokens** in 16×100M + 1 remainder uint16 shards, and 7,847,636 validation tokens. Disk: 13.6 GB (total checkpoints + data ≈ 22 GB, within the 150 GB budget). Full manifest: `reports/pt/PT1_manifest.md`. This is a new tokenizer lineage; the legacy `data/tokenizer.json` and `s1-35m-pretrain.pt` are untouched.
+
+## ★ P0 — CONCLUDED: training length and spatial exposure, not curriculum, explain GENERAL-1's spatial gains ★
+
+**Design recap (all arms: init `tournament/r2/looped.pt`, `configs/general_v1.yaml`, batch 16, label-balanced sampling, K ~ U[1,6]; registry-clean data):** dev gates, chains 1–10 hops (`reports/p0/`, `reports/p1/depth_*.json`).
+
+| arm | curriculum | updates | spatial examples seen | overall | 2 / 3 / 4 hops | 5–10 hops | rot. consistency | ECE15 | seeds |
+|---|---|---|---|---|---|---|---|---|---|
+| M6 | multi | 6k | ≈ 21k | 0.524 ± 0.001 | .895 / .704 / .435 | .367 | .890 ± .021 | .03 | 7, 8 |
+| S6 | spatial | 6k | 96k | 0.587 ± 0.002 | .956 / .804 / .629 | .414 | .944 ± .000 | .05 | 7, 8 |
+| M30 (GENERAL-1) | multi | 30k | ≈ 104k (verified from sampled IDs) | 0.574 | .950 / .785 / .596 | .400 | .943 | .045 | 7 |
+| **S30** | spatial | 30k | 480k | **0.764** | **.991 / .968 / .916** | **.630** | **.987** | **.039** | 7 |
+
+(± = half-range over seeds 7 and 8.)
+
+**Conclusions:**
+1. **Matched spatial exposure (S6 against M30, 96k vs 104k spatial examples): no positive transfer from the other domains to spatial.** S6 ≥ M30 (+1.3 overall, beyond S6's ±0.2 seed spread; M30's 4-hop is below S6's two-seed range). The ≈ 375k non-spatial examples did not substitute for spatial practice and may interfere slightly. This **retracts** the GENERAL-1 reading that multi-domain training helped spatial reasoning.
+2. **Matched updates (S30 against M30): the multi-domain curriculum dilutes spatial practice** (21.6% of samples); at 30k updates the spatial-only model is +19 points overall.
+3. **Training length × curriculum interaction:** the spatial gap grows with training (6k: −6.3; 30k: −19.0), as expected if spatial skill scales with spatial examples and other domains do not substitute.
+4. **Plateau test: not a plateau within the trained range.** S30 ≫ S6 at 4+ hops (4-hop .916 vs .629; 6-hop .81 vs ~.43). The earlier "architectural limit at ~4 hops" was undertraining. Cancellation labels, previously 5–10 points behind, now match or exceed diagonal ones (.774 vs .759 at K=4). **What remains architectural is length extrapolation:** S30 falls from .81 (6 hops, trained) to .69 / .52 / .48 / .43 at 7–10 (unseen), and extra test-time passes do not help (K=4 .764, K=6 .768, K=12 .744). Rotation/reflection consistency .987 clears the 95% gate for the first time (dev).
+5. **Caveats:** S30 is a single seed (seed 8 to follow before any registry promotion, per Rule 5); dev sets only, no locked evaluation yet.
+
+**Decisions:** (a) **P1 baseline = S30** (`checkpoints/p0/S30_s7.pt`), not GENERAL-1. (b) P1's question sharpens to *length extrapolation beyond trained depth* (7–10 hops), where training volume did not help; the coordinate readout is aimed at exactly this. (c) For later GENERAL runs: fix label-balanced sampling (SAMPLING-1) and give spatial its own adequate budget; do not expect other domains to carry spatial skill.
