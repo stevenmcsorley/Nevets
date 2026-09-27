@@ -10,3 +10,4 @@ probe pt_35m_tok_1000M_s8 done
 probe pt_35m_tok_1000M_s9 done
 probe legacy_s1_35m done
 VESSEL-1 slot open      2026-09-27 15:51
+released PT-2 150M hold after VESSEL-1 2026-09-27 16:12
