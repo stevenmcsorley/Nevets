@@ -16,6 +16,9 @@ EVAL_JSONL = [
     "data/processed/worlds_v1/counterfactual.jsonl",
     "data/processed/worlds_v2/eval_in_format.jsonl", "data/processed/worlds_v2/eval_heldout_table.jsonl",
     "data/processed/worlds_v2/counterfactual.jsonl",
+    # VESSEL-1 (Channel Watch vessel-behaviour domain; produced by the channel-watch repo)
+    "data/processed/vessel_v1/eval_synthetic.jsonl", "data/processed/vessel_v1/counterfactual.jsonl",
+    "data/processed/vessel_v1/eval_real.jsonl",
 ]
 EVAL_PAIRS = ["reports/paired_onehop/vertical_probe_pairs.json", "reports/paired_onehop/name_pairs.json",
               "reports/role_swap_onehop/name_pairs.json", "reports/paraphrase_onehop/name_pairs.json"]

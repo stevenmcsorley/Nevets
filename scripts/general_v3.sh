@@ -39,5 +39,5 @@ if [ -f $P1/${A}_s8.killed.json ]; then echo "${A}_s8 KILLED" >> $R1/status.txt;
   echo "${A}_s8 done" >> $R1/status.txt
 fi
 rm -f reports/general/GPU_BUSY
-rm -f reports/pt/HOLD  # releases PT-2 150M (train_pt.py is waiting on it)
-echo "released PT-2 150M hold $(date '+%Y-%m-%d %H:%M')" >> reports/pt/pt2/status.txt
+: # HOLD now released by scripts/vessel1.sh after VESSEL-1 (owner 27 Sep) 
+echo "VESSEL-1 slot open      $(date '+%Y-%m-%d %H:%M')" >> reports/pt/pt2/status.txt

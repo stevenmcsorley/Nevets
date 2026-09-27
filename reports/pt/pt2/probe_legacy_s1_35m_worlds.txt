@@ -1,0 +1,3 @@
+eval_heldout_table {'overall': 0.392, 'causal': 0.467, 'dependency': 0.56, 'infogather': 0.153, 'kinship': 0.14, 'probability': 0.453, 'rules': 0.613, 'temporal': 0.36}
+eval_in_format {'overall': 0.434, 'causal': 0.627, 'dependency': 0.573, 'infogather': 0.22, 'kinship': 0.147, 'probability': 0.433, 'rules': 0.573, 'temporal': 0.467}
+counterfactual {'rules': {'pairs': 300, 'both_correct': 0.3333333333333333, 'correct_direction': 0.64}, 'dependency': {'pairs': 300, 'both_correct': 0.0, 'correct_direction': 0.19}, 'infogather': {'pairs': 300, 'both_correct': 0.0, 'correct_direction': 0.6833333333333333}, 'causal': {'pairs': 300, 'both_correct': 0.006666666666666667, 'correct_direction': 0.55}}
