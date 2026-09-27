@@ -1,0 +1,14 @@
+infogather   late-slope falling in every run: False  | Spearman(exposure, accuracy) = +0.80  -> not exposure-limited
+             G1: 129k samples, acc 0.700, slope +0.029±0.420  G2 s7: 34k samples, acc 0.417, slope +0.841±0.758  G2 s8: 34k samples, acc 0.497, slope -0.159±0.777  G3 s7: 114k samples, acc 0.555, slope -0.285±0.163  G3 s8: 113k samples, acc 0.562, slope +0.504±0.303
+probability  late-slope falling in every run: False  | Spearman(exposure, accuracy) = +0.80  -> not exposure-limited
+             G1: 83k samples, acc 0.718, slope -0.676±0.589  G2 s7: 35k samples, acc 0.620, slope +0.632±0.675  G2 s8: 35k samples, acc 0.657, slope +0.314±0.595  G3 s7: 77k samples, acc 0.662, slope -0.209±0.400  G3 s8: 75k samples, acc 0.662, slope -0.650±0.360
+causal       late-slope falling in every run: False  | Spearman(exposure, accuracy) = +0.70  -> not exposure-limited
+             G1: 8k samples, acc 0.552, slope -2.117±1.576  G2 s7: 35k samples, acc 0.568, slope +0.462±0.726  G2 s8: 33k samples, acc 0.595, slope -1.006±0.860  G3 s7: 17k samples, acc 0.585, slope -0.489±0.789  G3 s8: 16k samples, acc 0.555, slope -0.583±0.830
+dependency   late-slope falling in every run: False  | Spearman(exposure, accuracy) = -0.40  -> not exposure-limited
+             G1: 8k samples, acc 0.608, slope -3.650±0.983  G2 s7: 34k samples, acc 0.895, slope -2.087±0.438  G2 s8: 34k samples, acc 0.905, slope +0.472±0.295  G3 s7: 40k samples, acc 0.752, slope +0.624±0.466  G3 s8: 41k samples, acc 0.585, slope +0.481±0.389
+kinship      late-slope falling in every run: False  | Spearman(exposure, accuracy) = -0.90  -> not exposure-limited
+             G1: 105k samples, acc 0.565, slope -0.383±0.341  G2 s7: 35k samples, acc 0.812, slope +0.699±0.542  G2 s8: 35k samples, acc 0.787, slope +0.054±0.477  G3 s7: 39k samples, acc 0.688, slope -1.026±0.541  G3 s8: 41k samples, acc 0.608, slope -1.039±0.612
+rules        late-slope falling in every run: False  | Spearman(exposure, accuracy) = +0.10  -> not exposure-limited
+             G1: 8k samples, acc 0.885, slope -3.173±2.591  G2 s7: 35k samples, acc 0.983, slope +0.002±0.675  G2 s8: 34k samples, acc 0.983, slope -0.234±0.351  G3 s7: 40k samples, acc 0.975, slope +0.587±0.245  G3 s8: 39k samples, acc 0.925, slope +0.219±0.218
+temporal     late-slope falling in every run: False  | Spearman(exposure, accuracy) = -0.50  -> not exposure-limited
+             G1: 35k samples, acc 0.615, slope +1.982±0.443  G2 s7: 34k samples, acc 0.892, slope +0.333±0.721  G2 s8: 34k samples, acc 0.910, slope +0.557±0.363  G3 s7: 40k samples, acc 0.710, slope +0.329±0.572  G3 s8: 41k samples, acc 0.850, slope +0.122±0.460

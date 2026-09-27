@@ -7,6 +7,9 @@ from .formatting import pack_request, branch_attention_mask, edge_restrict, enti
 
 
 def pick_device():
+    import os
+    forced = os.environ.get("S1_DEVICE")  # e.g. S1_DEVICE=cpu (on Windows an empty CUDA_VISIBLE_DEVICES is simply unset)
+    if forced: return torch.device(forced)
     if torch.cuda.is_available(): return torch.device("cuda")
     if getattr(torch.backends,"mps",None) and torch.backends.mps.is_available(): return torch.device("mps")
     return torch.device("cpu")

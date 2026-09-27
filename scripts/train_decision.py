@@ -159,6 +159,12 @@ def main():
             rp=(r.get('meta') or {}).get('render_pair')
             if rp is not None: groups[rp].append(i)
         partner={i:j for g in groups.values() if len(g)==2 for i,j in ((g[0],g[1]),(g[1],g[0]))}
+        # Unpaired draws get a companion from their OWN domain, so realised domain shares match --domain-shares
+        # (GENERAL-3 drew it from all records, which cut the realised spatial share from 35% to 23.7%).
+        dom_idx=_dd(list)
+        for i,r in enumerate(records): dom_idx[(r.get('meta') or {}).get('domain','none')].append(i)
+        dom_w={d:[weights[i] for i in ix] if weights else None for d,ix in dom_idx.items()}
+        dom_of=[(r.get('meta') or {}).get('domain','none') for r in records]
         print(json.dumps({'render_pairs':len(partner)//2}),flush=True)
     iters_range=tuple(int(x) for x in a.iters_range.split(',')) if a.iters_range else None
     hop_buckets=None
@@ -216,7 +222,7 @@ def main():
                 elif partner is not None:  # whole same-world pairs; unpaired draws (spatial) get an independent companion
                     idx=[]
                     for i in random.choices(range(len(records)),weights=weights,k=a.batch//2):
-                        idx+=[i,partner[i] if i in partner else random.choices(range(len(records)),weights=weights,k=1)[0]]
+                        idx+=[i,partner[i] if i in partner else random.choices(dom_idx[dom_of[i]],weights=dom_w[dom_of[i]],k=1)[0]]
                     recs=[records[i] for i in idx]
                 else:
                     recs=random.choices(records,weights=weights,k=a.batch)

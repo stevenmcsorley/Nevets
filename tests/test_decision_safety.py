@@ -653,3 +653,25 @@ def test_label_smoothing_and_render_pair_consistency(tok):
     assert stats['pairs']==1 and stats['pair_consistency']>=0 and abs(loss.item()-base-stats['pair_consistency'])<1e-4
     stats={}; decision_batch_loss(m,tok,[a,a],torch.device('cpu'),stats)
     assert stats['pair_consistency']<1e-6  # identical renderings agree exactly
+
+
+def test_pair_sampler_keeps_nominal_domain_shares(tmp_path):
+    import subprocess, sys, json, os, collections
+    recs=[]
+    for i in range(200):  # 100 world pairs + 200 unpaired spatial
+        for f in ('a','b'):
+            r=rec(); r['id']=f'w{i}{f}'; r['meta']={'domain':'kinship','render_pair':f'p{i}'}; recs.append(r)
+    for i in range(200):
+        r=rec(); r['id']=f's{i}'; r['meta']={'domain':'spatial'}; recs.append(r)
+    data=tmp_path/'d.jsonl'; data.write_text(''.join(json.dumps(r)+chr(10) for r in recs))
+    cfg=tmp_path/'c.yaml'
+    cfg.write_text(chr(10).join(["name: t","vocab_size: 16000","d_model: 32","n_layers: 2","n_heads: 4","n_kv_heads: 2","d_ff: 64",
+        "pointer_dim: 16","max_seq_len: 256","rope_theta: 10000.0","dropout: 0.0","decision_head:","  scorer: cosine",
+        "  temperature: 10.0","optimizer:","  lr: 1.0e-3",""]))
+    env={**os.environ,'PYTHONPATH':'src','S1_DEVICE':'cpu'}
+    subprocess.run([sys.executable,'scripts/train_decision.py','--config',str(cfg),'--tokenizer','data/tokenizer.json','--data',str(data),
+        '--batch','16','--steps','60','--save-every','60','--seed','3','--eval-every','0','--resume-every','0','--diagnostics',
+        '--domain-shares','spatial=0.7','--pair-consistency','0.5','--out',str(tmp_path/'m.pt')],check=True,env=env,capture_output=True)
+    ids=[b for l in open(tmp_path/'m.diagnostics.jsonl') for b in json.loads(l)['batch_ids']]
+    share=sum(i.startswith('s') for i in ids)/len(ids)
+    assert 0.6<share<0.8, share  # nominal 0.7 (the old sampler realised ~0.49 here)
