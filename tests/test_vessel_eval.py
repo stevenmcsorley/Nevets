@@ -34,3 +34,22 @@ def test_eval_vessel_contract_and_verdict(tmp_path):
     res = json.loads(out.read_text())
     assert set(res["by_question"]) == {"activity", "went_dark_suspicious"} and res["overall"]["n"] == 12
     assert res["cf_pairs"] == 1 and res["verdict"]["WIN"] is False  # a random model cannot beat near-perfect baselines
+
+
+def test_eval_vessel_robust_mode(tmp_path):
+    d = tmp_path / "vessel_v1"; d.mkdir()
+    recs = []
+    for i, cond in enumerate(["dropped_reports", "ambiguous"]):
+        r = _rec(i, "loitering", False); r["meta"]["stress"] = cond
+        if cond == "ambiguous": r["distributions"] = {"activity": {"transit": 0.4, "loitering": 0.6, "fishing": 0.0, "anchored": 0.0, "unusual": 0.0}}
+        recs.append(r)
+    (d / "eval_robust.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs))
+    cfg = ModelConfig(vocab_size=16000, d_model=32, n_layers=2, n_heads=4, n_kv_heads=2, d_ff=64, pointer_dim=16,
+                      decision_head={"scorer": "cosine", "temperature": 10.0})
+    save_checkpoint(tmp_path / "m.pt", SystemOneModel(cfg), cfg, "data/tokenizer.json", 0, {})
+    out = tmp_path / "r.json"
+    subprocess.run([sys.executable, "scripts/eval_vessel.py", "--robust", "--ckpt", str(tmp_path / "m.pt"), "--dir", str(d), "--out", str(out)],
+                   check=True, env={**os.environ, "PYTHONPATH": "src", "CUDA_VISIBLE_DEVICES": ""}, capture_output=True)
+    res = json.loads(out.read_text())["nevets"]
+    assert {"pooled", "dropped_reports", "ambiguous", "ambiguous_soft"} <= set(res) and res["pooled"]["n"] == 4
+    assert res["ambiguous_soft"]["kl"] >= 0

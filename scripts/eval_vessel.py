@@ -36,8 +36,10 @@ def score(rows):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", required=True); ap.add_argument("--dir", default="data/processed/vessel_v1"); ap.add_argument("--out", required=True)
+    ap.add_argument("--robust", action="store_true", help="score the VESSEL-ROBUST benchmark (eval_robust.jsonl) instead")
     a = ap.parse_args(); device = pick_device(); d = Path(a.dir)
     model, ck = load_checkpoint(a.ckpt, SystemOneModel, device); model.to(device).eval(); tok = LabTokenizer(ck["tokenizer"])
+    if a.robust: return robust(model, tok, device, d, a.out)
     ev = list(read_jsonl(d / "eval_synthetic.jsonl")); rows, byq = [], defaultdict(list)
     for r, p in zip(ev, predict_batch(model, tok, ev, device)):
         for q, dist in p.items():
@@ -59,6 +61,29 @@ def main():
                                                "WIN": (acc_win or ece_win) and cf_ok}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True); Path(a.out).write_text(json.dumps(out, indent=2))
     print(json.dumps({"nevets": m, **{k: {x: v.get(x) for x in ("accuracy", "ece15", "cf_both")} for k, v in base.items()}, "verdict": out["verdict"]}, indent=1))
+
+
+def robust(model, tok, device, d, out_path):
+    """VESSEL-ROBUST (pre-registered 27 Sep 15:40): per-condition accuracy/ECE15/Brier pooled over questions, plus
+    soft-label NLL, KL and Brier on the ambiguous condition's activity question. Reported, no win/loss attached."""
+    import math
+    recs = list(read_jsonl(d / "eval_robust.jsonl")); preds = predict_batch(model, tok, recs, device)
+    rows = defaultdict(list); soft = []
+    for r, p in zip(recs, preds):
+        for q, dist in p.items():
+            y = norm(r["labels"][q]); pred = max(dist, key=dist.get)
+            row = {"p": dist, "y": y, "ok": pred == y, "conf": dist[pred]}; rows["pooled"].append(row); rows[r["meta"]["stress"]].append(row)
+        if "distributions" in r:
+            t, p_ = r["distributions"]["activity"], p["activity"]
+            soft.append((-sum(t[k] * math.log(max(p_.get(k, 0), 1e-9)) for k in t),
+                         sum(t[k] * math.log(t[k] / max(p_.get(k, 0), 1e-9)) for k in t if t[k] > 0),
+                         sum((p_.get(k, 0) - t[k]) ** 2 for k in t)))
+    out = {k: score(v) for k, v in rows.items()}
+    out["ambiguous_soft"] = {"nll": sum(x[0] for x in soft) / len(soft), "kl": sum(x[1] for x in soft) / len(soft), "brier_soft": sum(x[2] for x in soft) / len(soft)}
+    base = json.loads((d / "robust_baselines.json").read_text()) if (d / "robust_baselines.json").exists() else {}
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True); Path(out_path).write_text(json.dumps({"nevets": out, "baselines": base}, indent=2))
+    for name, res in [("nevets", out)] + list(base.items()):
+        print(name, {c: round(res[c]["accuracy"], 3) for c in res if c != "ambiguous_soft"}, "| soft", {k: round(v, 3) for k, v in res["ambiguous_soft"].items()})
 
 
 if __name__ == "__main__":
