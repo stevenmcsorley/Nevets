@@ -108,3 +108,10 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
 ## 12. P0 revision — 26 September
 
 *Supersedes §11 item 4 and bottleneck 1.* Matched comparisons (`RESEARCH_LEDGER.md`, ★ P0) show that GENERAL-1's spatial gains came from **spatial exposure and training length**, not from multi-domain transfer. At matched spatial exposure, spatial-only ≥ multi-domain. With 480k spatial examples (S30), spatial reasoning within the trained range is far stronger than any earlier model: 4-hop 91.6%, rotation consistency 98.7% (dev), cancellation labels no longer behind. **The remaining architectural bottleneck is length extrapolation beyond the trained depth** (7–10 hops: 69 → 43%), which neither more training nor more test-time loop passes fixes. Revised bottleneck ranking: (1) length extrapolation (P1 target), (2) causal see/do, (3) held-out format robustness, (4) real-language coverage (PT programme), (5) chess data/targets, (6) latency. The TM-1 transfer claim is downgraded (TM-1-FLAG).
+
+## 13. 27 September — S30 promoted; GENERAL-2 LOSS; PT-2 running
+
+- **BEST_SPATIAL (dev) = S30** (two seeds: 0.776 / 0.764 dev-chain overall, 7–10 hops 0.556 / 0.529, rotation ≈ 0.99). BEST_GENERAL stays GENERAL-1.
+- **GENERAL-2 (from S30, multi-domain, spatial 50%) fails its pre-registered bar** on the domain floor (infogather −20 to −28, probability −6 to −10), the held-out table format and out-of-format calibration, while beating GENERAL-1 in-format (+8–10) and S30 on spatial (7–10 hops +10–12). Lessons: (a) sampling shares move per-domain skill almost one for one, so the next GENERAL run needs need-based shares, not uniform ones; (b) more in-format skill came with *worse* format robustness and overconfidence out of format, which makes P3 (representation invariance) more urgent; (c) the spatial gain is confounded with extra spatial exposure (S60 control proposed).
+- **Treasure Hunt** stays on GENERAL-1: the game saturates at 1–2 hops for every candidate.
+- **Queue:** PT-2 (35M vs 150M, 1B tokens, probe-slope decision with a pre-registered fine-tune-seed noise band) is next on the GPU; P1 round 2b arms fill gaps.

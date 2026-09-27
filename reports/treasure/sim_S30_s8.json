@@ -1,0 +1,25 @@
+{
+  "ckpt": "checkpoints/p0/S30_s8.pt",
+  "iters": 4,
+  "episodes": 60,
+  "noise": 2,
+  "seed": 31,
+  "direct": {
+    "win_rate": 1.0,
+    "decision_accuracy": 0.967391304347826,
+    "two_fact_accuracy": null,
+    "path_efficiency": 0.9565217391304348,
+    "mean_confidence": 0.9123442402190488,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 368
+  },
+  "landmark": {
+    "win_rate": 0.9833333333333333,
+    "decision_accuracy": 0.9714285714285714,
+    "two_fact_accuracy": 0.9915966386554622,
+    "path_efficiency": 0.975,
+    "mean_confidence": 0.9031271633080074,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 350
+  }
+}

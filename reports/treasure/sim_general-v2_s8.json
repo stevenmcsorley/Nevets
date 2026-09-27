@@ -1,0 +1,25 @@
+{
+  "ckpt": "checkpoints/general/general-v2_s8.pt",
+  "iters": 4,
+  "episodes": 60,
+  "noise": 2,
+  "seed": 31,
+  "direct": {
+    "win_rate": 1.0,
+    "decision_accuracy": 1.0,
+    "two_fact_accuracy": null,
+    "path_efficiency": 0.9740634005763689,
+    "mean_confidence": 0.99828222385401,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 347
+  },
+  "landmark": {
+    "win_rate": 1.0,
+    "decision_accuracy": 1.0,
+    "two_fact_accuracy": 1.0,
+    "path_efficiency": 0.9877300613496932,
+    "mean_confidence": 0.9996222021755266,
+    "accuracy_when_conf_ge_0.9": 1.0,
+    "turns": 326
+  }
+}
