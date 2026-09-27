@@ -20,6 +20,8 @@ EVAL_JSONL = [
     "data/processed/vessel_v1/eval_synthetic.jsonl", "data/processed/vessel_v1/counterfactual.jsonl",
     "data/processed/vessel_v1/eval_real.jsonl",
     "data/processed/vessel_v1/eval_robust.jsonl",
+    # VESSEL-1c: frozen copy of eval_real at launch (live tracks labelled by Claude, held-out vessels)
+    "data/processed/vessel_c/eval_real.jsonl",
 ]
 EVAL_PAIRS = ["reports/paired_onehop/vertical_probe_pairs.json", "reports/paired_onehop/name_pairs.json",
               "reports/role_swap_onehop/name_pairs.json", "reports/paraphrase_onehop/name_pairs.json"]

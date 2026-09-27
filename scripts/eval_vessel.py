@@ -37,9 +37,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", required=True); ap.add_argument("--dir", default="data/processed/vessel_v1"); ap.add_argument("--out", required=True)
     ap.add_argument("--robust", action="store_true", help="score the VESSEL-ROBUST benchmark (eval_robust.jsonl) instead")
+    ap.add_argument("--real", action="store_true", help="score eval_real.jsonl (live tracks labelled by Claude; agreement, not accuracy)")
     a = ap.parse_args(); device = pick_device(); d = Path(a.dir)
     model, ck = load_checkpoint(a.ckpt, SystemOneModel, device); model.to(device).eval(); tok = LabTokenizer(ck["tokenizer"])
     if a.robust: return robust(model, tok, device, d, a.out)
+    if a.real: return real(model, tok, device, d, a.out)
     ev = list(read_jsonl(d / "eval_synthetic.jsonl")); rows, byq = [], defaultdict(list)
     for r, p in zip(ev, predict_batch(model, tok, ev, device)):
         for q, dist in p.items():
@@ -84,6 +86,22 @@ def robust(model, tok, device, d, out_path):
     Path(out_path).parent.mkdir(parents=True, exist_ok=True); Path(out_path).write_text(json.dumps({"nevets": out, "baselines": base}, indent=2))
     for name, res in [("nevets", out)] + list(base.items()):
         print(name, {c: round(res[c]["accuracy"], 3) for c in res if c != "ambiguous_soft"}, "| soft", {k: round(v, 3) for k, v in res["ambiguous_soft"].items()})
+
+
+def real(model, tok, device, d, out_path):
+    """Live tracks labelled blind by Claude (held-out vessels; locked). Reported as agreement with Claude labels, with
+    ECE15 on the same rows; baselines_real.json (if present) holds the LightGBM/rules figures on the same file."""
+    recs = list(read_jsonl(d / "eval_real.jsonl")); rows, byq = [], defaultdict(list)
+    for r, p in zip(recs, predict_batch(model, tok, recs, device)):
+        for q, dist in p.items():
+            y = norm(r["labels"][q]); pred = max(dist, key=dist.get)
+            row = {"p": dist, "y": y, "ok": pred == y, "conf": dist[pred]}; rows.append(row); byq[q].append(row)
+    ren = lambda s: {"n": s["n"], "agreement_with_claude_labels": s["accuracy"], "ece15": s["ece15"], "brier": s["brier"]}
+    out = {"records": len(recs), "overall": ren(score(rows)), "by_question": {q: ren(score(v)) for q, v in sorted(byq.items())},
+           "note": "Agreement with Claude labels on held-out live vessels, not accuracy against ground truth."}
+    base = json.loads((d / "baselines_real.json").read_text()) if (d / "baselines_real.json").exists() else {}
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True); Path(out_path).write_text(json.dumps({"nevets": out, "baselines": base}, indent=2))
+    print(json.dumps({"nevets": out["by_question"], "baselines": base}, indent=1))
 
 
 if __name__ == "__main__":
