@@ -51,30 +51,40 @@ def s30():
     return 0 if ok else 1
 
 
-def g2():
+def general(v, label):
+    """GENERAL-v verdict (same criteria for v2 and v3; v3 pre-registered 27 Sep before any result)."""
     init = (R / "general/v2/s30_promotion.txt").read_text().strip().splitlines()[-1]
     seed = init.split("_s")[-1].split(".")[0]
     s30_runs = {s: depth(R / f"p1/depth_S30_s{s}.json") for s in (7, 8)}
     s30_ref = s30_runs[int(seed)]; s30_spread = {k: abs(s30_runs[7][k] - s30_runs[8][k]) for k in s30_ref}
-    g1 = worlds(R / "general/v1/worlds_v2.json")
-    seeds = [s for s in (7, 8) if (R / f"general/v2/worlds_v2_s{s}.json").exists()]
+    g1 = worlds(R / "general/v1/worlds_v2.json"); g1_raw = json.loads((R / "general/v1/worlds_v2.json").read_text())["counterfactual"]
+    seeds = [s for s in (7, 8) if (R / f"general/{v}/worlds_v2_s{s}.json").exists()]
     if len(seeds) < 2: print(f"only seeds {seeds} finished: two seeds are required before promotion")
     checks = {}
     for s in seeds:
-        sp, w = depth(R / f"general/v2/depth_s{s}.json"), worlds(R / f"general/v2/worlds_v2_s{s}.json")
-        print(f"G2_s{s} spatial", fmt(sp)); print(f"G2_s{s} worlds", fmt(w))
+        sp, w = depth(R / f"general/{v}/depth_s{s}.json"), worlds(R / f"general/{v}/worlds_v2_s{s}.json")
+        print(f"{label}_s{s} spatial", fmt(sp)); print(f"{label}_s{s} worlds", fmt(w))
+        cf = json.loads((R / f"general/{v}/worlds_v2_s{s}.json").read_text())["counterfactual"]
+        print(f"{label}_s{s} counterfactual per domain (both-correct, vs G1): "
+              + "  ".join(f"{d} {cf[d]['both_correct']:.3f} ({g1_raw[d]['both_correct']:.3f})" for d in sorted(cf)))
         for k in ("h1_6", "h7_10", "rot"):
             checks.setdefault(f"spatial {k} >= S30 - tol", []).append(sp[k] >= s30_ref[k] - max(s30_spread[k], 0.02))
         checks.setdefault("in-format >= G1", []).append(w["in_format"] >= g1["in_format"])
         checks.setdefault("no domain < G1 - 0.03", []).append(all(w[f"dom_{k}"] >= g1[f"dom_{k}"] - 0.03 for k in DOMAINS))
         checks.setdefault("table >= G1", []).append(w["table"] >= g1["table"])
-        checks.setdefault("counterfactual >= G1", []).append(w["cf_both"] >= g1["cf_both"])
-        checks.setdefault("ECE <= G1 + 0.01", []).append(w["ece_in"] <= g1["ece_in"] + 0.01 and w["ece_table"] <= g1["ece_table"] + 0.01)
+        checks.setdefault("counterfactual mean >= G1", []).append(w["cf_both"] >= g1["cf_both"])
+        checks.setdefault("ECE (in-format and table) <= G1 + 0.01", []).append(w["ece_in"] <= g1["ece_in"] + 0.01 and w["ece_table"] <= g1["ece_table"] + 0.01)
     print("S30 ref", init, fmt(s30_ref), "spread", fmt(s30_spread)); print("GENERAL-1", fmt(g1))
-    for k, v in checks.items(): print(f"{'PASS' if all(v) else 'FAIL'}  {k}  {v}")
-    win = len(seeds) == 2 and all(all(v) for v in checks.values())
-    print("GENERAL-2 WIN (promote)" if win else "GENERAL-2 not promotable"); return 0 if win else 1
+    for k, val in checks.items(): print(f"{'PASS' if all(val) else 'FAIL'}  {k}  {val}")
+    win = len(seeds) == 2 and all(all(val) for val in checks.values())
+    print(f"{label} WIN (promote)" if win else f"{label} not promotable"); return 0 if win else 1
+
+
+def g2(): return general("v2", "GENERAL-2")
+
+
+def g3(): return general("v3", "GENERAL-3")
 
 
 if __name__ == "__main__":
-    sys.exit({"s30": s30, "g2": g2}[sys.argv[1]]())
+    sys.exit({"s30": s30, "g2": g2, "g3": g3}[sys.argv[1]]())

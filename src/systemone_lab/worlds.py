@@ -20,6 +20,8 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 
 FORMATS = ("prose", "json", "table", "kv")
+# GENERAL-3 train pool: the in-format eval formats (prose/json/kv) plus shuffled-field JSON, CSV, key=value, bullets.
+V3_TRAIN_FORMATS = ("prose", "json", "kv", "jsonf", "csv", "kvf", "bullets")
 NAMES = ["Ada", "Ben", "Cleo", "Dev", "Eli", "Fay", "Gus", "Hana", "Ivo", "Jun", "Kai", "Lena", "Milo",
          "Nia", "Omar", "Pia", "Quin", "Rosa", "Sam", "Tara", "Uma", "Vic", "Wren", "Xavi", "Yara", "Zed"]
 SERVICES = ["auth", "billing", "cache", "db", "dns", "email", "gateway", "index", "ledger", "metrics",
@@ -47,6 +49,18 @@ def render(facts: list[Fact], fmt: str, rng: random.Random) -> str:
         return "subject | relation | object\n" + "\n".join(f"{r['subject']} | {r['relation']} | {r['object']}" for r in rows)
     if fmt == "kv":
         return "\n".join(f"{r['relation']}({r['subject']}, {r['object']})" for r in rows)
+    # GENERAL-3 training renderings (never P3's held-out pipe table / symbolic notation). Field order is shuffled
+    # once per state, so the model cannot rely on column or key position.
+    if fmt == "bullets":
+        mark = rng.choice(["-", "*", "+"])
+        return "\n".join(f"{mark} " + rng.choice(f.prose).format(s=f.subject, o=f.obj) for f in facts)
+    order = rng.sample(["subject", "relation", "object"], 3)
+    if fmt == "jsonf":
+        return json.dumps({"facts": [{k: r[k] for k in order} for r in rows]}, separators=(",", ":"))
+    if fmt == "csv":
+        return ",".join(order) + "\n" + "\n".join(",".join(r[k] for k in order) for r in rows)
+    if fmt == "kvf":
+        return "\n".join(" ".join(f"{k}={r[k]}" for k in order) for r in rows)
     raise ValueError(fmt)
 
 

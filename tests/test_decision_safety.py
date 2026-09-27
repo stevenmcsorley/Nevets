@@ -635,3 +635,21 @@ def test_train_decision_resume_falls_back_to_periodic_weights(tmp_path):
     assert torch.load(tmp_path/'m.pt',weights_only=False)['training_step']==8
     r=subprocess.run(base+['--resume'],check=True,env=env,capture_output=True,text=True)
     assert '"already_complete": 8' in r.stdout
+
+
+
+def test_label_smoothing_and_render_pair_consistency(tok):
+    cfg=ModelConfig(vocab_size=tok.vocab_size,d_model=32,n_layers=2,n_heads=4,n_kv_heads=2,d_ff=64,pointer_dim=16,
+                    decision_head={'scorer':'cosine','temperature':10.0,'state_attention':'bidirectional','option_attention':'isolated'})
+    m=SystemOneModel(cfg); m.train()
+    a=rec(); a['state']='A is left of B.'; a['meta']={'render_pair':'w1'}
+    b=rec(); b['state']='- A: left of B'; b['meta']={'render_pair':'w1'}
+    crit=b['questions']['spatial']['criteria']; b['questions']['spatial']['criteria']=dict(reversed(list(crit.items())))  # other option order
+    torch.manual_seed(0); base=decision_batch_loss(m,tok,[a,b],torch.device('cpu')).item()
+    m.label_smoothing=0.1; smooth=decision_batch_loss(m,tok,[a,b],torch.device('cpu')).item()
+    assert smooth!=base
+    m.label_smoothing=0.0; m.pair_consistency=1.0; stats={}
+    loss=decision_batch_loss(m,tok,[a,b],torch.device('cpu'),stats); loss.backward()
+    assert stats['pairs']==1 and stats['pair_consistency']>=0 and abs(loss.item()-base-stats['pair_consistency'])<1e-4
+    stats={}; decision_batch_loss(m,tok,[a,a],torch.device('cpu'),stats)
+    assert stats['pair_consistency']<1e-6  # identical renderings agree exactly

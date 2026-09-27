@@ -186,7 +186,27 @@ def decision_batch_loss(model, tokenizer, records, device, diagnostics=None, for
         logits, q, k = model.decision_logits_batch(h, move(b_idx), move(decide), move(opt_pos), move(opt_mask), bind,
                                                    move(signs), move(spatial))
         target, opt_mask = move(target), move(opt_mask)
+        ls = float(getattr(model, "label_smoothing", 0.0) or 0.0)
+        if ls > 0:  # mild label smoothing over the valid options (curbs overconfidence on unfamiliar formats)
+            target = (1 - ls) * target + ls * opt_mask.float() / opt_mask.sum(-1, keepdim=True).clamp_min(1)
         loss = -(target * F.log_softmax(logits, dim=-1)).sum(-1).mean()
+        pw = float(getattr(model, "pair_consistency", 0.0) or 0.0)
+        if pw > 0:  # same world, different renderings: symmetric KL between their answer distributions
+            lp = F.log_softmax(logits.float(), dim=-1); first = {}; pairs = []
+            for n, (i, l, rec) in enumerate(items):
+                rp = (rec.get("meta") or {}).get("render_pair")
+                if rp is None: continue
+                key = (rp, tuple(sorted(l.option_keys)))
+                if key in first: pairs.append((first.pop(key), n))
+                else: first[key] = n
+            if pairs:
+                terms = []
+                for a_, b_ in pairs:
+                    ka, kb = items[a_][1].option_keys, items[b_][1].option_keys
+                    la = lp[a_, :len(ka)]; lb = lp[b_, torch.tensor([kb.index(k) for k in ka], device=lp.device)]
+                    terms.append(0.5 * ((la.exp() * (la - lb)).sum() + (lb.exp() * (lb - la)).sum()))
+                cons = torch.stack(terms).mean(); loss = loss + pw * cons
+                if diagnostics is not None: diagnostics["pair_consistency"] = cons.detach().float().item(); diagnostics["pairs"] = len(pairs)
         deep = getattr(model, "deep_outputs", None)
         if deep:  # deep supervision: every pass at or past the required depth must already answer correctly
             saved = model.last_coord; terms = [loss]
