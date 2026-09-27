@@ -1,0 +1,2 @@
+slot open 2026-09-27 15:52
+init checkpoints/general/general-v1.pt
