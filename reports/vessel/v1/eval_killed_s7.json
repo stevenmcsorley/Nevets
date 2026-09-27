@@ -1,0 +1,65 @@
+{
+  "ckpt": "checkpoints/vessel/vessel-v1_s7.pt",
+  "overall": {
+    "n": 9000,
+    "accuracy": 0.9637777777777777,
+    "ece15": 0.0063798022435771,
+    "brier": 0.059945826201627535
+  },
+  "by_question": {
+    "activity": {
+      "n": 3000,
+      "accuracy": 0.925,
+      "ece15": 0.011751959870258939,
+      "brier": 0.12040130854524338
+    },
+    "collision_risk": {
+      "n": 3000,
+      "accuracy": 0.9786666666666667,
+      "ece15": 0.00667707629998526,
+      "brier": 0.03668104199875366
+    },
+    "went_dark_suspicious": {
+      "n": 3000,
+      "accuracy": 0.9876666666666667,
+      "ece15": 0.008669942597548198,
+      "brier": 0.022755128060885563
+    }
+  },
+  "cf_both": 0.805,
+  "cf_pairs": 600,
+  "baselines": {
+    "rules": {
+      "n": 9000,
+      "accuracy": 0.8692222222222222,
+      "ece15": 0.13077777777777777,
+      "brier": 0.26155555555555554,
+      "cf_both": 0.24666666666666667,
+      "cf_pairs": 600,
+      "accuracy_by_question": {
+        "activity": 0.6836666666666666,
+        "went_dark_suspicious": 0.9663333333333334,
+        "collision_risk": 0.9576666666666667
+      }
+    },
+    "lgbm": {
+      "n": 9000,
+      "accuracy": 0.978,
+      "ece15": 0.011702995768704837,
+      "brier": 0.0382174225969211,
+      "cf_both": 0.905,
+      "cf_pairs": 600,
+      "accuracy_by_question": {
+        "activity": 0.9603333333333334,
+        "went_dark_suspicious": 0.9876666666666667,
+        "collision_risk": 0.986
+      }
+    }
+  },
+  "verdict": {
+    "accuracy_beats_both": false,
+    "ece_beats_both": true,
+    "cf_no_worse": false,
+    "WIN": false
+  }
+}

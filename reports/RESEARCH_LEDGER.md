@@ -337,3 +337,21 @@ PASS: spatial (all three), in-format, **held-out table (+8–10 points) and tabl
 
 **VESSEL-1b (owner decision, 27 September; pre-registered before it runs)** · Slot: **after PT-2 150M, before the remaining round-2b arms** (`scripts/vessel1b.sh` holds `GPU_BUSY` from launch). Same init (general-v1), recipe (12k updates, seed 7, K ~ U[1,6], `--resume`), Rule-4 gates, **same pre-registered VESSEL-1 WIN criterion** (accuracy > both baselines OR ECE15 < both, AND counterfactual ≥ both) and the same VESSEL-ROBUST benchmark. Change: a **retention mix** `data/processed/vessel_v1b` (vessel_v1 train 30,000 + general_v2 worlds and spatial, registry-clean) sampled domain-first at **vessel 0.5, spatial 0.2, the 7 world domains 0.3** (≈0.043 each), so the gates that killed VESSEL-1 should hold.
 **Promotion vs display (owner policy, fixed now):** "promoted in Nevets" and "shown in Channel Watch" are separate. (1) VESSEL-1b is promoted as a Nevets vessel champion **only** if it meets the WIN criterion (and later a second seed, Rule 5). (2) If it **passes the gates** (no forgetting) but loses to LightGBM, it is still exported to int8 ONNX (after PyTorch↔ONNX parity) and shown in Channel Watch labelled **"experimental"**. Its benchmark results sit next to the rules and LightGBM, stated plainly, with its probabilities and the escalate threshold visible. (3) If it is killed by the gates, nothing is shown.
+
+**VESSEL-1 killed checkpoint — CPU scores (informational only; the run is a LOSS by Rule 4; step 4,000 of 12,000)** · `reports/vessel/v1/eval_killed_s7.*`, `robust_killed_s7.*`.
+
+| main benchmark (3,000 held-out synthetic) | accuracy | ECE15 | counterfactual both-correct |
+|---|---|---|---|
+| rules | 0.869 | 0.131 | 0.247 |
+| LightGBM | **0.978** | 0.0117 | **0.905** |
+| Nevets VESSEL-1 (killed, step 4k) | 0.964 | **0.0064** | 0.805 |
+
+Against the pre-registered criterion this checkpoint would have **failed** (ECE beats both, but counterfactual 0.805 < 0.905), besides being gate-killed.
+
+| VESSEL-ROBUST (accuracy) | pooled | dropped | missing type | irregular | unseen format | ambiguous | ambiguous soft NLL / KL |
+|---|---|---|---|---|---|---|---|
+| rules | 0.861 | 0.859 | 0.862 | 0.843 | 0.879 | 0.862 | 9.68 / 9.05 |
+| LightGBM | **0.944** | **0.963** | **0.978** | **0.970** | **0.980** | 0.830 | 5.03 / 4.41 |
+| Nevets (killed) | 0.879 | 0.943 | 0.959 | 0.946 | **0.708** | **0.842** | **3.57 / 2.94** |
+
+Reading (informational): Nevets is better calibrated than LightGBM on the main set and on the ambiguous blends (lower soft-label NLL/KL), but weaker on counterfactual pairs, and it breaks on the unseen text format (0.708). Rules and LightGBM read features, so they are unaffected by format by construction. VESSEL-1b, with its retention mix, is the real test.
