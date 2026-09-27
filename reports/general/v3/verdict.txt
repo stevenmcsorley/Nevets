@@ -1,0 +1,17 @@
+GENERAL-3_s7 spatial {'overall': 0.818, 'h1_6': 0.9545, 'h7_10': 0.6136, 'rot': 0.9967, 'ece': 0.038}
+GENERAL-3_s7 worlds {'in_format': 0.7039, 'table': 0.6446, 'ece_in': 0.0598, 'ece_table': 0.0494, 'cf_both': 0.3567, 'dom_causal': 0.585, 'dom_dependency': 0.7525, 'dom_infogather': 0.555, 'dom_kinship': 0.6875, 'dom_probability': 0.6625, 'dom_rules': 0.975, 'dom_temporal': 0.71}
+GENERAL-3_s7 counterfactual per domain (both-correct, vs G1): causal 0.107 (0.087)  dependency 0.253 (0.157)  infogather 0.087 (0.157)  rules 0.980 (0.737)
+GENERAL-3_s8 spatial {'overall': 0.8325, 'h1_6': 0.9628, 'h7_10': 0.639, 'rot': 0.9967, 'ece': 0.0311}
+GENERAL-3_s8 worlds {'in_format': 0.6782, 'table': 0.6243, 'ece_in': 0.0539, 'ece_table': 0.0545, 'cf_both': 0.3108, 'dom_causal': 0.555, 'dom_dependency': 0.585, 'dom_infogather': 0.5625, 'dom_kinship': 0.6075, 'dom_probability': 0.6625, 'dom_rules': 0.925, 'dom_temporal': 0.85}
+GENERAL-3_s8 counterfactual per domain (both-correct, vs G1): causal 0.120 (0.087)  dependency 0.170 (0.157)  infogather 0.080 (0.157)  rules 0.873 (0.737)
+S30 ref checkpoints/p0/S30_s8.pt {'overall': 0.7762, 'h1_6': 0.9244, 'h7_10': 0.5558, 'rot': 0.9887, 'ece': 0.0363} spread {'overall': 0.012, 'h1_6': 0.0009, 'h7_10': 0.0273, 'rot': 0.002, 'ece': 0.0031}
+GENERAL-1 {'in_format': 0.6632, 'table': 0.5414, 'ece_in': 0.0469, 'ece_table': 0.157, 'cf_both': 0.2842, 'dom_causal': 0.5525, 'dom_dependency': 0.6075, 'dom_infogather': 0.7, 'dom_kinship': 0.565, 'dom_probability': 0.7175, 'dom_rules': 0.885, 'dom_temporal': 0.615}
+PASS  spatial h1_6 >= S30 - tol  [True, True]
+PASS  spatial h7_10 >= S30 - tol  [True, True]
+PASS  spatial rot >= S30 - tol  [True, True]
+PASS  in-format >= G1  [True, True]
+FAIL  no domain < G1 - 0.03  [False, False]
+PASS  table >= G1  [True, True]
+PASS  counterfactual mean >= G1  [True, True]
+FAIL  ECE (in-format and table) <= G1 + 0.01  [False, True]
+GENERAL-3 not promotable

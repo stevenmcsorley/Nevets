@@ -299,3 +299,17 @@ Observations (secondary, not conclusions): (1) **The domain losses follow the sh
 - **Recipe:** init = best promoted checkpoint at launch (BEST_GENERAL = `general/general-v1.pt`, unless GENERAL-3 has been promoted by then; `reports/vessel/v1/init.txt` overrides). configs/general_v1.yaml, batch 16, 12,000 updates (≈1 h), seed 7, K ~ U[1,6], Rule-4 gates every 500 updates (kill on > 2-point one-hop/role-swap/option-order regression vs the parent), `--resume`.
 - **WIN criterion (`scripts/eval_vessel.py`, pooled over every question in the held-out synthetic set):** (accuracy > **both** the rules and LightGBM, **or** ECE15 < both) **and** counterfactual both-correct ≥ both baselines. Also reported per question (activity, went_dark_suspicious, collision_risk) and Brier.
 - **If it wins:** export int8 ONNX for Channel Watch and show it beside the rules with its probabilities and an "escalate if unsure" threshold. Per Rule 5 it is labelled **provisional (1 seed)** until a seed-8 run confirms it in the next GPU gap. If it loses, Channel Watch says so plainly.
+
+**★ GENERAL-3 — LOSS on the pre-registered criterion (27 September; not promoted)** · `reports/general/v3/verdict.txt`. All Rule-4 gates stayed at 1.00.
+
+| | G3 s7 | G3 s8 | GENERAL-1 |
+|---|---|---|---|
+| held-out table / table ECE | **0.645 / 0.049** | **0.624 / 0.055** | 0.541 / 0.157 |
+| in-format / ECE | 0.704 / 0.060 | 0.678 / 0.054 | 0.663 / 0.047 |
+| infogather / probability | 0.555 / 0.663 | 0.563 / 0.663 | 0.700 / 0.718 |
+| dev chains 7–10 hops / rotation | 0.614 / 0.997 | 0.639 / 0.997 | 0.349 / 0.943 |
+| counterfactual mean (rules, dep, info, causal) | 0.357 (0.98, 0.25, 0.09, 0.11) | 0.311 (0.87, 0.17, 0.08, 0.12) | 0.284 (0.74, 0.16, 0.16, 0.09) |
+
+PASS: spatial (all three), in-format, **held-out table (+8–10 points) and table ECE (3× better)**, counterfactual mean. **FAIL: domain floor** (infogather −14, probability −5.5, both seeds) and **ECE** (s7 in-format 0.0598 > 0.0569; s8 passes). Observations: (1) the format-robustness recipe (paired renderings + consistency + label smoothing) worked on exactly its target, out-of-format accuracy and confidence, though CSV's closeness to the pipe table (recorded caveat) means P3 must confirm it on a truly foreign format; (2) infogather stays about 14 points below GENERAL-1 even at a 20% share (GENERAL-1 had 26.8% from a different init), so the gap is not only exposure. Candidates: an S30-init interaction, or the probability/infogather numeric reasoning competing with spatial for the same capacity. (3) Counterfactual per domain: rules and dependency up, infogather and causal still near floor. BEST_GENERAL stays GENERAL-1. **Next per the owner's order:** round-2b seed 8 (running) → VESSEL-1 (dataset ready) → PT-2 150M.
+
+**VESSEL-1 data ready (27 September)** · Built by channel-watch `ml/build.py`: 30,000 train / 3,000 held-out synthetic / 600 counterfactual pairs, disjoint simulator seeds (1001/2002/3003), registry-clean. Baselines on the held-out set (pooled over 3 questions): **rules** accuracy 0.869, ECE 0.131, Brier 0.262, counterfactual 0.247; **LightGBM** (same features as the state text) accuracy **0.978**, ECE **0.0117**, Brier 0.038, counterfactual **0.905**. So VESSEL-1 wins only with accuracy > 0.978 or ECE < 0.0117 (and CF ≥ 0.905). **Recorded before training:** a GBM on engineered tabular features is close to Bayes-optimal for simulator labels built from those same features; the synthetic contest structurally favours it, and owner-labelled real tracks are the more meaningful test.
