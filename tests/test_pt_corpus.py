@@ -81,7 +81,7 @@ def test_train_pt_smoke_same_windows_checkpoints_and_resume(tmp_path):
                    "max_seq_len: 128\nrope_theta: 10000.0\ndropout: 0.0\ndecision_head:\n  scorer: cosine\n  temperature: 10.0\n")
     cmd = [sys.executable, "scripts/pt/train_pt.py", "--config", str(cfg), "--shards", str(tmp_path / "train_*.bin"),
            "--val", str(tmp_path / "val_0000.bin"), "--tokens", "4096", "--seq", "63", "--global-batch", "4", "--micro", "2",
-           "--lr", "1e-3", "--ckpt-every", "2048", "--val-tokens", "512", "--no-compile", "--out", str(tmp_path / "run")]
+           "--lr", "1e-3", "--ckpt-every", "2048", "--val-tokens", "512", "--no-compile", "--hold-file", "", "--out", str(tmp_path / "run")]
     env = {**os.environ, "PYTHONPATH": "src", "CUDA_VISIBLE_DEVICES": ""}
     subprocess.run(cmd + ["--max-steps", "10"], check=True, env=env, capture_output=True)
     assert (tmp_path / "run/tok_0M.pt").exists() and (tmp_path / "run/resume.pt").exists()

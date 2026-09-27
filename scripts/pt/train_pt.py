@@ -66,9 +66,15 @@ def main():
     ap.add_argument("--no-compile", action="store_true"); ap.add_argument("--out", required=True)
     ap.add_argument("--max-steps", type=int, default=0, help="stop after this many updates (smoke tests)")
     ap.add_argument("--mem-margin-gb", type=float, default=1.5, help="cap own VRAM at free-at-start minus this")
+    ap.add_argument("--hold-file", default="reports/pt/HOLD", help="if this file exists at launch, wait until it is removed")
     a = ap.parse_args(); assert a.global_batch % a.micro == 0, "global batch must be a multiple of the micro batch"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu"); out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(a.seed)
+    hold = Path(a.hold_file) if a.hold_file else None
+    if hold and hold.exists():  # owner-ordered pause (e.g. between PT-2 sizes); no GPU is touched while waiting
+        print(json.dumps({"holding": str(hold), "since": time.strftime("%Y-%m-%d %H:%M:%S")}), flush=True)
+        while hold.exists(): time.sleep(60)
+        print(json.dumps({"hold_released": time.strftime("%Y-%m-%d %H:%M:%S")}), flush=True)
     print(json.dumps({"vram_cap_gb": cap_gpu_memory(a.mem_margin_gb)}), flush=True)
     cfg = ModelConfig.load(a.config); model = SystemOneModel(cfg).to(device).train()
     maps, index = windows(sorted(glob.glob(a.shards)), a.seq, a.tokens)
