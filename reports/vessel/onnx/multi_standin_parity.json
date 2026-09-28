@@ -1,0 +1,19 @@
+{
+  "ckpt": "checkpoints/general/general-v1.pt",
+  "iters": 4,
+  "requests": 40,
+  "fp32_bytes": 129396472,
+  "int8_bytes": 80408579,
+  "fp32": {
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 4.470348358154297e-07,
+    "mean_abs_prob_diff": 9.317364945508425e-08,
+    "questions": 120
+  },
+  "int8": {
+    "argmax_agree": 0.8833333333333333,
+    "max_abs_prob_diff": 0.04442042112350464,
+    "mean_abs_prob_diff": 0.01010489047524364,
+    "questions": 120
+  }
+}
