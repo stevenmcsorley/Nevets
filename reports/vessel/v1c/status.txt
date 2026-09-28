@@ -1,1 +1,2 @@
 queued 2026-09-27 21:32
+HELD 2026-09-28 09:41 by owner instruction: provider terms prohibit training on Claude outputs without authorization; round-2b arms take the slot
