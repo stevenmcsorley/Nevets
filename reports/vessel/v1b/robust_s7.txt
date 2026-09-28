@@ -1,0 +1,3 @@
+nevets {'pooled': 0.906, 'dropped_reports': 0.938, 'missing_type': 0.953, 'irregular': 0.952, 'unseen_format': 0.848, 'ambiguous': 0.838} | soft {'nll': 3.676, 'kl': 3.048, 'brier_soft': 0.502}
+rules {'pooled': 0.861, 'dropped_reports': 0.859, 'missing_type': 0.862, 'irregular': 0.843, 'unseen_format': 0.879, 'ambiguous': 0.862} | soft {'nll': 9.676, 'kl': 9.048, 'brier_soft': 0.496}
+lgbm {'pooled': 0.944, 'dropped_reports': 0.963, 'missing_type': 0.978, 'irregular': 0.97, 'unseen_format': 0.98, 'ambiguous': 0.83} | soft {'nll': 5.033, 'kl': 4.405, 'brier_soft': 0.625}
