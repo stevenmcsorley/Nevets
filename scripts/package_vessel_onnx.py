@@ -38,6 +38,20 @@ def main():
               "--report", str(out / "parity.json"), "--limit", "200")[-1500:])
     fp32 = out / "vessel.dyn8.fp32.onnx"; w8 = out / "vessel.w8.onnx"
     run("scripts/quantize_weights_int8.py", str(fp32), str(w8))
+    # Full integer MatMuls (Codex's Pi profile: 0.489 s/vessel). The looped core's repeated weights sit behind ONNX
+    # Identity aliases; fold them so the dynamic quantizer converts every weight MatMul, not only the first pass.
+    import onnx
+    from onnxruntime.quantization import QuantType, quantize_dynamic
+    g = onnx.load(str(fp32)); aliases = {n.output[0]: n.input[0] for n in g.graph.node if n.op_type == "Identity"}
+    outputs = {o.name for o in g.graph.output}
+    for node in g.graph.node:
+        for i, nm in enumerate(node.input):
+            while nm in aliases: nm = aliases[nm]
+            node.input[i] = nm
+    keep = [n for n in g.graph.node if n.op_type != "Identity" or n.output[0] in outputs]
+    del g.graph.node[:]; g.graph.node.extend(keep); onnx.checker.check_model(g)
+    folded = out / "vessel.folded.fp32.onnx"; onnx.save(g, str(folded)); full8 = out / "vessel.full8.onnx"
+    quantize_dynamic(str(folded), str(full8), weight_type=QuantType.QInt8, op_types_to_quantize=["MatMul", "Gather"])
     # weight-only int8 parity against the fp32 graph on the same requests
     import numpy as np, onnxruntime as ort, torch
     from systemone_lab.formatting import pack_request
@@ -47,25 +61,29 @@ def main():
     sys.path.insert(0, "scripts"); from export_onnx_multi import multi_inputs  # noqa: E402
     model, ckd = load_checkpoint(str(ck), SystemOneModel, "cpu"); model.eval(); tok = LabTokenizer(ckd["tokenizer"])
     recs = [json.loads(l) for l in open(parity_src, encoding="utf-8")][:200]
-    s32, s8 = ort.InferenceSession(str(fp32)), ort.InferenceSession(str(w8)); agree = n = 0; maxd = 0.0
+    s32, s8, sf = ort.InferenceSession(str(fp32)), ort.InferenceSession(str(w8)), ort.InferenceSession(str(full8)); agree = n = 0; maxd = 0.0
+    fagree = 0; fmaxd = 0.0
     for r in recs:
         p = pack_request(tok, r["state"], r["questions"], isolate_options=model.isolated_options); inp, nk = multi_inputs(model, p)
         feed = {k: v.numpy() for k, v in inp.items()}
         l32 = s32.run(None, {k: v for k, v in feed.items() if k in {i.name for i in s32.get_inputs()}})[0]
         l8 = s8.run(None, {k: v for k, v in feed.items() if k in {i.name for i in s8.get_inputs()}})[0]
+        lf = sf.run(None, {k: v for k, v in feed.items() if k in {i.name for i in sf.get_inputs()}})[0]
         for qi, k in enumerate(nk):
             a32, a8 = l32[qi, :k], l8[qi, :k]; p32 = np.exp(a32 - a32.max()); p32 /= p32.sum(); p8 = np.exp(a8 - a8.max()); p8 /= p8.sum()
             agree += int(p32.argmax() == p8.argmax()); n += 1; maxd = max(maxd, float(np.abs(p32 - p8).max()))
+            af = lf[qi, :k]; pf = np.exp(af - af.max()); pf /= pf.sum(); fagree += int(p32.argmax() == pf.argmax()); fmaxd = max(fmaxd, float(np.abs(p32 - pf).max()))
     parity = json.loads((out / "parity.json").read_text())
     parity["w8_vs_fp32"] = {"argmax_agree": agree / n, "max_abs_prob_diff": maxd, "questions": n}
+    parity["full8_vs_fp32"] = {"argmax_agree": fagree / n, "max_abs_prob_diff": fmaxd, "questions": n}
     # Git (and so pi-ci) cannot carry files > 100 MB: prefer weight-only int8 (33 MB), then dynamic int8 (80 MB), each only
     # with full argmax agreement and <= MAX_PROB_DIFF; fp32 (129 MB) would need manual delivery and is only reported.
     dyn = parity["int8"]
     # >= 99% argmax agreement (near-ties may flip on rounding) and max probability difference <= MAX_PROB_DIFF.
-    choice = ("w8" if agree / n >= 0.99 and maxd <= MAX_PROB_DIFF else
-              "dyn8" if dyn["argmax_agree"] >= 0.99 and dyn["max_abs_prob_diff"] <= MAX_PROB_DIFF else "fp32-manual")
+    ok = lambda ag, md: ag >= 0.99 and md <= MAX_PROB_DIFF
+    choice = ("full8" if ok(fagree / n, fmaxd) else "dyn8" if ok(dyn["argmax_agree"], dyn["max_abs_prob_diff"]) else "fp32")
     parity["chosen"] = choice
-    (out / "parity.json").write_text(json.dumps(parity, indent=2)); print(json.dumps(parity["w8_vs_fp32"]), "chosen:", choice)
+    (out / "parity.json").write_text(json.dumps(parity, indent=2)); print(json.dumps({"full8": parity["full8_vs_fp32"], "dyn8": {k: parity["int8"][k] for k in ("argmax_agree", "max_abs_prob_diff")}}), "chosen:", choice)
     rd = lambda f: json.loads((rep / f).read_text()) if (rep / f).exists() else None
     ev, rob, real = rd("eval_s7.json"), rd("robust_s7.json"), rd("real_s7.json")
     bits = []
@@ -73,15 +91,15 @@ def main():
                        f" ({'meets' if ev.get('verdict', {}).get('WIN') else 'does not meet'} the pre-registered win criterion).")
     if real: bits.append("Held-out live vessels (agreement with Claude labels): " + ", ".join(f"{q} {v['agreement_with_claude_labels']:.3f}" for q, v in real["nevets"]["by_question"].items()) + ".")
     meta = {"name": a.name, "version": ck.stem, "bidirectional_state": bool(model.bidirectional_state), "isolated_options": bool(model.isolated_options),
-            "iters": getattr(model, "iters", None), "graph": choice, "parity": {"fp32": parity["fp32"], "w8_vs_fp32": parity["w8_vs_fp32"]},
+            "iters": getattr(model, "iters", None), "graph": choice, "parity": {"fp32": parity["fp32"], "int8_dynamic": parity["int8"], "full8_vs_fp32": parity["full8_vs_fp32"]},
             "benchmarks": {"summary": " ".join(bits), "synthetic": ev and {"accuracy": ev["overall"]["accuracy"], "ece15": ev["overall"]["ece15"], "cf_both": ev["cf_both"], "verdict": ev.get("verdict")},
                            "robust": rob and {k: v.get("accuracy") for k, v in rob["nevets"].items() if isinstance(v, dict) and "accuracy" in v},
                            "real": real and real["nevets"]["by_question"]}, "promoted": False, "tokenizer": "/app/model/tokenizer.json"}
     (out / "meta.json").write_text(json.dumps(meta, indent=1)); print(json.dumps(meta["benchmarks"]["summary"]))
     if a.dry_run: return
-    if choice == "fp32-manual": raise SystemExit("no int8 graph met parity; fp32 needs manual delivery (not packaged)")
-    CW_MODEL.mkdir(parents=True, exist_ok=True)
-    shutil.copy(w8 if choice == "w8" else out / "vessel.dyn8.onnx", CW_MODEL / "vessel.onnx"); shutil.copy("data/tokenizer.json", CW_MODEL / "tokenizer.json")
+    CW_MODEL.mkdir(parents=True, exist_ok=True)  # staging only; delivered to the Pi's ~/channel-watch-models by scp (never git)
+    src = {"full8": full8, "dyn8": out / "vessel.dyn8.onnx", "fp32": fp32}[choice]
+    shutil.copy(src, CW_MODEL / "vessel.onnx"); shutil.copy("data/tokenizer.json", CW_MODEL / "tokenizer.json")
     (CW_MODEL / "meta.json").write_text(json.dumps(meta, indent=1)); print("packaged into", CW_MODEL, "size", (CW_MODEL / "vessel.onnx").stat().st_size)
 
 
