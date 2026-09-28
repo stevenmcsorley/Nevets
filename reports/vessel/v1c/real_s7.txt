@@ -1,0 +1,59 @@
+{
+ "nevets": {
+  "activity": {
+   "n": 141,
+   "agreement_with_claude_labels": 0.8581560283687943,
+   "ece15": 0.10142293572425848,
+   "brier": 0.2197522754842926
+  },
+  "collision_risk": {
+   "n": 141,
+   "agreement_with_claude_labels": 0.9148936170212766,
+   "ece15": 0.07877902485800126,
+   "brier": 0.14735522832257855
+  },
+  "went_dark_suspicious": {
+   "n": 141,
+   "agreement_with_claude_labels": 0.9148936170212766,
+   "ece15": 0.0833219475779973,
+   "brier": 0.1555524064058644
+  }
+ },
+ "baselines": {
+  "rules": {
+   "by_question": {
+    "activity": {
+     "agreement_with_claude_labels": 0.7712418300653595
+    },
+    "went_dark_suspicious": {
+     "agreement_with_claude_labels": 0.8627450980392157
+    },
+    "collision_risk": {
+     "agreement_with_claude_labels": 0.9411764705882353
+    }
+   }
+  },
+  "lgbm_real": {
+   "version": "real-20260928-0944",
+   "train_labels": 695,
+   "eval_real_labels": 153,
+   "by_question": {
+    "activity": {
+     "agreement_with_claude_labels": 0.954248366013072,
+     "ece15": 0.022447054452530223,
+     "log_loss": 0.14695054312346856
+    },
+    "went_dark_suspicious": {
+     "agreement_with_claude_labels": 0.9803921568627451,
+     "ece15": 0.024949843950510905,
+     "log_loss": 0.05274454152100131
+    },
+    "collision_risk": {
+     "agreement_with_claude_labels": 0.9803921568627451,
+     "ece15": 0.01725762875521342,
+     "log_loss": 0.06716527034026488
+    }
+   }
+  }
+ }
+}

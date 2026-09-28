@@ -1,0 +1,23 @@
+{
+ "nevets": {
+  "accuracy": 0.922,
+  "ece15": 0.023792350547181165,
+  "cf_both": 0.4816666666666667
+ },
+ "rules": {
+  "accuracy": 0.8692222222222222,
+  "ece15": 0.13077777777777777,
+  "cf_both": 0.24666666666666667
+ },
+ "lgbm": {
+  "accuracy": 0.978,
+  "ece15": 0.011702995768704837,
+  "cf_both": 0.905
+ },
+ "verdict": {
+  "accuracy_beats_both": false,
+  "ece_beats_both": false,
+  "cf_no_worse": false,
+  "WIN": false
+ }
+}

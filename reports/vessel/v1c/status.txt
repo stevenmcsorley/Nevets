@@ -1,1 +1,5 @@
 queued 2026-09-28 10:37
+start 2026-09-28 11:52
+steps 3762; manifest {"by_domain":{"rules":17143,"vessel":30000,"spatial":259152,"probability":17143,"temporal":17075,"causal":17142,"dependency":17143,"infogather":17143,"kinship":17143,"vessel_real":627},"live_train":627,"eval_real":141,"steps":3762,"hashes":{"eval_real":"6a0d2e408459ac8e","baselines
+s7 done
+vessel_v1c done 2026-09-28 12:19
