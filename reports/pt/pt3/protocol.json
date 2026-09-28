@@ -1,0 +1,476 @@
+{
+  "approved": "Owner: \"ok do it\", 28 September 2026; local 35M, <=10B tokens",
+  "init": "random weights; fresh long cosine schedule; PT-2 checkpoints remain untouched",
+  "config": "configs/pt/pt_35m.yaml",
+  "config_sha256": "41bbcf574a64235f170c87a391663d4a9ed39a65c23253a2ce308a6b4946ee59",
+  "tokenizer": "tokenizers/pt_32k.json",
+  "tokenizer_sha256": "229a91f7d1befea96cd93af911c79cd62765101610470f4866a7d2477c9e1126",
+  "corpus_manifest_sha256": "45aa4285f9708998ade1c922cfc10984961ffb7ba071cdedc7da68f62487152d",
+  "shards": [
+    {
+      "path": "data\\pt\\shards\\train_0000.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0001.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0002.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0003.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0004.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0005.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0006.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0007.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0008.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0009.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0010.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0011.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0012.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0013.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0014.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0015.bin",
+      "bytes": 95159620
+    },
+    {
+      "path": "data\\pt\\shards\\train_0016.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0017.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0018.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0019.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0020.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0021.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0022.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0023.bin",
+      "bytes": 132341464
+    },
+    {
+      "path": "data\\pt\\shards\\train_0024.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0025.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0026.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0027.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0028.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0029.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0030.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0031.bin",
+      "bytes": 118238396
+    },
+    {
+      "path": "data\\pt\\shards\\train_0032.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0033.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0034.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0035.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0036.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0037.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0038.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0039.bin",
+      "bytes": 103482498
+    },
+    {
+      "path": "data\\pt\\shards\\train_0040.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0041.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0042.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0043.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0044.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0045.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0046.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0047.bin",
+      "bytes": 94293444
+    },
+    {
+      "path": "data\\pt\\shards\\train_0048.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0049.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0050.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0051.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0052.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0053.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0054.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0055.bin",
+      "bytes": 91363852
+    },
+    {
+      "path": "data\\pt\\shards\\train_0056.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0057.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0058.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0059.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0060.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0061.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0062.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0063.bin",
+      "bytes": 78032128
+    },
+    {
+      "path": "data\\pt\\shards\\train_0064.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0065.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0066.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0067.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0068.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0069.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0070.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0071.bin",
+      "bytes": 65470460
+    },
+    {
+      "path": "data\\pt\\shards\\train_0072.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0073.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0074.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0075.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0076.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0077.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0078.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0079.bin",
+      "bytes": 63101926
+    },
+    {
+      "path": "data\\pt\\shards\\train_0080.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0081.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0082.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0083.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0084.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0085.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0086.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0087.bin",
+      "bytes": 59876496
+    },
+    {
+      "path": "data\\pt\\shards\\train_0088.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0089.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0090.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0091.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0092.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0093.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0094.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0095.bin",
+      "bytes": 55333642
+    },
+    {
+      "path": "data\\pt\\shards\\train_0096.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0097.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0098.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0099.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0100.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0101.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0102.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0103.bin",
+      "bytes": 54072842
+    },
+    {
+      "path": "data\\pt\\shards\\train_0104.bin",
+      "bytes": 200000000
+    },
+    {
+      "path": "data\\pt\\shards\\train_0105.bin",
+      "bytes": 165409430
+    }
+  ],
+  "unique_windows": 9646818,
+  "tokens": 9878323200,
+  "total_steps": 80390,
+  "target_steps": [
+    8138,
+    16276,
+    24414,
+    32552,
+    40690,
+    48828,
+    56966,
+    65104,
+    73242,
+    80390
+  ],
+  "seq": 1024,
+  "global_batch": 120,
+  "micro": 30,
+  "lr": 0.0015,
+  "seed": 2027,
+  "checkpoint_every": 1000000000,
+  "probe": {
+    "config": "configs/pt/probe_v2.yaml",
+    "config_sha256": "a06a11f6329596041243989cfd6e5d6e8690edf2c679f38707f5450654c9c4fe",
+    "train_sha256": "ef86fd65da5449144bc40b58614227ab87b7a570c66d8dc33869f8e05c6c5f7c",
+    "steps": 6000,
+    "batch": 16,
+    "seed": 11
+  },
+  "plateau": {
+    "min_improvement": 0.005,
+    "patience": 2,
+    "metrics": [
+      "in_format",
+      "table",
+      "cf_both"
+    ],
+    "earliest_readout": 3
+  },
+  "queue": "after s60 done and all existing GPU marker files clear",
+  "rented_compute": false
+}
