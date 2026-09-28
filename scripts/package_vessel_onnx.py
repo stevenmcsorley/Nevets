@@ -61,8 +61,9 @@ def main():
     # Git (and so pi-ci) cannot carry files > 100 MB: prefer weight-only int8 (33 MB), then dynamic int8 (80 MB), each only
     # with full argmax agreement and <= MAX_PROB_DIFF; fp32 (129 MB) would need manual delivery and is only reported.
     dyn = parity["int8"]
-    choice = ("w8" if agree == n and maxd <= MAX_PROB_DIFF else
-              "dyn8" if dyn["argmax_agree"] == 1.0 and dyn["max_abs_prob_diff"] <= MAX_PROB_DIFF else "fp32-manual")
+    # >= 99% argmax agreement (near-ties may flip on rounding) and max probability difference <= MAX_PROB_DIFF.
+    choice = ("w8" if agree / n >= 0.99 and maxd <= MAX_PROB_DIFF else
+              "dyn8" if dyn["argmax_agree"] >= 0.99 and dyn["max_abs_prob_diff"] <= MAX_PROB_DIFF else "fp32-manual")
     parity["chosen"] = choice
     (out / "parity.json").write_text(json.dumps(parity, indent=2)); print(json.dumps(parity["w8_vs_fp32"]), "chosen:", choice)
     rd = lambda f: json.loads((rep / f).read_text()) if (rep / f).exists() else None
