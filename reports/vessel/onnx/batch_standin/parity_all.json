@@ -1,0 +1,56 @@
+{
+  "batch.fp32.onnx/B1": {
+    "questions": 36,
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 5.364418029785156e-07,
+    "passes_existing_threshold": true
+  },
+  "batch.fp32.onnx/B2": {
+    "questions": 36,
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 5.364418029785156e-07,
+    "passes_existing_threshold": true
+  },
+  "batch.fp32.onnx/B4": {
+    "questions": 36,
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 5.364418029785156e-07,
+    "passes_existing_threshold": true
+  },
+  "batch.onnx/B1": {
+    "questions": 36,
+    "argmax_agree": 0.8333333333333334,
+    "max_abs_prob_diff": 0.05738028883934021,
+    "passes_existing_threshold": false
+  },
+  "batch.onnx/B2": {
+    "questions": 36,
+    "argmax_agree": 0.75,
+    "max_abs_prob_diff": 0.08129546046257019,
+    "passes_existing_threshold": false
+  },
+  "batch.onnx/B4": {
+    "questions": 36,
+    "argmax_agree": 0.75,
+    "max_abs_prob_diff": 0.0839652419090271,
+    "passes_existing_threshold": false
+  },
+  "batch.fullint8.onnx/B1": {
+    "questions": 36,
+    "argmax_agree": 0.8611111111111112,
+    "max_abs_prob_diff": 0.06966793537139893,
+    "passes_existing_threshold": false
+  },
+  "batch.fullint8.onnx/B2": {
+    "questions": 36,
+    "argmax_agree": 0.6666666666666666,
+    "max_abs_prob_diff": 0.1114756166934967,
+    "passes_existing_threshold": false
+  },
+  "batch.fullint8.onnx/B4": {
+    "questions": 36,
+    "argmax_agree": 0.75,
+    "max_abs_prob_diff": 0.08507651090621948,
+    "passes_existing_threshold": false
+  }
+}

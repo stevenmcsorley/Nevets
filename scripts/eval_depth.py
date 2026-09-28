@@ -37,6 +37,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", required=True); ap.add_argument("--out", required=True)
     ap.add_argument("--iters", default="1,2,4,6,8,12")
+    ap.add_argument("--batch-size", type=int, default=64)
     ap.add_argument("--hop-offset", type=int, default=None,
                     help="also evaluate each hop group at K = hops + offset (ORACLE diagnostic: uses the true hop count)")
     ap.add_argument("--chains", default="reports/chain/eval_hops.jsonl"); ap.add_argument("--transforms", default="reports/chain/transforms.jsonl")
@@ -50,12 +51,12 @@ def main():
     for K in ([int(k) for k in a.iters.split(",")] if looped else [None]):
         if K: model.iters = K
         rows = []
-        for r, p in zip(chains, predict_batch(model, tok, chains, device)):
+        for r, p in zip(chains, predict_batch(model, tok, chains, device, batch_size=a.batch_size)):
             p = p["spatial"]; pred = max(p, key=p.get); y = r["labels"]["spatial"]
             rows.append({"hops": r["meta"]["hops"], "p": p, "y": y, "ok": pred == y, "conf": p[pred], "cancel": y in CANCEL})
         by = defaultdict(list)
         for x in rows: by[x["hops"]].append(x)
-        preds = predict_batch(model, tok, tfs, device); worlds = defaultdict(dict)
+        preds = predict_batch(model, tok, tfs, device, batch_size=a.batch_size); worlds = defaultdict(dict)
         for r, p in zip(tfs, preds):
             p = p["spatial"]; worlds[r["meta"]["world_id"]][r["meta"]["transform"]] = max(p, key=p.get)
         pairs = [(w["identity"], t, pr) for w in worlds.values() for t, pr in w.items() if t != "identity"]
@@ -72,7 +73,7 @@ def main():
         for r in chains: by[r["meta"]["hops"]].append(r)
         for h, rs in sorted(by.items()):
             model.iters = h + a.hop_offset
-            for r, p in zip(rs, predict_batch(model, tok, rs, device)):
+            for r, p in zip(rs, predict_batch(model, tok, rs, device, batch_size=a.batch_size)):
                 p = p["spatial"]; pred = max(p, key=p.get); rows.append({"hops": h, "ok": pred == r["labels"]["spatial"]})
         acc = {h: sum(x["ok"] for x in rows if x["hops"] == h) / sum(1 for x in rows if x["hops"] == h) for h in sorted(by)}
         out["oracle_k_equals_hops_plus"] = {"offset": a.hop_offset, "by_hops": acc}

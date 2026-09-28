@@ -1,0 +1,6 @@
+{"model":"batch.fp32.onnx","threads":2,"batch":1,"format":"essential","n":12,"mean_tokens":261.6666666666667,"ms_per_vessel":797.7876760833333,"median_batch_ms_per_vessel":860.1722779999996,"rss_mb":326.209536}
+{"model":"batch.fp32.onnx","threads":2,"batch":2,"format":"essential","n":12,"mean_tokens":261.6666666666667,"ms_per_vessel":1034.9564458333332,"median_batch_ms_per_vessel":1233.40755,"rss_mb":370.003968}
+{"model":"batch.fp32.onnx","threads":2,"batch":4,"format":"essential","n":12,"mean_tokens":261.6666666666667,"ms_per_vessel":1278.67347825,"median_batch_ms_per_vessel":1268.1000075000002,"rss_mb":452.288512}
+{"model":"batch.fullint8.onnx","threads":2,"batch":1,"format":"essential","n":12,"mean_tokens":261.6666666666667,"ms_per_vessel":439.4110903333332,"median_batch_ms_per_vessel":423.07436400000006,"rss_mb":202.768384}
+{"model":"batch.fullint8.onnx","threads":2,"batch":2,"format":"essential","n":12,"mean_tokens":261.6666666666667,"ms_per_vessel":670.3527949166667,"median_batch_ms_per_vessel":738.3178915000001,"rss_mb":236.785664}
+{"model":"batch.fullint8.onnx","threads":2,"batch":4,"format":"essential","n":12,"mean_tokens":261.6666666666667,"ms_per_vessel":797.0082887500001,"median_batch_ms_per_vessel":787.7356817499999,"rss_mb":321.396736}

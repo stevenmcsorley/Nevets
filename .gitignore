@@ -42,3 +42,6 @@ reports/pt/HOLD
 
 # exported ONNX graphs (large; delivered to Channel Watch, never committed here)
 reports/vessel/onnx/**/*.onnx
+
+# Background queue stderr (runtime diagnostics, not research results)
+reports/**/queue*.err

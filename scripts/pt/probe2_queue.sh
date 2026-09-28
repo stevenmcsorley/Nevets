@@ -16,11 +16,14 @@ for s in 11 12 13; do
   sh scripts/pt/probe_v2.sh checkpoints/s1-35m-pretrain.pt data/tokenizer.json legacy_s1_35m_s$s $s
   sh scripts/pt/probe_v2.sh checkpoints/pt2/pt_35m/tok_0M.pt tokenizers/pt_32k.json pt_35m_tok_0M_s$s $s
 done
-if ! $PY scripts/pt/probe2_report.py control; then
+CONTROL_RC=0
+$PY scripts/pt/probe2_report.py control || CONTROL_RC=$?
+if [ "$CONTROL_RC" -eq 2 ]; then
   echo 'INCONCLUSIVE: positive control failed; owner review required' >> "$REP/status.txt"
   touch "$REP/COMPLETE"
   exit 0
 fi
+[ "$CONTROL_RC" -eq 0 ] || exit "$CONTROL_RC"
 for size in 35m 150m; do
   for m in 250 500 750 1000; do
     sh scripts/pt/probe_v2.sh checkpoints/pt2/pt_$size/tok_${m}M.pt tokenizers/pt_32k.json pt_${size}_tok_${m}M_s11 11
@@ -32,7 +35,7 @@ done
 $PY scripts/pt/probe2_report.py band
 # Durably record the band before calculating slopes.
 git add "$REP/band.json" reports/RESEARCH_LEDGER.md
-git commit -m 'PROBE-2: record fine-tune noise band before slope comparison'
+git commit --only -m 'PROBE-2: record fine-tune noise band before slope comparison' "$REP/band.json" reports/RESEARCH_LEDGER.md
 $PY scripts/pt/probe2_report.py compare
 echo "probe2 done $(date -u +%FT%TZ); PT-3 requires owner approval if recommended" >> "$REP/status.txt"
 touch "$REP/COMPLETE"

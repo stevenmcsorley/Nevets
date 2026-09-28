@@ -66,8 +66,14 @@ def main():
             d = slopes['150m'][k] - slopes['35m'][k]
             decision[k] = ('within noise' if abs(d) <= band[k] else
                            '150M' if (d < 0 if k == 'ece_in' else d > 0) else '35M')
+        winners = {decision[k] for k in METRICS[:3]} - {'within noise'}
+        selected = '150m' if not winners or winners == {'150M'} else '35m' if winners == {'35M'} else None
+        positive = selected is not None and all(slopes[selected][k] > 0 for k in METRICS[:3])
+        calibration = selected is not None and decision['ece_in'] in ('within noise', selected.replace('m', 'M'))
+        recommendation = (f'Propose PT-3 at {selected}; ask owner before launch.' if positive and calibration else
+                          'No positive PT-3 recommendation: mixed/ nonpositive slopes or calibration guard failed.')
         result = dict(points=points, slope_per_250M=slopes, band=band, decision=decision,
-                      pt3='Not started. Review positive slopes and calibration before owner approval.')
+                      pt3_recommendation=recommendation, pt3_started=False)
         (rep / 'report.json').write_text(json.dumps(result, indent=2))
         with a.ledger.open('a', encoding='utf-8') as f:
             f.write('\n\n**PROBE-2 slope comparison:** ' + json.dumps(result) + '\n')
