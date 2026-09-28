@@ -20,6 +20,9 @@ EVAL_JSONL = [
     "data/processed/vessel_v1/eval_synthetic.jsonl", "data/processed/vessel_v1/counterfactual.jsonl",
     "data/processed/vessel_v1/eval_real.jsonl",
     "data/processed/vessel_v1/eval_robust.jsonl",
+    # P2 (force vs observe): SCM eval sets (iid, held-out wordings, held-out structures)
+    "data/processed/p2_scm_v1/eval_iid.jsonl", "data/processed/p2_scm_v1/eval_heldout_wording.jsonl",
+    "data/processed/p2_scm_v1/eval_heldout_structure.jsonl",
     # VESSEL-1c: frozen copy of eval_real at launch (live tracks labelled by Claude, held-out vessels)
     "data/processed/vessel_c/eval_real.jsonl",
 ]
