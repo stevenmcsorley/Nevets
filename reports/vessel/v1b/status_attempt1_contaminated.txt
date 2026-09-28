@@ -1,0 +1,4 @@
+start 2026-09-28 10:35
+contaminated
+vessel_v1b done 2026-09-28 10:35
+GPU_BUSY re-taken 09:36 UTC to keep 1b -> 1c ahead of round-2b while the P3 eval set is decontaminated

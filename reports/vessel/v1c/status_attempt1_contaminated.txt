@@ -1,0 +1,8 @@
+queued 2026-09-27 21:32
+HELD 2026-09-28 09:41 by owner instruction: provider terms prohibit training on Claude outputs without authorization; round-2b arms take the slot
+RELEASED 2026-09-28 08:44 UTC: owner decision - train on Claude labels regardless (their data, their compute); order 1b -> 1c -> round-2b
+queued 2026-09-28 09:44
+start 2026-09-28 10:35
+steps 3762; manifest {"by_domain":{"rules":17143,"vessel":30000,"spatial":259152,"probability":17143,"temporal":17075,"causal":17142,"dependency":17143,"infogather":17143,"kinship":17143,"vessel_real":627},"live_train":627,"eval_real":141,"steps":3762,"hashes":{"eval_real":"6a0d2e408459ac8e","baselines
+contaminated
+vessel_v1c done 2026-09-28 10:36

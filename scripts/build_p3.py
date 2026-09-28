@@ -13,17 +13,30 @@ from systemone_lab.worlds import DOMAINS
 OUT = Path("data/processed/p3_v1"); N_PER_DOMAIN = 250; SEED = 6001
 
 
+def training_state_hashes():
+    """Hashes of every state in every training file under data/processed (built before this eval set), so the eval set
+    can be decontaminated against them (small worlds can render to identical prose)."""
+    import glob, hashlib
+    seen = set()
+    for path in glob.glob("data/processed/*/train*.jsonl"):
+        for line in open(path, encoding="utf-8"):
+            seen.add(hashlib.sha1(json.loads(line)["state"].encode()).digest())
+    return seen
+
+
 def main():
-    OUT.mkdir(parents=True, exist_ok=True); sym, prose = [], []
+    import hashlib
+    OUT.mkdir(parents=True, exist_ok=True); sym, prose = [], []; train = training_state_hashes(); dropped = 0
     for d, fn in DOMAINS.items():
         for i in range(N_PER_DOMAIN):
             s = SEED * 1000 + zlib.crc32(d.encode()) % 997 * 10000 + i
             r1, _ = fn(random.Random(s), "symbolic", f"p3-{d}-{i}-sym"); r2, _ = fn(random.Random(s), "prose", f"p3-{d}-{i}-prose")
             if r1["labels"] != r2["labels"] or r1["questions"] != r2["questions"]: continue  # same world, same questions
+            if any(hashlib.sha1(r["state"].encode()).digest() in train for r in (r1, r2)): dropped += 1; continue
             r1["meta"]["twin"] = r2["id"]; r2["meta"]["twin"] = r1["id"]; sym.append(r1); prose.append(r2)
     for name, recs in (("eval_symbolic", sym), ("eval_prose_twin", prose)):
         (OUT / f"{name}.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs), encoding="utf-8")
-    man = {"records_per_file": len(sym), "by_domain": dict(Counter(r["meta"]["domain"] for r in sym)), "seed": SEED}
+    man = {"records_per_file": len(sym), "dropped_for_training_overlap": dropped, "by_domain": dict(Counter(r["meta"]["domain"] for r in sym)), "seed": SEED}
     (OUT / "manifest.json").write_text(json.dumps(man, indent=1)); print(json.dumps(man))
 
 

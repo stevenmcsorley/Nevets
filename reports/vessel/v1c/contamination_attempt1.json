@@ -1,0 +1,1 @@
+{"train_records": 409711, "eval_states": 67021, "collisions_by_eval_file": {"data/processed/p3_v1/eval_prose_twin.jsonl": 5}, "p3_heldout_format_records": 0}

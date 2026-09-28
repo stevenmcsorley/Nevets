@@ -1,4 +1,1 @@
-queued 2026-09-27 21:32
-HELD 2026-09-28 09:41 by owner instruction: provider terms prohibit training on Claude outputs without authorization; round-2b arms take the slot
-RELEASED 2026-09-28 08:44 UTC: owner decision - train on Claude labels regardless (their data, their compute); order 1b -> 1c -> round-2b
-queued 2026-09-28 09:44
+queued 2026-09-28 10:37
