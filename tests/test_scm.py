@@ -81,3 +81,21 @@ def test_collider_observe_question_conditions_on_the_collider():
     recs = scm.pair(random.Random(4), "collider", "prose", "c0")
     see = next(r for r in recs if r["meta"]["kind"] == "see")
     assert "among cases with" in see["questions"]["answer"]["instructions"]
+
+
+def test_p3_symbolic_format_renders_postfix_and_is_rejected_for_training(tmp_path):
+    import json, re, subprocess, sys
+    from systemone_lab.worlds import DOMAINS, P3_HELDOUT_FORMATS, SYMBOLIC_RE
+    assert "symbolic" in P3_HELDOUT_FORMATS
+    rng = random.Random(9)
+    for dom, fn in DOMAINS.items():
+        rec, _ = fn(rng, "symbolic", f"p3-{dom}")
+        st = rec["state"]
+        assert re.search(SYMBOLIC_RE, st), (dom, st[:120])
+        facts = [ln for ln in st.splitlines() if re.search(SYMBOLIC_RE, ln)][0]
+        assert "(" not in facts and "{" not in facts and "|" not in facts and "," not in facts
+    for fmt in ("prose", "json", "kv", "csv", "bullets"):
+        rec, _ = DOMAINS["kinship"](rng, fmt, "ok"); assert not re.search(SYMBOLIC_RE, rec["state"])
+    bad = tmp_path / "bad.jsonl"; rec, _ = DOMAINS["rules"](rng, "symbolic", "x"); bad.write_text(json.dumps(rec) + "\n")
+    r = subprocess.run([sys.executable, "scripts/check_contamination.py", str(bad)], capture_output=True, text=True, env={**__import__("os").environ, "PYTHONPATH": "src"})
+    assert r.returncode == 1 and '"p3_heldout_format_records": 1' in r.stdout

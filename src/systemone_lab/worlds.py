@@ -20,6 +20,10 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 
 FORMATS = ("prose", "json", "table", "kv")
+# P3 held-out representation formats (decided 26 Sep; "symbolic" defined 28 Sep as postfix operator notation). They are
+# rendered only for P3 evaluation sets and must never appear in training data (enforced by check_contamination.py).
+P3_HELDOUT_FORMATS = ("table", "symbolic")
+SYMBOLIC_RE = r"(?m)^\S+ \S+ \S+!( ; \S+ \S+ \S+!)*$"  # some line is entirely postfix clauses (use re.search)
 # GENERAL-3 train pool: the in-format eval formats (prose/json/kv) plus shuffled-field JSON, CSV, key=value, bullets.
 V3_TRAIN_FORMATS = ("prose", "json", "kv", "jsonf", "csv", "kvf", "bullets")
 NAMES = ["Ada", "Ben", "Cleo", "Dev", "Eli", "Fay", "Gus", "Hana", "Ivo", "Jun", "Kai", "Lena", "Milo",
@@ -49,6 +53,9 @@ def render(facts: list[Fact], fmt: str, rng: random.Random) -> str:
         return "subject | relation | object\n" + "\n".join(f"{r['subject']} | {r['relation']} | {r['object']}" for r in rows)
     if fmt == "kv":
         return "\n".join(f"{r['relation']}({r['subject']}, {r['object']})" for r in rows)
+    if fmt == "symbolic":  # P3 held-out: postfix operator notation, one clause per fact, no columns, brackets or words
+        tok = lambda x: str(x).strip().replace(" ", "_")
+        return " ; ".join(f"{tok(r['subject'])} {tok(r['object'])} {tok(r['relation'])}!" for r in rows)
     # GENERAL-3 training renderings (never P3's held-out pipe table / symbolic notation). Field order is shuffled
     # once per state, so the model cannot rely on column or key position.
     if fmt == "bullets":

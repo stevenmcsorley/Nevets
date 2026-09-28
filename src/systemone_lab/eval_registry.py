@@ -23,6 +23,8 @@ EVAL_JSONL = [
     # P2 (force vs observe): SCM eval sets (iid, held-out wordings, held-out structures)
     "data/processed/p2_scm_v1/eval_iid.jsonl", "data/processed/p2_scm_v1/eval_heldout_wording.jsonl",
     "data/processed/p2_scm_v1/eval_heldout_structure.jsonl",
+    # P3: held-out "symbolic" (postfix operator) format and its prose twins
+    "data/processed/p3_v1/eval_symbolic.jsonl", "data/processed/p3_v1/eval_prose_twin.jsonl",
     # VESSEL-1c: frozen copy of eval_real at launch (live tracks labelled by Claude, held-out vessels)
     "data/processed/vessel_c/eval_real.jsonl",
 ]
