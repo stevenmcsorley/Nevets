@@ -11,3 +11,14 @@ probe pt_35m_tok_1000M_s9 done
 probe legacy_s1_35m done
 VESSEL-1 slot open      2026-09-27 15:51
 released PT-2 150M hold after VESSEL-1 2026-09-27 16:12
+pt_150m lm done
+probe pt_150m_tok_0M done
+probe pt_150m_tok_1000M done
+probe pt_150m_tok_250M done
+probe pt_150m_tok_500M done
+probe pt_150m_tok_750M done
+probe pt_150m_tok_250M_s8 done
+probe pt_150m_tok_250M_s9 done
+probe pt_150m_tok_1000M_s8 done
+probe pt_150m_tok_1000M_s9 done
+pt2 (all) done (band computed; comparison pending ledger entry)

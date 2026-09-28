@@ -1,0 +1,36 @@
+{
+  "cells": [
+    "35m@250M(n=3)",
+    "35m@1000M(n=3)",
+    "150m@250M(n=3)",
+    "150m@1000M(n=3)"
+  ],
+  "sxx": {
+    "35m": 5.0,
+    "150m": 5.0
+  },
+  "chains": {
+    "sigma_finetune": 0.018122126208956094,
+    "slope_diff_band": 0.022922877946133496
+  },
+  "stress": {
+    "sigma_finetune": 0.011373422764074602,
+    "slope_diff_band": 0.014386368290593445
+  },
+  "in_format": {
+    "sigma_finetune": 0.0173619160811115,
+    "slope_diff_band": 0.021961279744406814
+  },
+  "table": {
+    "sigma_finetune": 0.02276270171946118,
+    "slope_diff_band": 0.02879279325301138
+  },
+  "cf_both": {
+    "sigma_finetune": 0.037541643544203016,
+    "slope_diff_band": 0.04748684028233506
+  },
+  "ece_in": {
+    "sigma_finetune": 0.01630556741605709,
+    "slope_diff_band": 0.020625092630466715
+  }
+}
