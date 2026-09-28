@@ -115,3 +115,17 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
 - **GENERAL-2 (from S30, multi-domain, spatial 50%) fails its pre-registered bar** on the domain floor (infogather −20 to −28, probability −6 to −10), the held-out table format and out-of-format calibration, while beating GENERAL-1 in-format (+8–10) and S30 on spatial (7–10 hops +10–12). Lessons: (a) sampling shares move per-domain skill almost one for one, so the next GENERAL run needs need-based shares, not uniform ones; (b) more in-format skill came with *worse* format robustness and overconfidence out of format, which makes P3 (representation invariance) more urgent; (c) the spatial gain is confounded with extra spatial exposure (S60 control proposed).
 - **Treasure Hunt** stays on GENERAL-1: the game saturates at 1–2 hops for every candidate.
 - **Queue:** PT-2 (35M vs 150M, 1B tokens, probe-slope decision with a pre-registered fine-tune-seed noise band) is next on the GPU; P1 round 2b arms fill gaps.
+
+## 14. 27–28 September — real-world vessel data (Channel Watch); off simulation
+
+- **Owner decisions:** GENERAL-3 LOSS (the diagnosis says not exposure-limited, so G4 was not triggered); P1 round 2b arm r2b1 WIN (two seeds); VESSEL-1 LOSS by Rule 4 (forgetting), VESSEL-1b (retention mix) queued after PT-2 150M. Then (evening, 27 Sep): **train on Claude labels and get Channel Watch off simulation as soon as possible.**
+- **Real-world labels:** about 760 live AIS tracks were labelled blind by Claude through the private Channel Watch MCP overnight. They are split at vessel level: `vessel_v1/eval_real.jsonl` is locked (20% of MMSIs by hash), and the rest is `vessel_real_v1/train.jsonl`. All scores on this data are **agreement with Claude labels, not accuracy**.
+- **Channel Watch now runs a real-label LightGBM** (experimental, in the vessel panel). On held-out vessels it agrees with the Claude labels at about 0.96 on activity (rules about 0.76; the simulator-trained LightGBM 0.235), with went-dark and collision-risk agreement at about 0.98. The simulator's coverage gap (no moored Class B craft, no reporting gaps while stationary) is why simulation alone failed.
+- **Data lessons (each fixed and tested):**
+  - facts read back from the snapshot store lost every float (round-trip bug);
+  - the straight-line Dover TSS mis-laned north-east-bound traffic (now OSM seamark geometry, validated against live courses);
+  - a distance-only coverage rule hid a mid-Channel reception hole (now a learned ships-only coverage map);
+  - river bends on the Seine looked like "looping" (now an explicit area from OSM);
+  - feed-wide pauses create fake gaps.
+  Mislabels caused by these are excluded, never edited (`channel-watch/ml/label_exclusions.json`).
+- **Nevets queue:** PT-2 150M (finishing ~06:00 UTC, 28 Sep), then VESSEL-1b (synthetic, pre-registered), then **VESSEL-1c** (live labels plus the retention mix, pre-registered: compare with LightGBM-real on the same frozen eval_real), then the remaining round-2b arms. Putting VESSEL-1c before round 2b is a flagged change to the owner's order.
