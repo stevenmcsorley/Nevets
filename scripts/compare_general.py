@@ -86,5 +86,20 @@ def g2(): return general("v2", "GENERAL-2")
 def g3(): return general("v3", "GENERAL-3")
 
 
+def g4(): return general("v4", "GENERAL-4")  # GENERAL-3's recipe at 50k updates; same criteria (pre-registered 28 Sep)
+
+
+def s60():
+    """S60 exposure control (pre-registered 28 Sep): S30_s8 + 30k spatial-only updates vs GENERAL-2 (S30_s8 + 30k at 50%
+    spatial). G2's 7-10-hop gain counts as exposure if S60 >= G2_s7 - max(G2 seed spread, 0.02) at each model's best K."""
+    best = lambda p: max((depth(p, K) for K in ("4", "6", "8", "12")), key=lambda d: d["h7_10"])
+    s60 = best(R / "general/s60/depth_s7.json"); g2 = {s: best(R / f"general/v2/depth_s{s}.json") for s in (7, 8)}
+    spread = abs(g2[7]["h7_10"] - g2[8]["h7_10"]); tol = max(spread, 0.02)
+    print("S60_s7", fmt(s60)); print("G2_s7", fmt(g2[7]), "G2_s8", fmt(g2[8]), "tol", round(tol, 4))
+    exposure = s60["h7_10"] >= g2[7]["h7_10"] - tol
+    print("VERDICT: G2's spatial gain is " + ("EXPOSURE (S60 matches it)" if exposure else "NOT explained by exposure alone (S60 falls short)"))
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit({"s30": s30, "g2": g2, "g3": g3}[sys.argv[1]]())
+    sys.exit({"s30": s30, "g2": g2, "g3": g3, "g4": g4, "s60": s60}[sys.argv[1]]())
