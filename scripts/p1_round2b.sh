@@ -4,11 +4,13 @@
 # K ~ U(h, h+4), decision loss at every pass t >= h (deep supervision). Key metric: does unseen-hop
 # accuracy rise with passes past 6? eval_depth K in 1..16 (+ oracle K = hops+2) and probes to K=16.
 export PYTHONPATH=src; PY=./.venv/Scripts/python.exe
+until [ -f reports/pt/probe2/COMPLETE ]; do sleep 30; done
 until grep -q "S30_s8 done" reports/p0/status.txt 2>/dev/null; do sleep 60; done
 # Same data as ctl (spatial_only_v1).
 INIT=checkpoints/p0/S30_s7.pt; DATA=data/processed/spatial_only_v1/train.jsonl; OUT=checkpoints/p1; REP=reports/p1
 $PY scripts/check_contamination.py $DATA > $REP/contamination_r2b.json || { echo contaminated; exit 1; }
 for a in r2b1_depthK r2b2_edge r2b3_incoff r2b4_combo; do
+  grep -q "${a}_s7 done" "$REP/status.txt" 2>/dev/null && continue
   while [ -f reports/pt/PT2_RUNNING ] || [ -f reports/general/GPU_BUSY ]; do sleep 120; done  # PT-2 and GENERAL-2 have GPU priority; 2b fills gaps
   touch reports/p1/ARM_RUNNING  # PT-2 waits for an arm in flight
   $PY scripts/train_decision.py --config configs/p1/$a.yaml --init $INIT --tokenizer data/tokenizer.json --data $DATA \

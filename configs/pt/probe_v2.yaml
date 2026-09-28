@@ -1,0 +1,26 @@
+# PROBE-2 (28 Sep): TM-1's protocol and learning rates (the one that separated LM from scratch). A FIXED decision fine-tune applied identically to every LM checkpoint
+# (PT ladder points and the legacy s1-35m-pretrain). Flat architecture (no loop) so every size is comparable.
+name: pt-probe
+vocab_size: 32000
+decision_head:
+  scorer: cosine
+  temperature: 10.0
+  query_mode: entity_binding
+  state_attention: bidirectional
+  option_attention: isolated
+optimizer:
+  lr: 1.0e-05
+  backbone_lr: 3.0e-05
+  decision_head_lr: 1.0e-04
+  betas: [0.9, 0.95]
+  eps: 1.0e-08
+  weight_decay: 0.01
+scheduler:
+  type: cosine
+  warmup_steps: 100
+training:
+  max_grad_norm: 1.0
+safety:
+  max_loss: 25.0
+  max_abs_logit: 100.0
+  abort_on_nonfinite: true

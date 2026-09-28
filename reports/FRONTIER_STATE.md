@@ -129,3 +129,12 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
   - feed-wide pauses create fake gaps.
   Mislabels caused by these are excluded, never edited (`channel-watch/ml/label_exclusions.json`).
 - **Nevets queue:** PT-2 150M (finishing ~06:00 UTC, 28 Sep), then VESSEL-1b (synthetic, pre-registered), then **VESSEL-1c** (live labels plus the retention mix, pre-registered: compare with LightGBM-real on the same frozen eval_real), then the remaining round-2b arms. Putting VESSEL-1c before round 2b is a flagged change to the owner's order.
+
+
+## 15. 28 September — first length-extrapolation win; probe repair
+
+**r2b1 is the first two-seed length-extrapolation WIN.** Unseen 7–10-hop accuracy rises from K6 0.587/0.593 to K8 0.594/0.600 (seeds 7/8), versus matched controls at their best K 0.571/0.576. Both seeds win; extra passes are necessary. The effect is modest and selected on dev data, falls beyond K12, and is not yet a locked-set promotion. The next attack tests 12–16 hops through K24 against both controls. Plan to incorporate the depth-tied random-loop schedule and deep supervision into a preregistered GENERAL-4 mixed-domain variant after this attack.
+
+**PT-2 is INCONCLUSIVE (invalid probe), superseding LOSS.** PROBE-2 uses existing LM checkpoints only, with the TM-1 6,000-update recipe and a three-seed legacy-versus-random positive control. Require a gain of at least three points and beyond twice the SE before comparing 35M/150M slopes. Record the new noise band before comparing. PT-3 awaits a positive recommendation and explicit owner approval.
+
+**Current queue:** VESSEL-1b → VESSEL-1c → PROBE-2 → remaining round-2b arms → GENERAL-4 → S60. Pi inference profiling and CPU extrapolation attacks run alongside; VESSEL deployment remains gated.

@@ -1,7 +1,8 @@
 #!/bin/sh
-# Owner brief (28 Sep), item (e) after the remaining round-2b arms: GENERAL-4, then S60. PT-3 was skipped (PT-2 LOSS).
+# Owner brief (28 Sep): repaired PROBE-2, remaining round-2b arms, GENERAL-4, then S60. PT-3 pending valid evidence.
 # Pre-registered in the ledger before launch. Holds GPU_BUSY from start to end; never overlaps another GPU job.
 export PYTHONPATH=src; PY=./.venv/Scripts/python.exe
+until [ -f reports/pt/probe2/COMPLETE ]; do sleep 30; done
 OUT=checkpoints/general; mkdir -p reports/general/v4 reports/general/s60
 until grep -qE "r2b4_combo_s7 (done|KILLED)|r2b4_combo_s7 exited" reports/p1/status.txt 2>/dev/null; do sleep 60; done
 while [ -f reports/general/GPU_BUSY ] || [ -f reports/p1/ARM_RUNNING ] || [ -f reports/pt/PT2_RUNNING ]; do sleep 30; done
