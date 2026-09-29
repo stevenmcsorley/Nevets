@@ -149,3 +149,12 @@ logged information-gathering samples versus 42.18% in source data. Optional
 not yet trained. This distortion also affects earlier recipes and is not an
 isolated explanation of the regression. Diagnosis and next controlled comparison:
 `reports/general/diagnosis_20260929/REPORT.md`. No additional GPU job queued.
+
+**29 September continuation, owner "ok do it" (supersedes no-job statement):**
+`scripts/general_repair.py --run` is now queued after PT-3 COMPLETE, under the
+shared GPU markers. Eight 10k runs: S30 versus G1 start x legacy versus semantic
+infogather sampler x seeds 7/8; then S60 seed 8 at 30k. Total <=110k updates,
+no rented compute or automatic promotion. Fresh registered dev: 1,400 examples
+plus 100 cost-flip pairs, with exact-state exclusion against training/eval.
+5k/10k checkpoints retained using exact resume. Protocol/readouts/status:
+`reports/general/repair_20260929/`. Queue, resume and contamination checks passed.

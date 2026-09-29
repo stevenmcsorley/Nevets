@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 
 EVAL_JSONL = [
+    "data/processed/general_repair_dev/eval_in_format.jsonl",
+    "data/processed/general_repair_dev/counterfactual.jsonl",
     "reports/p1/attack_12_16/chains.jsonl",
     "reports/chain/eval_hops.jsonl", "reports/chain/transforms.jsonl", "reports/binding_stress/stress.jsonl",
     "reports/role_swap_onehop/heldout.jsonl", "reports/paired_onehop/counterfactual.jsonl",

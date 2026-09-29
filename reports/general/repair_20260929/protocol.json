@@ -1,0 +1,90 @@
+{
+  "approved": "Owner \"ok do it\", 29 September 2026: review labels, controlled GENERAL comparison, S60 second seed",
+  "hashes": {
+    "configs/general_v1.yaml": "da0b52403fafce5e1eb41eade476dc00ed3886b519153665f4ac6ab19612df9b",
+    "data/tokenizer.json": "a78287861bc84f8d291fad598ae7d7c87f1da13bc3bc6e3019f1fa7924aeaa84",
+    "data/processed/general_v3/train.jsonl": "fa9ad153339a0f92a9fd1b8066801fc6195a6e495cf85c5cd2139741dbf825cb",
+    "data/processed/spatial_only_v1/train.jsonl": "b7ccdd7d194d497c27ffaea43ba171fa3c1002b077af366f6a54e2c7fb7e0623",
+    "checkpoints/p0/S30_s8.pt": "4580751a32e618569648b54a38d015217d6f05cfe1abafdd17a0492118b59ecb",
+    "checkpoints/general/general-v1.pt": "2022227bfe59b882b4c989b555cf35038f1beb4fa95955cb9a602b04f20b08d3",
+    "scripts/general_repair.py": "a473445e51e1d6bc264c316a7d384cf1b584e752659ae50b393764094eb8ee2b",
+    "scripts/train_decision.py": "c6c8fdbbed9b26a889e571749ffd41f2053e23336c4bb23418c4eedd4c6f9aeb",
+    "src/systemone_lab/training.py": "4f279e36ea2e92448740621f871546c4f7ae622989559982e9a5499ff13beea2",
+    "src/systemone_lab/worlds.py": "b813117f2457e1f7ea2fb51d54a866f934ba4fd064ec7b56acc88de08da672ec",
+    "scripts/eval_depth.py": "6031d61f141d6bb4e15d3053ab4850cd81a4cc55fae4bc87760e9834f7776ca9",
+    "scripts/eval_worlds.py": "e7fd243d0a273fa1da01ac1a74392785d8d3ad51dc33e138589d3f4c2dfaf329",
+    "data/processed/general_repair_dev/eval_in_format.jsonl": "93ee7791267798470645126bc93afad92744a37c6bffa449bd93a57a7dedbb5e",
+    "data/processed/general_repair_dev/counterfactual.jsonl": "0a6b1b11fea3490947ed47cd4be041e4018a6408202ec485509518b558cb9a35"
+  },
+  "domain_shares": "spatial=0.35,infogather=0.20,probability=0.135,dependency=0.0715,kinship=0.0715,temporal=0.0715,rules=0.0715,causal=0.029",
+  "arms": [
+    {
+      "init": "s30",
+      "semantic": false,
+      "seed": 7,
+      "steps": 10000
+    },
+    {
+      "init": "s30",
+      "semantic": true,
+      "seed": 7,
+      "steps": 10000
+    },
+    {
+      "init": "s30",
+      "semantic": false,
+      "seed": 8,
+      "steps": 10000
+    },
+    {
+      "init": "s30",
+      "semantic": true,
+      "seed": 8,
+      "steps": 10000
+    },
+    {
+      "init": "g1",
+      "semantic": false,
+      "seed": 7,
+      "steps": 10000
+    },
+    {
+      "init": "g1",
+      "semantic": true,
+      "seed": 7,
+      "steps": 10000
+    },
+    {
+      "init": "g1",
+      "semantic": false,
+      "seed": 8,
+      "steps": 10000
+    },
+    {
+      "init": "g1",
+      "semantic": true,
+      "seed": 8,
+      "steps": 10000
+    }
+  ],
+  "readout_steps": [
+    5000,
+    10000
+  ],
+  "pair_consistency": 0.5,
+  "label_smoothing": 0.05,
+  "iters_range": "1,6",
+  "batch": 16,
+  "s60": {
+    "init": "checkpoints/p0/S30_s8.pt",
+    "seed": 8,
+    "steps": 30000,
+    "balanced_sampling": true
+  },
+  "total_max_training_updates": 110000,
+  "queue": "after PT-3 COMPLETE and shared GPU markers clear; one job at a time",
+  "criteria": "Diagnostic only. Sampler effect >=3pp infogather in BOTH seeds within init, non-increasing expected-utility regret, no other domain down >3pp, spatial long-chain down <=2pp. Compare 10k endpoints, report all arms and 5k trajectory; no automatic selection/promotion.",
+  "interpretation": "Matched additional compute, not matched lifetime exposure across initializations. Fresh dev is not a locked promotion test.",
+  "gpu_extensions": false,
+  "automatic_deployment": false
+}

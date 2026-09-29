@@ -1,0 +1,18 @@
+{
+  "seed": 9292026,
+  "domains": 7,
+  "per_domain": 200,
+  "cost_flip_pairs": 100,
+  "cost_flip": "0 versus 1 on the identical generated world; deliberately easy structural diagnostic",
+  "exclusion": "exact state SHA-256 against prior general/spatial training and registered eval, plus internal deduplication; not latent-world disjointness",
+  "training_sha256": {
+    "data\\processed\\general_v1\\train.jsonl": "fe74eb090cf39e71bff7c4008e30e993a390de5eabf1c9aa740edc1b62cdf80a",
+    "data\\processed\\general_v2\\train.jsonl": "ecca221a33786974e41465a3aa866b6f17989b101e9afed7da9830b91f754d17",
+    "data\\processed\\general_v3\\train.jsonl": "fa9ad153339a0f92a9fd1b8066801fc6195a6e495cf85c5cd2139741dbf825cb",
+    "data\\processed\\spatial_only_v1\\train.jsonl": "b7ccdd7d194d497c27ffaea43ba171fa3c1002b077af366f6a54e2c7fb7e0623"
+  },
+  "files": {
+    "counterfactual.jsonl": "0a6b1b11fea3490947ed47cd4be041e4018a6408202ec485509518b558cb9a35",
+    "eval_in_format.jsonl": "93ee7791267798470645126bc93afad92744a37c6bffa449bd93a57a7dedbb5e"
+  }
+}

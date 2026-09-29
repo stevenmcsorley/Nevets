@@ -46,3 +46,4 @@ reports/vessel/onnx/**/*.onnx
 # Background queue stderr (runtime diagnostics, not research results)
 reports/**/queue*.err
 reports/pt/pt3/QUEUE_LOCK/
+reports/general/repair_20260929/QUEUE_LOCK/
