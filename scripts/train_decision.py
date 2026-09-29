@@ -83,6 +83,8 @@ def main():
                     help='Freeze all pretrained weights and train only the entity-binding projection')
     ap.add_argument('--allow-tokenizer-mismatch',action='store_true')
     ap.add_argument('--balanced-sampling',action='store_true')
+    ap.add_argument('--semantic-infogather',action='store_true',
+                    help='with --domain-shares, balance diagnostic vs repair decisions, not repair names')
     ap.add_argument('--resume',action='store_true',help='continue from <out>.resume.pt if present (model, optimiser, '
                     'scheduler, step, RNG states, parent gate baseline); logs are appended')
     ap.add_argument('--resume-every',type=int,default=500,help='write <out>.resume.pt every N updates (atomic)')
@@ -101,6 +103,8 @@ def main():
     ap.add_argument('--nograd-range',help='looped arch: warm-up iterations without gradient, sampled from "lo,hi" per update')
     ap.add_argument('--iters-range',help='looped arch: sample core iterations uniformly from "lo,hi" per update')
     a=ap.parse_args()
+    if a.semantic_infogather and a.domain_shares is None:
+        ap.error('--semantic-infogather requires --domain-shares')
     if min(a.steps,a.batch,a.accum,a.save_every)<1: ap.error('counts must be positive')
     if Path(a.out).resolve() == Path('checkpoints/s1-35m-pretrain.pt').resolve() or (a.init and Path(a.out).resolve()==Path(a.init).resolve()):
         ap.error('output must not overwrite initialization or protected LM')
@@ -145,7 +149,7 @@ def main():
         weights=[1/counts[label] for label in labels]
     if a.domain_shares is not None:
         from systemone_lab.training import domain_balanced_weights
-        weights=domain_balanced_weights(records,a.domain_shares)
+        weights=domain_balanced_weights(records,a.domain_shares,a.semantic_infogather)
         from collections import defaultdict as _dd
         mass=_dd(float)
         for r,w in zip(records,weights): mass[(r.get('meta') or {}).get('domain','none')]+=w

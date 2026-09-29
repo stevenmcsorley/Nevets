@@ -138,3 +138,14 @@ Every competitive open System-One reproduction uses a large frozen pretrained ba
 **PT-2 is INCONCLUSIVE (invalid probe), superseding LOSS.** PROBE-2 uses existing LM checkpoints only, with the TM-1 6,000-update recipe and a three-seed legacy-versus-random positive control. Require a gain of at least three points and beyond twice the SE before comparing 35M/150M slopes. Record the new noise band before comparing. PT-3 awaits a positive recommendation and explicit owner approval.
 
 **Current queue:** VESSEL-1b → VESSEL-1c → PROBE-2 → remaining round-2b arms → GENERAL-4 → S60. Pi inference profiling and CPU extrapolation attacks run alongside; VESSEL deployment remains gated.
+
+**Update 29 September (supersedes queue above):** GENERAL-4 and S60 finished;
+PT-3 is running after owner approval. G4 is not promotable: aggregate in-format
+78.96% but information gathering 57% < 67% floor. S60 long-chain 77.31% supports
+exposure as sufficient for GENERAL-2's gain; single seed and calibration prevent
+automatic promotion. New audit finds diagnostic decisions get 9.16% of G4's
+logged information-gathering samples versus 42.18% in source data. Optional
+`--semantic-infogather` balances test/act inside the domain share, with tests;
+not yet trained. This distortion also affects earlier recipes and is not an
+isolated explanation of the regression. Diagnosis and next controlled comparison:
+`reports/general/diagnosis_20260929/REPORT.md`. No additional GPU job queued.

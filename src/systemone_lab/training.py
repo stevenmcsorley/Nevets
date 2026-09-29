@@ -342,11 +342,12 @@ def check_safety(stats, safety, failure_path, records):
 
 
 
-def domain_balanced_weights(records, spec):
+def domain_balanced_weights(records, spec, semantic_infogather=False):
     """Sampling weights: domain shares first, then label balance within each domain (SAMPLING-1 fix).
 
     spec: "spatial=0.5" style overrides, comma-separated; domains not named split the remaining share
     equally. Domain = meta.domain ("none" if absent). Within a domain every label tuple gets equal mass.
+    semantic_infogather optionally groups named repairs as 'act' against 'test'.
     """
     from collections import Counter, defaultdict
     fixed = {}
@@ -354,6 +355,18 @@ def domain_balanced_weights(records, spec):
         k, v = part.split("="); fixed[k.strip()] = float(v)
     dom = [(r.get("meta") or {}).get("domain", "none") for r in records]
     lab = [tuple(sorted(r["labels"].items())) for r in records]
+    if semantic_infogather:
+        # Balance the decision (test vs act), not the spelling of ten repair names.
+        # Keep legacy sampling as the default for reproducible registered runs.
+        for i, (d, r) in enumerate(zip(dom, records)):
+            if d == 'infogather':
+                answer = r['labels'].get('answer')
+                if answer == 'run the diagnostic':
+                    lab[i] = (('decision', 'test'),)
+                elif isinstance(answer, str) and answer.startswith('repair the '):
+                    lab[i] = (('decision', 'act'),)
+                else:
+                    raise ValueError(f'unknown infogather answer: {answer!r}')
     doms = sorted(set(dom)); rest = [d for d in doms if d not in fixed]
     left = 1.0 - sum(fixed[d] for d in doms if d in fixed)
     if left < -1e-9 or (not rest and abs(left) > 1e-9): raise ValueError(f"domain shares do not sum to 1: {fixed}")

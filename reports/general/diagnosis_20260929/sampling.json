@@ -1,0 +1,14 @@
+{
+  "training_record_counts": {
+    "test": 12052,
+    "act": 16518
+  },
+  "logged_G4_counts": {
+    "act": 14512,
+    "test": 1464
+  },
+  "unweighted_test_fraction": 0.42184109205460274,
+  "legacy_weighted_test_fraction": 0.09090909090909091,
+  "semantic_weighted_test_fraction": 0.5,
+  "caveat": "Shared by earlier label-balanced recipes; not proven to cause G4-minus-G1 regression. Sampling change requires controlled training."
+}
