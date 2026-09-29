@@ -1,0 +1,33 @@
+{
+ "deployed_iters": 4,
+ "records": 141,
+ "set": "eval_real (final, once)",
+ "by_k": {
+  "4": {
+   "agreement_with_claude_labels": {
+    "activity": 0.8581560283687943,
+    "went_dark_suspicious": 0.9148936170212766,
+    "collision_risk": 0.9148936170212766
+   },
+   "same_answer_as_deployed": {
+    "activity": 1.0,
+    "went_dark_suspicious": 1.0,
+    "collision_risk": 1.0
+   },
+   "cpu_s_per_vessel_2threads": 0.4225
+  },
+  "2": {
+   "agreement_with_claude_labels": {
+    "activity": 0.8652482269503546,
+    "went_dark_suspicious": 0.9148936170212766,
+    "collision_risk": 0.9290780141843972
+   },
+   "same_answer_as_deployed": {
+    "activity": 0.9716312056737588,
+    "went_dark_suspicious": 0.9858156028368794,
+    "collision_risk": 0.9858156028368794
+   },
+   "cpu_s_per_vessel_2threads": 0.2528
+  }
+ }
+}

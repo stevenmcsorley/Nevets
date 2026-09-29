@@ -1,0 +1,207 @@
+{
+ "weight_matmuls": 143,
+ "variants": {
+  "pertensor_mm": {
+   "argmax_agree": 0.9858156028368794,
+   "max_abs_prob_diff": 0.5673040747642517,
+   "passes": false,
+   "bytes": 57857343
+  },
+  "perchannel_mm": {
+   "argmax_agree": 0.983451536643026,
+   "max_abs_prob_diff": 0.43380996584892273,
+   "passes": false,
+   "bytes": 58056038
+  },
+  "perchannel_mm_gather": {
+   "argmax_agree": 0.9810874704491725,
+   "max_abs_prob_diff": 0.59847092628479,
+   "passes": false,
+   "bytes": 33480330
+  },
+  "perchannel_excl2": {
+   "argmax_agree": 0.9929078014184397,
+   "max_abs_prob_diff": 0.1703815460205078,
+   "passes": false,
+   "bytes": 62374360,
+   "excluded": [
+    "/blocks.0/ff/down/MatMul",
+    "/blocks.1/ff/down/MatMul"
+   ]
+  },
+  "perchannel_excl4": {
+   "argmax_agree": 0.9929078014184397,
+   "max_abs_prob_diff": 0.1309191882610321,
+   "passes": false,
+   "bytes": 68139838,
+   "excluded": [
+    "/blocks.0/ff/down/MatMul",
+    "/blocks.1/ff/down/MatMul",
+    "/blocks.2/ff/down/MatMul",
+    "/blocks.4/ff/down/MatMul"
+   ]
+  },
+  "perchannel_excl8": {
+   "argmax_agree": 0.9952718676122931,
+   "max_abs_prob_diff": 0.08070403337478638,
+   "passes": false,
+   "bytes": 71472142,
+   "excluded": [
+    "/blocks.0/ff/down/MatMul",
+    "/blocks.1/ff/down/MatMul",
+    "/blocks.2/ff/down/MatMul",
+    "/blocks.4/ff/down/MatMul",
+    "/blocks.7/ff/down/MatMul",
+    "/blocks.1/attn/o/MatMul",
+    "/blocks.1/attn/v/MatMul",
+    "/blocks.4/ff/down_1/MatMul"
+   ]
+  },
+  "perchannel_excl16": {
+   "argmax_agree": 0.9905437352245863,
+   "max_abs_prob_diff": 0.20510420203208923,
+   "passes": false,
+   "bytes": 81819478,
+   "excluded": [
+    "/blocks.0/ff/down/MatMul",
+    "/blocks.1/ff/down/MatMul",
+    "/blocks.2/ff/down/MatMul",
+    "/blocks.4/ff/down/MatMul",
+    "/blocks.7/ff/down/MatMul",
+    "/blocks.1/attn/o/MatMul",
+    "/blocks.1/attn/v/MatMul",
+    "/blocks.4/ff/down_1/MatMul",
+    "/blocks.6/attn/k/MatMul",
+    "/blocks.4/attn/q/MatMul",
+    "/blocks.2/attn/o/MatMul",
+    "/blocks.3/attn/v/MatMul",
+    "/blocks.5/ff/down/MatMul",
+    "/blocks.4/attn/o/MatMul",
+    "/blocks.3/ff/down/MatMul",
+    "/blocks.4/attn/k/MatMul"
+   ]
+  },
+  "perchannel_excl32": {
+   "argmax_agree": 0.9976359338061466,
+   "max_abs_prob_diff": 0.05713212490081787,
+   "passes": false,
+   "bytes": 88344366,
+   "excluded": [
+    "/blocks.0/ff/down/MatMul",
+    "/blocks.1/ff/down/MatMul",
+    "/blocks.2/ff/down/MatMul",
+    "/blocks.4/ff/down/MatMul",
+    "/blocks.7/ff/down/MatMul",
+    "/blocks.1/attn/o/MatMul",
+    "/blocks.1/attn/v/MatMul",
+    "/blocks.4/ff/down_1/MatMul",
+    "/blocks.6/attn/k/MatMul",
+    "/blocks.4/attn/q/MatMul",
+    "/blocks.2/attn/o/MatMul",
+    "/blocks.3/attn/v/MatMul",
+    "/blocks.5/ff/down/MatMul",
+    "/blocks.4/attn/o/MatMul",
+    "/blocks.3/ff/down/MatMul",
+    "/blocks.4/attn/k/MatMul",
+    "/blocks.1/attn/q/MatMul",
+    "/blocks.1/attn/k/MatMul",
+    "/blocks.4/attn/k_1/MatMul",
+    "/blocks.2/attn/v/MatMul",
+    "/blocks.4/attn/v/MatMul",
+    "/blocks.3/ff/down_1/MatMul",
+    "/blocks.0/attn/o/MatMul",
+    "/blocks.0/ff/gate/MatMul",
+    "/blocks.5/ff/down_1/MatMul",
+    "/blocks.3/attn/o/MatMul",
+    "/blocks.4/ff/down_3/MatMul",
+    "/blocks.3/attn/k/MatMul",
+    "/blocks.2/attn/k/MatMul",
+    "/blocks.5/attn/v_1/MatMul",
+    "/blocks.4/ff/down_2/MatMul",
+    "/blocks.4/attn/q_1/MatMul"
+   ]
+  }
+ },
+ "most_sensitive": [
+  [
+   0.7085782289505005,
+   "/blocks.0/ff/down/MatMul"
+  ],
+  [
+   0.10034975409507751,
+   "/blocks.1/ff/down/MatMul"
+  ],
+  [
+   0.0565529465675354,
+   "/blocks.2/ff/down/MatMul"
+  ],
+  [
+   0.05544024705886841,
+   "/blocks.4/ff/down/MatMul"
+  ],
+  [
+   0.044326722621917725,
+   "/blocks.7/ff/down/MatMul"
+  ],
+  [
+   0.03592491149902344,
+   "/blocks.1/attn/o/MatMul"
+  ],
+  [
+   0.030580610036849976,
+   "/blocks.1/attn/v/MatMul"
+  ],
+  [
+   0.028334438800811768,
+   "/blocks.4/ff/down_1/MatMul"
+  ],
+  [
+   0.027875542640686035,
+   "/blocks.6/attn/k/MatMul"
+  ],
+  [
+   0.027817636728286743,
+   "/blocks.4/attn/q/MatMul"
+  ],
+  [
+   0.026573598384857178,
+   "/blocks.2/attn/o/MatMul"
+  ],
+  [
+   0.024852871894836426,
+   "/blocks.3/attn/v/MatMul"
+  ],
+  [
+   0.02435964345932007,
+   "/blocks.5/ff/down/MatMul"
+  ],
+  [
+   0.022260725498199463,
+   "/blocks.4/attn/o/MatMul"
+  ],
+  [
+   0.021154403686523438,
+   "/blocks.3/ff/down/MatMul"
+  ],
+  [
+   0.02084571123123169,
+   "/blocks.4/attn/k/MatMul"
+  ],
+  [
+   0.01957642287015915,
+   "/blocks.1/attn/q/MatMul"
+  ],
+  [
+   0.019010066986083984,
+   "/blocks.1/attn/k/MatMul"
+  ],
+  [
+   0.018509209156036377,
+   "/blocks.4/attn/k_1/MatMul"
+  ],
+  [
+   0.01788341999053955,
+   "/blocks.2/attn/v/MatMul"
+  ]
+ ]
+}

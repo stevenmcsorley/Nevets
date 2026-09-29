@@ -1,0 +1,45 @@
+{
+ "name": "VESSEL-1c",
+ "version": "vessel-v1c_s7-k2",
+ "bidirectional_state": true,
+ "isolated_options": true,
+ "iters": 2,
+ "graph": "fp32",
+ "parity": {
+  "fp32": {
+   "argmax_agree": 1.0,
+   "max_abs_prob_diff": 3.635883331298828e-06,
+   "mean_abs_prob_diff": 4.2374985957949754e-08,
+   "questions": 423
+  },
+  "note": "2 loop passes (trained K~U[1,6]; was 4). Chosen on a post-freeze dev set, eval_real checked once."
+ },
+ "benchmarks": {
+  "summary": "Synthetic benchmark: accuracy 0.922, ECE 0.024, counterfactual 0.482 (does not meet the pre-registered win criterion). Held-out live vessels (agreement with Claude labels, 2 passes): activity 0.865, went_dark_suspicious 0.915, collision_risk 0.929.",
+  "synthetic": {
+   "accuracy": 0.922,
+   "ece15": 0.023792350547181165,
+   "cf_both": 0.4816666666666667,
+   "verdict": {
+    "accuracy_beats_both": false,
+    "ece_beats_both": false,
+    "cf_no_worse": false,
+    "WIN": false
+   }
+  },
+  "robust": null,
+  "real": {
+   "activity": {
+    "agreement_with_claude_labels": 0.8652482269503546
+   },
+   "went_dark_suspicious": {
+    "agreement_with_claude_labels": 0.9148936170212766
+   },
+   "collision_risk": {
+    "agreement_with_claude_labels": 0.9290780141843972
+   }
+  }
+ },
+ "promoted": false,
+ "tokenizer": "/app/model/tokenizer.json"
+}

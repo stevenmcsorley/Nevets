@@ -1,0 +1,19 @@
+{
+  "ckpt": "checkpoints/vessel/vessel-v1c_s7.pt",
+  "iters": 2,
+  "requests": 141,
+  "fp32_bytes": 129133382,
+  "int8_bytes": 80019358,
+  "fp32": {
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 3.635883331298828e-06,
+    "mean_abs_prob_diff": 4.2374985957949754e-08,
+    "questions": 423
+  },
+  "int8": {
+    "argmax_agree": 0.9858156028368794,
+    "max_abs_prob_diff": 0.4935990869998932,
+    "mean_abs_prob_diff": 0.005600174450791248,
+    "questions": 423
+  }
+}

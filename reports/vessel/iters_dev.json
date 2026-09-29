@@ -1,0 +1,59 @@
+{
+ "deployed_iters": 4,
+ "records": 90,
+ "set": "post-freeze dev (no eval_real vessels)",
+ "by_k": {
+  "4": {
+   "agreement_with_claude_labels": {
+    "activity": 0.7111111111111111,
+    "went_dark_suspicious": 0.9666666666666667,
+    "collision_risk": 0.9
+   },
+   "same_answer_as_deployed": {
+    "activity": 1.0,
+    "went_dark_suspicious": 1.0,
+    "collision_risk": 1.0
+   },
+   "cpu_s_per_vessel_2threads": 0.4139
+  },
+  "3": {
+   "agreement_with_claude_labels": {
+    "activity": 0.7,
+    "went_dark_suspicious": 0.9666666666666667,
+    "collision_risk": 0.9
+   },
+   "same_answer_as_deployed": {
+    "activity": 0.9666666666666667,
+    "went_dark_suspicious": 1.0,
+    "collision_risk": 1.0
+   },
+   "cpu_s_per_vessel_2threads": 0.3311
+  },
+  "2": {
+   "agreement_with_claude_labels": {
+    "activity": 0.7111111111111111,
+    "went_dark_suspicious": 0.9666666666666667,
+    "collision_risk": 0.9
+   },
+   "same_answer_as_deployed": {
+    "activity": 0.9444444444444444,
+    "went_dark_suspicious": 1.0,
+    "collision_risk": 1.0
+   },
+   "cpu_s_per_vessel_2threads": 0.2393
+  },
+  "1": {
+   "agreement_with_claude_labels": {
+    "activity": 0.7,
+    "went_dark_suspicious": 0.9555555555555556,
+    "collision_risk": 0.9
+   },
+   "same_answer_as_deployed": {
+    "activity": 0.9444444444444444,
+    "went_dark_suspicious": 0.9888888888888889,
+    "collision_risk": 1.0
+   },
+   "cpu_s_per_vessel_2threads": 0.1504
+  }
+ }
+}
