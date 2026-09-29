@@ -22,3 +22,10 @@ def test_sampler_comparison_changes_only_flag():
     assert fixed==base+['--semantic-infogather']
     assert base[base.index('--steps')+1]=='10000'
     assert '--resume' in base
+
+
+def test_queue_may_start_while_pt3_paused_but_not_while_its_gpu_marker_is_held(tmp_path):
+    marker=tmp_path/'reports/pt/pt3/PAUSED_FOR_GENERAL'; marker.parent.mkdir(parents=True); marker.touch()
+    assert repair.ready(tmp_path)
+    busy=tmp_path/'reports/pt/PT2_RUNNING'; busy.touch()
+    assert not repair.ready(tmp_path)

@@ -9,3 +9,6 @@ ctl_s8 done
 A_warm_s7 done
 r2b1_depthK_s7 done
 r2b1_depthK_s8 done
+r2b2_edge_s7 done
+r2b3_incoff_s7 done
+r2b4_combo_s7 done

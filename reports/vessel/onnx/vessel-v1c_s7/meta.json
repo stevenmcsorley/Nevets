@@ -1,0 +1,64 @@
+{
+ "name": "VESSEL-1c",
+ "version": "vessel-v1c_s7",
+ "bidirectional_state": true,
+ "isolated_options": true,
+ "iters": 4,
+ "graph": "fp32",
+ "parity": {
+  "fp32": {
+   "argmax_agree": 1.0,
+   "max_abs_prob_diff": 3.427267074584961e-06,
+   "mean_abs_prob_diff": 3.9929534254344444e-08,
+   "questions": 423
+  },
+  "int8_dynamic": {
+   "argmax_agree": 0.9810874704491725,
+   "max_abs_prob_diff": 0.5652663707733154,
+   "mean_abs_prob_diff": 0.0057906760238987205,
+   "questions": 423
+  },
+  "full8_vs_fp32": {
+   "argmax_agree": 0.983451536643026,
+   "max_abs_prob_diff": 0.5608576536178589,
+   "questions": 423
+  }
+ },
+ "benchmarks": {
+  "summary": "Synthetic benchmark: accuracy 0.922, ECE 0.024, counterfactual 0.482 (does not meet the pre-registered win criterion). Held-out live vessels (agreement with Claude labels): activity 0.858, collision_risk 0.915, went_dark_suspicious 0.915.",
+  "synthetic": {
+   "accuracy": 0.922,
+   "ece15": 0.023792350547181165,
+   "cf_both": 0.4816666666666667,
+   "verdict": {
+    "accuracy_beats_both": false,
+    "ece_beats_both": false,
+    "cf_no_worse": false,
+    "WIN": false
+   }
+  },
+  "robust": null,
+  "real": {
+   "activity": {
+    "n": 141,
+    "agreement_with_claude_labels": 0.8581560283687943,
+    "ece15": 0.10142293572425848,
+    "brier": 0.2197522754842926
+   },
+   "collision_risk": {
+    "n": 141,
+    "agreement_with_claude_labels": 0.9148936170212766,
+    "ece15": 0.07877902485800126,
+    "brier": 0.14735522832257855
+   },
+   "went_dark_suspicious": {
+    "n": 141,
+    "agreement_with_claude_labels": 0.9148936170212766,
+    "ece15": 0.0833219475779973,
+    "brier": 0.1555524064058644
+   }
+  }
+ },
+ "promoted": false,
+ "tokenizer": "/app/model/tokenizer.json"
+}

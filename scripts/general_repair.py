@@ -98,7 +98,9 @@ def plan():
 
 
 def ready(root=ROOT):
-    return (root/'reports/pt/pt3/COMPLETE').exists() and not any((root/p).exists() for p in
+    # Owner, 29 Sep: GENERAL repair may run while PT-3 is paused at a 1B checkpoint (PAUSED_FOR_GENERAL marker).
+    pt3=root/'reports/pt/pt3'
+    return ((pt3/'COMPLETE').exists() or (pt3/'PAUSED_FOR_GENERAL').exists()) and not any((root/p).exists() for p in
         ['reports/pt/PT2_RUNNING','reports/general/GPU_BUSY','reports/p1/ARM_RUNNING'])
 
 

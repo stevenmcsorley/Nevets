@@ -1,0 +1,24 @@
+[
+  {
+    "step": 8138,
+    "tokens": 999997440,
+    "checkpoint": "E:\\systemone-lab\\checkpoints\\pt3\\pt_35m\\tok_1000M.pt",
+    "metrics": {
+      "in_format": 0.661,
+      "table": 0.5025,
+      "cf_both": 0.135,
+      "ece_in": 0.024127817295491735
+    }
+  },
+  {
+    "step": 16276,
+    "tokens": 1999994880,
+    "checkpoint": "E:\\systemone-lab\\checkpoints\\pt3\\pt_35m\\tok_2000M.pt",
+    "metrics": {
+      "in_format": 0.624,
+      "table": 0.515,
+      "cf_both": 0.07666666666666666,
+      "ece_in": 0.024751251265406615
+    }
+  }
+]

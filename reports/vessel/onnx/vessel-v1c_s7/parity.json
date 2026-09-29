@@ -1,0 +1,30 @@
+{
+  "ckpt": "checkpoints\\vessel\\vessel-v1c_s7.pt",
+  "iters": 4,
+  "requests": 141,
+  "fp32_bytes": 129396472,
+  "int8_bytes": 80408579,
+  "fp32": {
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 3.427267074584961e-06,
+    "mean_abs_prob_diff": 3.9929534254344444e-08,
+    "questions": 423
+  },
+  "int8": {
+    "argmax_agree": 0.9810874704491725,
+    "max_abs_prob_diff": 0.5652663707733154,
+    "mean_abs_prob_diff": 0.0057906760238987205,
+    "questions": 423
+  },
+  "w8_vs_fp32": {
+    "argmax_agree": 1.0,
+    "max_abs_prob_diff": 0.08024182915687561,
+    "questions": 423
+  },
+  "full8_vs_fp32": {
+    "argmax_agree": 0.983451536643026,
+    "max_abs_prob_diff": 0.5608576536178589,
+    "questions": 423
+  },
+  "chosen": "fp32"
+}

@@ -1,1 +1,25 @@
 queued 2026-09-28T10:20:15Z
+start 2026-09-28T11:19:22Z
+probe legacy_s1_35m_s11 done
+probe pt_35m_tok_0M_s11 done
+probe legacy_s1_35m_s12 done
+probe pt_35m_tok_0M_s12 done
+probe legacy_s1_35m_s13 done
+probe pt_35m_tok_0M_s13 done
+probe pt_35m_tok_250M_s11 done
+probe pt_35m_tok_500M_s11 done
+probe pt_35m_tok_750M_s11 done
+probe pt_35m_tok_1000M_s11 done
+probe pt_35m_tok_250M_s12 done
+probe pt_35m_tok_250M_s13 done
+probe pt_35m_tok_1000M_s12 done
+probe pt_35m_tok_1000M_s13 done
+probe pt_150m_tok_250M_s11 done
+probe pt_150m_tok_500M_s11 done
+probe pt_150m_tok_750M_s11 done
+probe pt_150m_tok_1000M_s11 done
+probe pt_150m_tok_250M_s12 done
+probe pt_150m_tok_250M_s13 done
+probe pt_150m_tok_1000M_s12 done
+probe pt_150m_tok_1000M_s13 done
+probe2 done 2026-09-28T16:49:52Z; PT-3 requires owner approval if recommended

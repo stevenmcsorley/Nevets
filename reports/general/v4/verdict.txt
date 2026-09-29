@@ -1,0 +1,15 @@
+only seeds [7] finished: two seeds are required before promotion
+GENERAL-4_s7 spatial {'overall': 0.9062, 'h1_6': 0.9888, 'h7_10': 0.7815, 'rot': 1.0, 'ece': 0.0336}
+GENERAL-4_s7 worlds {'in_format': 0.7896, 'table': 0.6936, 'ece_in': 0.0457, 'ece_table': 0.062, 'cf_both': 0.39, 'dom_causal': 0.57, 'dom_dependency': 0.95, 'dom_infogather': 0.57, 'dom_kinship': 0.8125, 'dom_probability': 0.69, 'dom_rules': 0.9875, 'dom_temporal': 0.9475}
+GENERAL-4_s7 counterfactual per domain (both-correct, vs G1): causal 0.053 (0.087)  dependency 0.423 (0.157)  infogather 0.103 (0.157)  rules 0.980 (0.737)
+S30 ref checkpoints/p0/S30_s8.pt {'overall': 0.7762, 'h1_6': 0.9244, 'h7_10': 0.5558, 'rot': 0.9887, 'ece': 0.0363} spread {'overall': 0.012, 'h1_6': 0.0009, 'h7_10': 0.0273, 'rot': 0.002, 'ece': 0.0031}
+GENERAL-1 {'in_format': 0.6632, 'table': 0.5414, 'ece_in': 0.0469, 'ece_table': 0.157, 'cf_both': 0.2842, 'dom_causal': 0.5525, 'dom_dependency': 0.6075, 'dom_infogather': 0.7, 'dom_kinship': 0.565, 'dom_probability': 0.7175, 'dom_rules': 0.885, 'dom_temporal': 0.615}
+PASS  spatial h1_6 >= S30 - tol  [True]
+PASS  spatial h7_10 >= S30 - tol  [True]
+PASS  spatial rot >= S30 - tol  [True]
+PASS  in-format >= G1  [True]
+FAIL  no domain < G1 - 0.03  [False]
+PASS  table >= G1  [True]
+PASS  counterfactual mean >= G1  [True]
+PASS  ECE (in-format and table) <= G1 + 0.01  [True]
+GENERAL-4 not promotable

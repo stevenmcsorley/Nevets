@@ -1,0 +1,124 @@
+{
+  "ckpt": "checkpoints/pt2/probe2/pt_35m_tok_0M_s13.pt",
+  "split": "data/processed/worlds_v1",
+  "eval_heldout_table": {
+    "overall": {
+      "n": 2000,
+      "accuracy": 0.425,
+      "ece15": 0.04247372381761669,
+      "brier": 0.604975108261555,
+      "coverage_at_0.9": 0.0195,
+      "accuracy_at_0.9": 0.9230769230769231,
+      "kl_to_exact_posterior": 0.28105945597344983,
+      "mean_abs_prob_error": 0.238884016447026
+    },
+    "dependency": {
+      "n": 400,
+      "accuracy": 0.5175,
+      "ece15": 0.06851396650075911,
+      "brier": 0.5144934248410606,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    },
+    "kinship": {
+      "n": 400,
+      "accuracy": 0.135,
+      "ece15": 0.020061320010572665,
+      "brier": 0.8824217722873426,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    },
+    "probability": {
+      "n": 400,
+      "accuracy": 0.4075,
+      "ece15": 0.05892850719392301,
+      "brier": 0.5605907506227017,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "kl_to_exact_posterior": 0.28105945597344983,
+      "mean_abs_prob_error": 0.238884016447026
+    },
+    "rules": {
+      "n": 400,
+      "accuracy": 0.7375,
+      "ece15": 0.07948575079441068,
+      "brier": 0.3682047739198919,
+      "coverage_at_0.9": 0.0975,
+      "accuracy_at_0.9": 0.9230769230769231
+    },
+    "temporal": {
+      "n": 400,
+      "accuracy": 0.3275,
+      "ece15": 0.11077314577996733,
+      "brier": 0.699164819636778,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    }
+  },
+  "eval_in_format": {
+    "overall": {
+      "n": 2000,
+      "accuracy": 0.423,
+      "ece15": 0.05726990102231502,
+      "brier": 0.6114470905935993,
+      "coverage_at_0.9": 0.0545,
+      "accuracy_at_0.9": 0.7706422018348624,
+      "kl_to_exact_posterior": 0.3006540156512786,
+      "mean_abs_prob_error": 0.2491602039353434
+    },
+    "dependency": {
+      "n": 400,
+      "accuracy": 0.4875,
+      "ece15": 0.10632294163107879,
+      "brier": 0.5244782638130738,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    },
+    "kinship": {
+      "n": 400,
+      "accuracy": 0.1725,
+      "ece15": 0.011110275536775582,
+      "brier": 0.8687751442850543,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null
+    },
+    "probability": {
+      "n": 400,
+      "accuracy": 0.4375,
+      "ece15": 0.021446654126048088,
+      "brier": 0.5533682215384462,
+      "coverage_at_0.9": 0.0,
+      "accuracy_at_0.9": null,
+      "kl_to_exact_posterior": 0.3006540156512786,
+      "mean_abs_prob_error": 0.2491602039353434
+    },
+    "rules": {
+      "n": 400,
+      "accuracy": 0.6525,
+      "ece15": 0.12298977002501485,
+      "brier": 0.4653770207272966,
+      "coverage_at_0.9": 0.255,
+      "accuracy_at_0.9": 0.7745098039215687
+    },
+    "temporal": {
+      "n": 400,
+      "accuracy": 0.365,
+      "ece15": 0.03719967022538186,
+      "brier": 0.6452368026041249,
+      "coverage_at_0.9": 0.0175,
+      "accuracy_at_0.9": 0.7142857142857143
+    }
+  },
+  "counterfactual": {
+    "rules": {
+      "pairs": 300,
+      "both_correct": 0.3933333333333333,
+      "correct_direction": 0.7333333333333333
+    },
+    "dependency": {
+      "pairs": 300,
+      "both_correct": 0.043333333333333335,
+      "correct_direction": 0.21333333333333335
+    }
+  }
+}
